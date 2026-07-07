@@ -1,0 +1,45 @@
+SEMICONDUCTOR SUPPLY CHAIN ANALYSIS
+
+ASML is the sole global supplier of EUV lithography machines required for manufacturing chips at 7nm and below. Each machine costs approximately 200 million dollars. ASML supplies EUV machines exclusively to TSMC, Samsung, and Intel. Without ASML EUV machines, no company can manufacture advanced AI chips. The Netherlands government has restricted ASML from exporting EUV machines to China since 2023.
+
+TSMC manufactures approximately 92 percent of the worlds most advanced chips below 7nm. TSMC customers include NVIDIA, AMD, Apple, Qualcomm, and Broadcom. TSMC operates in Taiwan which sits 180 kilometers from mainland China. Any military conflict affecting Taiwan would immediately halt global AI chip production. TSMC is building fabs in Arizona USA, Kumamoto Japan, and Dresden Germany.
+
+MICRON TECHNOLOGY produces DRAM and NAND flash memory. Micron produces High Bandwidth Memory HBM chips used in NVIDIA H100 and H200 GPUs. China accounts for approximately 16 percent of Micron revenue. Micron manufactures in Boise Idaho, Hiroshima Japan, and Taiwan.
+
+SK HYNIX is the world second largest DRAM manufacturer and the leading supplier of HBM chips to NVIDIA. SK Hynix supplies approximately 70 percent of NVIDIA HBM requirements for H100 and H200 GPUs. SK Hynix was first to market with HBM3 and HBM3e. SK Hynix is building a new facility in Indiana USA to serve US AI customers.
+
+SAMSUNG ELECTRONICS is the worlds largest memory chip manufacturer. Samsung operates its own foundry competing directly with TSMC. Samsung has struggled with HBM yield rates compared to SK Hynix causing NVIDIA to reduce Samsung HBM allocation.
+
+NVIDIA dominates the AI accelerator market with approximately 80 to 90 percent market share in data center GPUs. NVIDIA H100 H200 and Blackwell GPUs are the primary compute engines for AI training and inference. NVIDIA gross margins exceed 70 percent reflecting its pricing power and CUDA software ecosystem moat.
+
+AMD produces EPYC server CPUs and Instinct MI300X AI accelerators competing with NVIDIA. AMD MI300X uses HBM3 memory and is manufactured at TSMC 5nm. AMD AI accelerator revenue reached 5 billion dollars in 2024.
+
+INTEL is the only IDM among top semiconductor companies that both designs and manufactures chips. Intel Foundry Services competes with TSMC for external customers. Intel is building new fabs in Ohio Arizona Germany and Israel under the US CHIPS Act.
+
+QUALCOMM designs Snapdragon mobile SoCs and is the dominant supplier to Android smartphone manufacturers. China represents approximately 60 percent of Qualcomm revenue. US-China tensions pose significant risk to Qualcomm revenue model.
+
+BROADCOM designs custom AI ASICs for Google Meta and ByteDance. Broadcom networking chips connect GPU clusters in AI data centers. Broadcom custom ASIC business is the fastest growing alternative to NVIDIA GPUs.
+
+MARVELL TECHNOLOGY designs custom AI ASICs for Amazon AWS and Microsoft. Marvell electro-optics and networking chips are critical for AI data center interconnects.
+
+APPLIED MATERIALS is the worlds largest semiconductor equipment company. Applied Materials supplies deposition etching and metrology equipment to every major semiconductor fab globally. China accounts for approximately 27 percent of Applied Materials revenue.
+
+LAM RESEARCH is the leading supplier of etch and deposition equipment for memory semiconductors. Lam Research equipment is critical for DRAM and NAND manufacturing at Micron SK Hynix and Samsung. China accounts for approximately 26 percent of Lam Research revenue.
+
+KLA CORPORATION is the dominant supplier of process control and inspection equipment. KLA equipment ensures yield at every stage of semiconductor manufacturing.
+
+TEXAS INSTRUMENTS manufactures analog and embedded chips for industrial and automotive markets. Texas Instruments is an IDM with its own fabs in Texas and Maine.
+
+ANALOG DEVICES manufactures high-performance analog mixed-signal and DSP chips serving industrial automotive communications and healthcare markets.
+
+ON SEMICONDUCTOR is the leading supplier of silicon carbide SiC power semiconductors for electric vehicles. EV adoption directly drives ON Semiconductor revenue growth.
+
+MICROCHIP TECHNOLOGY manufactures microcontrollers and analog chips for embedded systems serving industrial automotive aerospace and IoT markets.
+
+MONOLITHIC POWER SYSTEMS designs power management integrated circuits for AI servers EVs and consumer electronics. MPWR voltage regulators are used in NVIDIA GPU servers.
+
+SKYWORKS SOLUTIONS designs RF radio frequency chips for smartphones and IoT devices. Apple accounts for approximately 60 percent of Skyworks revenue.
+
+GEOPOLITICAL RISKS: Taiwan Strait tension represents the single largest systemic risk to global semiconductor supply. A Chinese military blockade of Taiwan would immediately halt 92 percent of advanced chip manufacturing globally. US export controls on advanced semiconductors to China restrict H100 H800 A100 A800 GPUs and equipment. China domestic semiconductor champion SMIC is limited to 7nm and above due to lack of EUV machines. Japan imposed semiconductor equipment export restrictions in 2023. The Strait of Hormuz disruption affects oil prices which increases semiconductor manufacturing costs.
+
+SUPPLY CHAIN INTERDEPENDENCIES: Any disruption to TSMC production directly impacts NVIDIA AMD Apple Qualcomm and Broadcom simultaneously. NVIDIA GPU shortage in 2022 to 2023 was caused by TSMC CoWoS advanced packaging capacity constraints. CoWoS packaging is required for HBM integration in AI GPUs. SK Hynix HBM supply allocation to NVIDIA is fully booked through 2025. Memory pricing cycles follow 18 to 24 month supply demand patterns. DRAM oversupply in 2022 to 2023 was followed by HBM shortage in 2024 to 2025.

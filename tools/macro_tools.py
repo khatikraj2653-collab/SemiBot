@@ -1,0 +1,45 @@
+import os
+from langchain_core.tools import tool
+from fredapi import Fred
+from dotenv import load_dotenv
+
+load_dotenv()
+fred = Fred(api_key=os.getenv("FRED_API_KEY"))
+
+@tool
+def get_cpi() -> str:
+    """Fetches latest CPI value from FRED as inflation signal."""
+    try:
+        cpi = fred.get_series('CPIAUCSL').iloc[-1]
+        return f"CPI: {round(float(cpi), 2)}"
+    except Exception as e:
+        return f"CPI: Data unavailable ({str(e)})"
+
+@tool
+def get_ppi() -> str:
+    """Fetches latest PPI value from FRED as producer cost signal."""
+    try:
+        ppi = fred.get_series('PPIACO').iloc[-1]
+        return f"PPI: {round(float(ppi), 2)}"
+    except Exception as e:
+        return f"PPI: Data unavailable ({str(e)})"
+
+@tool
+def get_fed_rate() -> str:
+    """Fetches current Federal Funds Rate from FRED."""
+    try:
+        rate = fred.get_series('FEDFUNDS').iloc[-1]
+        return f"Fed Rate: {round(float(rate), 2)}%"
+    except Exception as e:
+        return f"Fed Rate: Data unavailable ({str(e)})"
+
+@tool
+def get_usd_index() -> str:
+    """Fetches current USD Index (DXY) value as dollar strength signal."""
+    try:
+        import yfinance as yf
+        dxy = yf.Ticker("DX-Y.NYB")
+        price = dxy.info.get('regularMarketPrice')
+        return f"USD Index (DXY): {price}"
+    except Exception as e:
+        return f"USD Index: Data unavailable ({str(e)})"
