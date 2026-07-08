@@ -1,32 +1,24 @@
 import os
+
 from langgraph.graph import StateGraph, START, END
-from langgraph.checkpoint.memory import MemorySaver
+import sqlite3
+from langgraph.checkpoint.sqlite import SqliteSaver
 from graph.state import SemiconductorState
-from graph.nodes import (
-    fetch_macro_factors,
-    fetch_fundamental_factors,
-    fetch_market_factors,
-    fetch_external_factors,
-    generate_prediction
-)
+from graph.nodes import generate_prediction
+from graph.subgraphs import build_macro_subgraph, build_fundamental_subgraph, build_market_subgraph, build_external_subgraph
 
 def build_graph():
-    """Builds and compiles the semiconductor analysis LangGraph workflow."""
-    
-    # Initialize MemorySaver for checkpointing
-    checkpointer = MemorySaver()
-    
-    # Build graph
+    db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'semibot_checkpoints.db')
+    conn = sqlite3.connect(db_path, check_same_thread=False)
+    checkpointer = SqliteSaver(conn)
     graph = StateGraph(SemiconductorState)
-    
-    # Add nodes
-    graph.add_node("fetch_macro", fetch_macro_factors)
-    graph.add_node("fetch_fundamental", fetch_fundamental_factors)
-    graph.add_node("fetch_market", fetch_market_factors)
-    graph.add_node("fetch_external", fetch_external_factors)
+
+    graph.add_node("fetch_macro", build_macro_subgraph())
+    graph.add_node("fetch_fundamental", build_fundamental_subgraph())
+    graph.add_node("fetch_market", build_market_subgraph())
+    graph.add_node("fetch_external", build_external_subgraph())
     graph.add_node("generate_prediction", generate_prediction)
-    
-    # Add edges
+
     graph.add_edge(START, "fetch_macro")
     graph.add_edge(START, "fetch_fundamental")
     graph.add_edge(START, "fetch_market")
@@ -36,11 +28,7 @@ def build_graph():
     graph.add_edge("fetch_market", "generate_prediction")
     graph.add_edge("fetch_external", "generate_prediction")
     graph.add_edge("generate_prediction", END)
-    
-    # Compile with checkpointer
-    app = graph.compile(checkpointer=checkpointer)
-    
-    return app
 
-# Initialize graph at module level
-app = build_graph() 
+    return graph.compile(checkpointer=checkpointer)
+
+app = build_graph()

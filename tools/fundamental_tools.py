@@ -51,9 +51,11 @@ def get_insider_selling(ticker: str) -> str:
                 shares = row.get('Shares', 'N/A')
                 value = row.get('Value', 'N/A')
                 text = row.get('Text', '')
-                # Format value as dollar amount if numeric
-                if isinstance(value, (int, float)):
+                # Format value as dollar amount if numeric and not NaN
+                if isinstance(value, (int, float)) and not (isinstance(value, float) and value != value):
                     value = f"${value:,.0f}"
+                else:
+                    value = "Not disclosed"
                 lines.append(f"{name}: {text} | Shares: {shares} | Value: {value}")
             return "Recent Insider Transactions:\n" + "\n".join(lines)
         return "Insider Selling: No recent transactions found"

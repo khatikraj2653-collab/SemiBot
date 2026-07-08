@@ -3,33 +3,34 @@ import operator
 
 class SemiconductorState(TypedDict):
     # Input
-    ticker: str
+    ticker: Annotated[str, lambda old, new: new]
     
     # Macroeconomic factors
-    cpi: str
-    ppi: str
-    fed_rate: str
-    usd_index: str
+    cpi: Annotated[str, lambda old, new: new]
+    ppi: Annotated[str, lambda old, new: new]
+    fed_rate: Annotated[str, lambda old, new: new]
+    usd_index: Annotated[str, lambda old, new: new]
     
     # Fundamental factors
-    pe_ratio: str
-    market_cap: str
-    earnings_guidance: str
-    insider_selling: str
+    pe_ratio: Annotated[str, lambda old, new: new]
+    market_cap: Annotated[str, lambda old, new: new]
+    earnings_guidance: Annotated[str, lambda old, new: new]
+    insider_selling: Annotated[str, lambda old, new: new]
     
     # Market intelligence factors 
-    sector_rally: str
-    technical_signal: str
-    analyst_ratings: str
-    sell_the_news: str
+    sector_rally: Annotated[str, lambda old, new: new]
+    technical_signal: Annotated[str, lambda old, new: new]
+    analyst_ratings: Annotated[str, lambda old, new: new]
+    sell_the_news: Annotated[str, lambda old, new: new]
     
     # External signal factors
-    geopolitics: str
-    supply_chain: str
-    news_sentiment: str
-    capital_rotation: str
-    competitor_contagion: str
-    beta: str
+    geopolitics: Annotated[str, lambda old, new: new]
+    supply_chain: Annotated[str, lambda old, new: new]
+    news_sentiment: Annotated[str, lambda old, new: new]
+    capital_rotation: Annotated[str, lambda old, new: new]
+    competitor_contagion: Annotated[str, lambda old, new: new]
+    beta: Annotated[str, lambda old, new: new]
     
     # Final output
-    prediction: str
+    prediction: Annotated[str, lambda old, new: new]
+    scores: Annotated[dict, lambda old, new: new] 
