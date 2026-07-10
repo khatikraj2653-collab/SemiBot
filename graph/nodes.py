@@ -103,9 +103,13 @@ BETA_SCORE: [integer -10 to 10]
 """)
 
 reasoning_prompt = ChatPromptTemplate.from_template("""
-You are a semiconductor equity analyst. Write a 2-3 sentence reasoning for why {ticker} stock
-scored UP {up_prob}% based on these factor scores:
+You are a semiconductor equity analyst. {ticker} stock has an UP probability of {up_prob}% and a DOWN probability of {down_prob}%.
 
+The DOMINANT direction is: {dominant_direction} (whichever probability is higher above 50%).
+
+Write a 2-3 sentence reasoning that correctly reflects the DOMINANT direction above - if DOWN is dominant, the reasoning must explain why the stock is more likely to fall, not rise, even if some individual factors are bullish. Do not default to bullish framing unless UP is actually dominant.
+
+FACTOR SCORES:
 {scores_text}
 
 Identify the 3 most bullish and 3 most bearish factors (by weight x score).
@@ -157,9 +161,13 @@ def generate_prediction(state: SemiconductorState) -> dict:
 
     scores_text = "\n".join([f"{k}: {scores[k]:+d} (weight {FACTOR_WEIGHTS[k]})" for k in FACTOR_WEIGHTS])
 
+    dominant_direction = "UP" if up_prob > down_prob else ("DOWN" if down_prob > up_prob else "NEUTRAL/EVEN")
+
     reasoning_response = (reasoning_prompt | llm).invoke({
         "ticker": state["ticker"],
         "up_prob": up_prob,
+        "down_prob": down_prob,
+        "dominant_direction": dominant_direction,
         "scores_text": scores_text
     })
 

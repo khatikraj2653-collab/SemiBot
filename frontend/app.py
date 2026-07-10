@@ -123,6 +123,21 @@ def update_followup(history_id, followup_history):
     conn.commit()
     conn.close()
 
+def get_historical_context(ticker, limit=5):
+    """Long-term memory: queries past analysis sessions for this SAME ticker from SQLite
+    (persists across threads/sessions) and returns a trend summary the agent can reason over."""
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.execute(
+        "SELECT up_prob, timestamp FROM analysis_history WHERE ticker = ? ORDER BY id DESC LIMIT ?",
+        (ticker, limit)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    if not rows:
+        return f"No prior analysis history for {ticker} yet."
+    summary_lines = [f"UP {up} at {ts}" for up, ts in rows]
+    return f"Recent {ticker} analysis history (most recent first): {'; '.join(summary_lines)}."
+
 init_history_table()
 
 st.set_page_config(
@@ -484,7 +499,7 @@ with st.sidebar:
     <div style='font-size:0.72rem;color:#AAAAAA;margin-bottom:18px'>18-Factor Agentic RAG</div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<a href='http://localhost:8502/landing.html' target='_self' style='display:block;width:100%;text-align:center;background:linear-gradient(135deg,#0055FF,#00AAFF);color:white;padding:10px;border-radius:10px;font-weight:600;font-size:0.9rem;text-decoration:none;margin-bottom:8px;'>Home</a>", unsafe_allow_html=True)
+    st.markdown("<a href='http://localhost:8506/landing.html' target='_self' style='display:block;width:100%;text-align:center;background:linear-gradient(135deg,#0055FF,#00AAFF);color:white;padding:10px;border-radius:10px;font-weight:600;font-size:0.9rem;text-decoration:none;margin-bottom:8px;'>Home</a>", unsafe_allow_html=True)
     if st.button("+ New Analysis", use_container_width=True):
         st.session_state.result = None
         st.session_state.ticker = None
@@ -792,7 +807,12 @@ if st.session_state.result:
         ask_button = st.button("Ask →", use_container_width=True, key="ask_btn")
 
     if ask_button and followup_q:
+        historical_context = get_historical_context(ticker)
         analysis_context = f"""You are analyzing {ticker} stock. Here is the complete 18-factor analysis:
+
+LONG_TERM_MEMORY: {historical_context}
+The above line lists ONLY past UP% values for {ticker} with timestamps, most recent first - nothing else. It does NOT include individual factor scores (P/E, CPI, Fed Rate, etc.) from past sessions. When asked to compare the current UP%/DOWN% result to past sessions, cite the specific past UP% value directly (e.g. "your last {ticker} analysis showed UP 45%, and this one is higher at 48%"). If asked about a specific FACTOR SCORE from a past session (not the overall UP%), you MUST say you don't have that level of historical detail - only overall UP% and timestamp are stored in long-term memory, not individual factor values. Never substitute the CURRENT analysis's factor value and present it as if it were from a past session.
+
 PREDICTION: UP {up_prob}% / DOWN {down_prob}% (Confidence: {confidence})
 REASONING: {reasoning}
 BULLISH FACTORS: {', '.join(bullish)}
