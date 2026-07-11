@@ -2,6 +2,7 @@ import os
 import yfinance as yf
 from langchain_core.tools import tool
 from dotenv import load_dotenv
+from tools.cache_utils import cached_tool, TTL_SLOW, TTL_FAST
 
 load_dotenv()
 
@@ -18,6 +19,7 @@ def web_search(query: str, max_results: int = 3) -> str:
         return f"Search unavailable: {str(e)}"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_sector_rally() -> str:
     """Fetches 1-month SOXX ETF performance as semiconductor sector momentum signal."""
     try:
@@ -29,6 +31,7 @@ def get_sector_rally() -> str:
         return f"Sector Rally: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_technical_signal(ticker: str) -> str:
     """Calculates 50-day and 200-day moving averages to identify golden or death cross."""
     try:
@@ -42,6 +45,7 @@ def get_technical_signal(ticker: str) -> str:
         return f"Technical Signal: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_analyst_ratings(ticker: str) -> str:
     """Fetches analyst buy/hold/sell recommendations for a given ticker."""
     try:
@@ -53,6 +57,7 @@ def get_analyst_ratings(ticker: str) -> str:
         return f"Analyst Ratings: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_FAST)
 def get_sell_the_news(ticker: str) -> str:
     """Searches for sell-the-news risk signals around upcoming earnings."""
     try:

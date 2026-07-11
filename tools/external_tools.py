@@ -6,6 +6,7 @@ import asyncio
 import threading
 import yfinance as yf
 from ddgs import DDGS
+from tools.cache_utils import cached_tool, TTL_SLOW, TTL_FAST
 from langchain_core.tools import tool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from dotenv import load_dotenv
@@ -246,6 +247,7 @@ DEFAULT_COMPETITORS = ["NVIDIA", "AMD"]
 
 
 @tool
+@cached_tool(TTL_FAST)
 def get_geopolitics() -> str:
     """Searches for latest geopolitical signals affecting semiconductor supply chain."""
     try:
@@ -260,6 +262,7 @@ def get_geopolitics() -> str:
 
 
 @tool
+@cached_tool(TTL_FAST)
 def get_news_sentiment(ticker: str) -> str:
     """Searches for latest news sentiment around a given semiconductor ticker."""
     try:
@@ -274,6 +277,7 @@ def get_news_sentiment(ticker: str) -> str:
 
 
 @tool
+@cached_tool(TTL_FAST)
 def get_capital_rotation() -> str:
     """Searches for capital rotation signals between tech IPOs and semiconductors."""
     try:
@@ -288,6 +292,7 @@ def get_capital_rotation() -> str:
 
 
 @tool
+@cached_tool(TTL_FAST)
 def get_competitor_contagion(ticker: str) -> str:
     """Fetches recent earnings reactions from a company's actual competitors as contagion signals."""
     try:
@@ -305,6 +310,7 @@ def get_competitor_contagion(ticker: str) -> str:
 
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_beta(ticker: str) -> str:
     """Fetches beta coefficient as market volatility sensitivity signal."""
     try:
@@ -319,6 +325,7 @@ def get_beta(ticker: str) -> str:
 
 
 @tool
+@cached_tool(TTL_FAST)
 def get_supply_chain(ticker: str) -> str:
     """Searches for supply chain signals for a semiconductor ticker."""
     try:

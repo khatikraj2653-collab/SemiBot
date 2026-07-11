@@ -13,7 +13,7 @@ import yfinance as yf
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
-from graph.workflow import app
+from graph.workflow import app, build_graph
 
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
 os.environ["LANGCHAIN_TRACING_V2"] = os.getenv("LANGCHAIN_TRACING_V2", "true")
@@ -61,6 +61,29 @@ def smart_truncate(text, limit: int = 1200) -> str:
 
     cut = text[:limit].rsplit(' ', 1)[0]
     return cut.strip() + "..."
+
+def parse_result(result: dict):
+    prediction = result.get("prediction", "")
+    up_prob, down_prob, confidence, reasoning = 50, 50, "Medium", ""
+    bullish, bearish = [], []
+    for line in prediction.split("\n"):
+        line = line.strip()
+        if "UP_PROBABILITY:" in line:
+            try: up_prob = int(float(line.split(":")[-1].strip().replace("%","").strip()))
+            except: pass
+        elif "DOWN_PROBABILITY:" in line:
+            try: down_prob = int(float(line.split(":")[-1].strip().replace("%","").strip()))
+            except: pass
+        elif "REASONING:" in line:
+            reasoning = line.replace("REASONING:","").strip()
+        elif "CONFIDENCE:" in line:
+            confidence = line.replace("CONFIDENCE:","").strip()
+        elif "BULLISH_FACTORS:" in line:
+            bullish = [x.strip() for x in line.replace("BULLISH_FACTORS:","").split("|") if x.strip()]
+        elif "BEARISH_FACTORS:" in line:
+            bearish = [x.strip() for x in line.replace("BEARISH_FACTORS:","").split("|") if x.strip()]
+    return {"up_prob": up_prob, "down_prob": down_prob, "confidence": confidence,
+            "reasoning": reasoning, "bullish": bullish, "bearish": bearish}
 
 import sqlite3
 import json
@@ -123,6 +146,60 @@ def update_followup(history_id, followup_history):
     conn.commit()
     conn.close()
 
+def init_compare_table():
+    conn = sqlite3.connect(get_db_path())
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS compare_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tickers_csv TEXT,
+            timestamp TEXT,
+            results_json TEXT,
+            followup_json TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+def save_compare_session(tickers_list, timestamp, results_dict, followup_history):
+    conn = sqlite3.connect(get_db_path())
+    conn.execute(
+        "INSERT INTO compare_sessions (tickers_csv, timestamp, results_json, followup_json) VALUES (?, ?, ?, ?)",
+        (",".join(tickers_list), timestamp, json.dumps(results_dict), json.dumps(followup_history))
+    )
+    conn.commit()
+    conn.close()
+
+def load_compare_sessions(limit=10):
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.execute(
+        "SELECT id, tickers_csv, timestamp FROM compare_sessions ORDER BY id DESC LIMIT ?",
+        (limit,)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    return [{"id": r[0], "tickers_csv": r[1], "time": r[2]} for r in rows]
+
+def load_compare_session_detail(session_id):
+    conn = sqlite3.connect(get_db_path())
+    cursor = conn.execute(
+        "SELECT tickers_csv, results_json, followup_json FROM compare_sessions WHERE id = ?",
+        (session_id,)
+    )
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        return row[0].split(","), json.loads(row[1]), json.loads(row[2])
+    return None, None, None
+
+def update_compare_followup(session_id, followup_history):
+    conn = sqlite3.connect(get_db_path())
+    conn.execute(
+        "UPDATE compare_sessions SET followup_json = ? WHERE id = ?",
+        (json.dumps(followup_history), session_id)
+    )
+    conn.commit()
+    conn.close()
+
 def get_historical_context(ticker, limit=5):
     """Long-term memory: queries past analysis sessions for this SAME ticker from SQLite
     (persists across threads/sessions) and returns a trend summary the agent can reason over."""
@@ -139,10 +216,63 @@ def get_historical_context(ticker, limit=5):
     return f"Recent {ticker} analysis history (most recent first): {'; '.join(summary_lines)}."
 
 init_history_table()
+init_compare_table()
+
+TICKER_TAPE = ["MU", "NVDA", "AMD", "INTC", "TSM", "ASML", "QCOM", "AVGO", "AMAT", "LRCX", "ARM", "TXN", "ADI", "MCHP", "ON"]
+
+@st.cache_data(ttl=900)
+def get_ticker_prices():
+    try:
+        data = yf.download(tickers=" ".join(TICKER_TAPE), period="5d", interval="1d", group_by="ticker", threads=True, progress=False)
+        results = []
+        for t in TICKER_TAPE:
+            try:
+                closes = data[t]["Close"].dropna()
+                if len(closes) < 2:
+                    raise ValueError("not enough price history")
+                price = round(float(closes.iloc[-1]), 2)
+                prev = round(float(closes.iloc[-2]), 2)
+                change = round(price - prev, 2)
+                pct = round((change / prev) * 100, 2)
+                arrow = "▲" if change >= 0 else "▼"
+                color = "#34D399" if change >= 0 else "#F87171"
+                results.append(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#E8F4FF'>${price}</span> <span style='color:{color}'>{arrow} {pct}%</span></span>")
+            except Exception as e:
+                print(f"[TICKER ERROR] {t}: {e}", flush=True)
+                results.append(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#888'>N/A</span></span>")
+        return "".join(results)
+    except Exception as e:
+        print(f"[TICKER TAPE BATCH ERROR]: {e}", flush=True)
+        return "".join(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#888'>N/A</span></span>" for t in TICKER_TAPE)
+
+def render_ticker_tape():
+    ticker_html = get_ticker_prices()
+    st.markdown(f"""
+    <style>
+    .ticker-wrap {{
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+        background: #1a1a2e;
+        border-top: 1px solid rgba(0,140,255,0.2);
+        padding: 8px 0; overflow: hidden;
+    }}
+    .ticker-move {{
+        display: inline-block; white-space: nowrap;
+        animation: ticker-scroll 60s linear infinite;
+        font-size: 0.78rem; font-family: 'Inter', sans-serif;
+    }}
+    @keyframes ticker-scroll {{
+        0% {{ transform: translateX(100vw); }}
+        100% {{ transform: translateX(-100%); }}
+    }}
+    </style>
+    <div class='ticker-wrap'>
+        <div class='ticker-move'>{ticker_html}&nbsp;&nbsp;&nbsp;&nbsp;{ticker_html}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.set_page_config(
     page_title="SemiBot",
-    page_icon="📡",
+    page_icon="::",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -217,6 +347,27 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
     transition: border-color 0.2s;
 }
 .semi-card:hover { border-color: rgba(0,140,255,0.38); }
+[data-testid="stWidgetLabel"] p { color: #B8D4F0 !important; font-weight: 600 !important; }
+.semi-card.hover-expand { position: relative; cursor: help; }
+.semi-card.hover-expand .hover-tooltip {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    top: 100%;
+    left: 0;
+    width: 320px;
+    max-width: 90vw;
+    margin-top: 6px;
+    background: #1E1E24;
+    border: 1px solid rgba(0,140,255,0.45);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: #E8F4FF;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.55);
+}
+.semi-card.hover-expand:hover .hover-tooltip { display: block; }
 .card-key {
     font-size: 0.65rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.1em;
@@ -376,7 +527,7 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
     color: #E8F4FF;
     white-space: nowrap;
     opacity: 0;
-    animation: cloud-cycle 18s ease-in-out infinite;
+    animation: cloud-cycle 45s ease-in-out infinite;
 }
 .robot-cloud::before {
     content: '';
@@ -399,14 +550,20 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
     bottom: -28px;
 }
 .robot-cloud:nth-child(1) { animation-delay: 0s; }
-.robot-cloud:nth-child(2) { animation-delay: 2s; }
-.robot-cloud:nth-child(3) { animation-delay: 4s; }
-.robot-cloud:nth-child(4) { animation-delay: 6s; }
-.robot-cloud:nth-child(5) { animation-delay: 8s; }
-.robot-cloud:nth-child(6) { animation-delay: 10s; }
-.robot-cloud:nth-child(7) { animation-delay: 12s; }
-.robot-cloud:nth-child(8) { animation-delay: 14s; }
-.robot-cloud:nth-child(9) { animation-delay: 16s; }
+.robot-cloud:nth-child(2) { animation-delay: 3s; }
+.robot-cloud:nth-child(3) { animation-delay: 6s; }
+.robot-cloud:nth-child(4) { animation-delay: 9s; }
+.robot-cloud:nth-child(5) { animation-delay: 12s; }
+.robot-cloud:nth-child(6) { animation-delay: 15s; }
+.robot-cloud:nth-child(7) { animation-delay: 18s; }
+.robot-cloud:nth-child(8) { animation-delay: 21s; }
+.robot-cloud:nth-child(9) { animation-delay: 24s; }
+.robot-cloud:nth-child(10) { animation-delay: 27s; }
+.robot-cloud:nth-child(11) { animation-delay: 30s; }
+.robot-cloud:nth-child(12) { animation-delay: 33s; }
+.robot-cloud:nth-child(13) { animation-delay: 36s; }
+.robot-cloud:nth-child(14) { animation-delay: 39s; }
+.robot-cloud:nth-child(15) { animation-delay: 42s; }
 @keyframes cloud-cycle {
     0% { opacity: 0; transform: translateY(6px); }
     4% { opacity: 1; transform: translateY(0); }
@@ -462,6 +619,38 @@ COMPANY_NAME_MAP = {
     "power integrations": "POWI", "be semiconductor": "BE.NA",
 }
 
+TICKER_TO_NAME = {}
+for _name, _tick in COMPANY_NAME_MAP.items():
+    if _tick not in TICKER_TO_NAME or len(_name) > len(TICKER_TO_NAME[_tick]):
+        TICKER_TO_NAME[_tick] = _name
+
+def format_ticker_option(name, tick):
+    clean_ticker = tick.split(".")[0]
+    if name.replace(" ", "").upper() == clean_ticker.upper():
+        return f"{clean_ticker} ({tick})"
+    return f"{name.title()} ({tick})"
+
+def build_ticker_options():
+    named_options = []
+    bare_options = []
+    seen = set()
+    for name, tick in COMPANY_NAME_MAP.items():
+        if tick not in seen:
+            named_options.append(format_ticker_option(name, tick))
+            seen.add(tick)
+    for tick in sorted(VALID_TICKERS):
+        if tick not in seen:
+            bare_options.append(f"({tick})")
+            seen.add(tick)
+    return sorted(named_options) + sorted(bare_options)
+
+TICKER_OPTIONS = build_ticker_options()
+
+def extract_ticker_from_option(option_str: str):
+    if "(" in option_str and option_str.endswith(")"):
+        return option_str.rsplit("(", 1)[1].rstrip(")").strip()
+    return option_str.strip()
+
 def validate_ticker(user_input: str):
     if not user_input or not user_input.strip():
         return None, "Please enter a ticker symbol or company name."
@@ -489,11 +678,20 @@ if "current_history_id" not in st.session_state:
     st.session_state.current_history_id = None
 if "thread_id" not in st.session_state:
     st.session_state.thread_id = f"session_{int(time.time())}"
-
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "single"
+if "ticker_count" not in st.session_state:
+    st.session_state.ticker_count = None
+if "compare_results" not in st.session_state:
+    st.session_state.compare_results = {}
+if "compare_sessions_list" not in st.session_state:
+    st.session_state.compare_sessions_list = load_compare_sessions()
+if "current_compare_session_id" not in st.session_state:
+    st.session_state.current_compare_session_id = None
 with st.sidebar:
     st.markdown("""
     <div style='display:flex;align-items:center;gap:10px;margin-bottom:4px'>
-        <div style='width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0055FF,#00C8FF);display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 16px rgba(0,140,255,0.5)'>📡</div>
+        <div style='width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0055FF,#00C8FF);display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 16px rgba(0,140,255,0.5)'>::</div>
         <span style='font-family:Space Grotesk,sans-serif;font-size:16px;font-weight:700;color:#E8F4FF'>SemiBot</span>
     </div>
     <div style='font-size:0.72rem;color:#AAAAAA;margin-bottom:18px'>18-Factor Agentic RAG</div>
@@ -524,7 +722,350 @@ with st.sidebar:
                     st.session_state.ticker = ticker_r
                     st.session_state.followup_history = followup_r
                     st.session_state.current_history_id = item['id']
+                    st.session_state.active_tab = "single"
                     st.rerun()
+
+    st.markdown("<hr style='border-color:rgba(0,140,255,0.1);margin:14px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.65rem;color:#AAAAAA;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>COMPARISONS</div>", unsafe_allow_html=True)
+
+    if st.session_state.compare_sessions_list:
+        for csession in st.session_state.compare_sessions_list[:10]:
+            tickers_preview = csession["tickers_csv"].split(",")
+            label = f"{len(tickers_preview)} tickers - {csession['time']}"
+            if st.button(label, key=f"cmp_hist_{csession['id']}", use_container_width=True):
+                tickers_r, results_r, followup_r = load_compare_session_detail(csession['id'])
+                if results_r is not None:
+                    st.session_state.compare_results = results_r
+                    st.session_state.compare_followup_history = followup_r
+                    st.session_state.current_compare_session_id = csession['id']
+                    st.session_state.ticker_count = len(tickers_r)
+                    st.session_state.active_tab = "compare"
+                    st.rerun()
+
+if st.session_state.result is None:
+    tcol1, tcol2 = st.columns(2)
+    with tcol1:
+        if st.button("Single ticker", use_container_width=True,
+                      type="primary" if st.session_state.active_tab == "single" else "secondary"):
+            st.session_state.active_tab = "single"
+            st.rerun()
+    with tcol2:
+        if st.button("Compare tickers", use_container_width=True,
+                      type="primary" if st.session_state.active_tab == "compare" else "secondary"):
+            st.session_state.active_tab = "compare"
+            st.rerun()
+
+    if st.session_state.active_tab == "compare":
+        st.markdown("<div style='padding:16px 0'>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:0.75rem;color:#5A8AAF;margin-bottom:10px'>How many tickers do you want to compare?</div>", unsafe_allow_html=True)
+
+        count_cols = st.columns(5)
+        for i, c in enumerate(count_cols):
+            with c:
+                if st.button(str(i + 1), use_container_width=True, key=f"count_btn_{i+1}",
+                              type="primary" if st.session_state.ticker_count == (i + 1) else "secondary"):
+                    st.session_state.ticker_count = i + 1
+                    st.rerun()
+
+        if st.session_state.ticker_count:
+            selected_options = []
+            for i in range(st.session_state.ticker_count):
+                opt = st.selectbox(
+                    f"Ticker {i+1}",
+                    options=[""] + TICKER_OPTIONS,
+                    key=f"cmp_ticker_{i}",
+                )
+                selected_options.append(opt)
+
+            compare_go = st.button("Compare ->", type="primary")
+
+            if compare_go:
+                chosen_raw = [o for o in selected_options if o.strip()]
+                seen_options = set()
+                chosen = []
+                had_duplicates = False
+                for o in chosen_raw:
+                    if o in seen_options:
+                        had_duplicates = True
+                        continue
+                    seen_options.add(o)
+                    chosen.append(o)
+
+                if had_duplicates:
+                    st.markdown("<div class='val-error'>Warning: Duplicate ticker selections were removed - each ticker can only be compared once.</div>", unsafe_allow_html=True)
+
+                if not chosen:
+                    st.markdown("<div class='val-error'>Warning: Please select at least one ticker.</div>", unsafe_allow_html=True)
+                else:
+                    from graph.nodes import resolve_ticker
+                    compare_results = {}
+                    progress = st.progress(0, text="Starting comparison...")
+                    
+                    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+                    resolved_final_tickers = []
+                    for opt in chosen:
+                        raw_ticker = extract_ticker_from_option(opt)
+                        resolved_ticker, error_msg = validate_ticker(raw_ticker)
+                        if error_msg:
+                            st.markdown(f"<div class='val-error'>Warning: '{raw_ticker}' skipped - {error_msg}</div>", unsafe_allow_html=True)
+                            continue
+                        final_t = resolve_ticker(resolved_ticker)
+                        resolved_final_tickers.append(final_t)
+
+                    def run_single_analysis(ticker_symbol):
+                        print(f"[PARALLEL CHECK] {ticker_symbol} STARTED at {time.time():.2f}", flush=True)
+                        thread_id = f"compare_{int(time.time())}_{ticker_symbol}"
+                        thread_local_app = build_graph()
+                        merged_result = {}
+                        for chunk in thread_local_app.stream(
+                            {"ticker": ticker_symbol},
+                            config={"configurable": {"thread_id": thread_id}},
+                            stream_mode="updates"
+                        ):
+                            for node_name, node_data in chunk.items():
+                                for k, v in node_data.items():
+                                    if v:
+                                        merged_result[k] = v
+                        return ticker_symbol, merged_result
+
+                    completed = 0
+                    total = len(resolved_final_tickers)
+                    with ThreadPoolExecutor(max_workers=total if total > 0 else 1) as executor:
+                        futures = {executor.submit(run_single_analysis, t): t for t in resolved_final_tickers}
+                        for future in as_completed(futures):
+                            ticker_symbol = futures[future]
+                            try:
+                                t, r = future.result()
+                                compare_results[t] = r
+                            except Exception as e:
+                                st.markdown(f"<div class='val-error'>Warning: {ticker_symbol} failed - {str(e)}</div>", unsafe_allow_html=True)
+                            completed += 1
+                            progress.progress(int((completed/total)*100), text=f"{completed}/{total} tickers analysed")
+                    progress.empty()
+                    st.session_state.compare_results = compare_results
+                    st.session_state.compare_followup_history = []
+
+                    if compare_results:
+                        for _t, _r in compare_results.items():
+                            _p = parse_result(_r)
+                            _up_str = f"{_p['up_prob']}%"
+                            save_history(_t, _up_str, time.strftime("%H:%M"), _r, [])
+
+                        save_compare_session(
+                            list(compare_results.keys()),
+                            time.strftime("%H:%M"),
+                            compare_results,
+                            []
+                        )
+                        st.session_state.compare_sessions_list = load_compare_sessions()
+                        st.session_state.history = load_history()
+                        if st.session_state.compare_sessions_list:
+                            st.session_state.current_compare_session_id = st.session_state.compare_sessions_list[0]["id"]
+
+        if st.session_state.compare_results:
+            st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:20px 0'>", unsafe_allow_html=True)
+            tickers_list = list(st.session_state.compare_results.keys())
+
+            ranked = sorted(tickers_list, key=lambda t: parse_result(st.session_state.compare_results[t])["up_prob"], reverse=True)
+
+            def display_name(t):
+                name = TICKER_TO_NAME.get(t)
+                if not name:
+                    return t
+                clean_ticker = t.split(".")[0]
+                if name.replace(" ", "").upper() == clean_ticker.upper():
+                    return f"{clean_ticker} ({t})"
+                return f"{name.title()} ({t})"
+
+            st.markdown("<div class='sec-label' style='font-size:0.7rem'>Priority ranking (highest upside first)</div>", unsafe_allow_html=True)
+            rank_html = ""
+            for i, t in enumerate(ranked):
+                p = parse_result(st.session_state.compare_results[t])
+                rank_color = "#34D399" if p["up_prob"] >= p["down_prob"] else "#F87171"
+                rank_html += f"<div class='semi-card' style='display:flex;justify-content:space-between;align-items:center;padding:8px 14px'><span style='font-size:0.8rem;color:#D0E8FF'>{i+1}. {display_name(t)}</span><span style='font-family:Space Grotesk,sans-serif;font-weight:700;color:{rank_color}'>{p['up_prob']}% / {p['down_prob']}%</span></div>"
+            st.markdown(rank_html, unsafe_allow_html=True)
+
+            st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:20px 0'>", unsafe_allow_html=True)
+
+            cols = st.columns(len(tickers_list))
+            factor_groups = [
+                ("Macroeconomic", [("CPI","cpi"),("PPI","ppi"),("Fed Rate","fed_rate"),("USD Index","usd_index")]),
+                ("Fundamental", [("P/E Ratio","pe_ratio"),("Market Cap","market_cap"),("Earnings Guidance","earnings_guidance"),("Insider Selling","insider_selling")]),
+                ("Market Intelligence", [("Sector Rally","sector_rally"),("Technical Signal","technical_signal"),("Analyst Ratings","analyst_ratings"),("Sell-the-News","sell_the_news")]),
+                ("External Signals", [("Geopolitics","geopolitics"),("Supply Chain","supply_chain"),("News Sentiment","news_sentiment"),("Capital Rotation","capital_rotation"),("Competitor Contagion","competitor_contagion"),("Beta","beta")]),
+            ]
+            for col, t in zip(cols, tickers_list):
+                with col:
+                    r = st.session_state.compare_results[t]
+                    parsed = parse_result(r)
+                    scores = r.get("scores", {})
+                    st.markdown(f"<div style='font-family:Space Grotesk,sans-serif;font-size:0.9rem;font-weight:700;color:#D0E8FF;margin-bottom:8px' title='{display_name(t)}'>{display_name(t)}</div>", unsafe_allow_html=True)
+                    up_color = "#34D399" if parsed["up_prob"] >= parsed["down_prob"] else "#F87171"
+                    st.markdown(f"""
+                    <div class='metric-card' style='margin-bottom:10px'>
+                        <div class='metric-lbl'>Upside / Downside</div>
+                        <div style='font-family:Space Grotesk,sans-serif;font-size:1.4rem;font-weight:700;color:{up_color}'>{parsed['up_prob']}% / {parsed['down_prob']}%</div>
+                        <div style='font-size:0.68rem;color:#888;margin-top:4px'>Confidence: {parsed['confidence']}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    for group_label, pairs in factor_groups:
+                        st.markdown(f"<div class='sec-label' style='font-size:0.6rem'>{group_label}</div>", unsafe_allow_html=True)
+                        for label, key in pairs:
+                            raw_val = str(r.get(key, "N/A")).strip()
+                            if not raw_val:
+                                raw_val = "N/A"
+                            score_val = scores.get(key)
+                            sentiment_label = "Bullish" if (score_val or 0) > 0 else ("Bearish" if (score_val or 0) < 0 else "Neutral")
+                            tooltip_body = smart_truncate(raw_val, limit=1200).replace("'", "&#39;")
+                            full_val = f"{label}: {tooltip_body}"
+                            st.markdown(f"<div class='semi-card hover-expand' style='padding:8px 10px'><div class='card-key' style='font-size:0.58rem'>{label}</div><div class='card-val' style='font-size:0.7rem'>{sentiment_label}</div>{score_badge(key, scores)}<div class='hover-tooltip'>{full_val}</div></div>", unsafe_allow_html=True)
+
+            st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:24px 0'>", unsafe_allow_html=True)
+            st.markdown("<div style='font-family:Space Grotesk,sans-serif;font-size:0.95rem;font-weight:600;color:#D0E8FF;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size:0.75rem;color:#5A8AAF;margin-bottom:12px'>Ask about any or all of the compared tickers - e.g. \"which has the strongest fundamentals?\" or \"compare their supply chain risk\"</div>", unsafe_allow_html=True)
+
+            if "compare_followup_history" not in st.session_state:
+                st.session_state.compare_followup_history = []
+
+            for msg in st.session_state.compare_followup_history:
+                if msg["role"] == "user":
+                    st.markdown(f"<div class='user-bubble'>{msg['content']}</div>", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#4A9AFF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{msg['content']}</div>", unsafe_allow_html=True)
+
+            if "compare_input_counter" not in st.session_state:
+                st.session_state.compare_input_counter = 0
+
+            cfq1, cfq2 = st.columns([5, 1])
+            with cfq1:
+                compare_followup_q = st.text_input("", placeholder="e.g. Which ticker has the best risk/reward right now?", label_visibility="collapsed", key=f"compare_followup_input_{st.session_state.compare_input_counter}")
+            with cfq2:
+                compare_ask_button = st.button("Ask ->", use_container_width=True, key="compare_ask_btn")
+
+            if compare_ask_button and compare_followup_q:
+                combined_summary = ""
+                for t in tickers_list:
+                    r = st.session_state.compare_results[t]
+                    p = parse_result(r)
+                    hist_context = get_historical_context(t)
+                    combined_summary += f"""
+--- {display_name(t)} ---
+PREDICTION: UP {p['up_prob']}% / DOWN {p['down_prob']}% (Confidence: {p['confidence']})
+REASONING: {p['reasoning']}
+CPI: {r.get('cpi','N/A')} | PPI: {r.get('ppi','N/A')} | Fed Rate: {r.get('fed_rate','N/A')} | USD Index: {r.get('usd_index','N/A')}
+P/E Ratio: {r.get('pe_ratio','N/A')} | Market Cap: {r.get('market_cap','N/A')} | Earnings: {r.get('earnings_guidance','N/A')} | Insider: {r.get('insider_selling','N/A')}
+Sector Rally: {r.get('sector_rally','N/A')} | Technical: {r.get('technical_signal','N/A')} | Analyst: {r.get('analyst_ratings','N/A')}
+Geopolitics: {r.get('geopolitics','N/A')} | Supply Chain: {r.get('supply_chain','N/A')}
+LONG_TERM_MEMORY for {display_name(t)}: {hist_context}
+"""
+                context = f"""You are SemiBot, comparing {len(tickers_list)} semiconductor tickers side by side: {', '.join(display_name(t) for t in tickers_list)}.
+
+Here is the full 18-factor analysis for each:
+{combined_summary}
+
+Answer the user's question by comparing across these tickers where relevant. Reference specific tickers by name when making comparisons.
+
+IDENTITY (HIGHEST PRIORITY): You are SemiBot, an 18-factor agentic RAG system for semiconductor equity analysis, created by Raj Tejpal Khatik, an MSc Applied AI student at the University of Warwick, targeting ACM FinNLP.
+- If asked "who are you" or "who is Raj" or "who made you" or "who created you" or "who is Raj Tejpal Khatik": say "I am SemiBot, an AI-powered semiconductor equity analyser. I was created by Raj Tejpal Khatik, an MSc Applied AI student at the University of Warwick."
+- Never say you are ChatGPT, Claude, or any other AI.
+
+TOPIC RULES:
+- If the user types just a company name or ticker alone (examples: "micron", "mu", "nvidia", "intel"), treat it as "tell me about this company" and answer with what you know about it - this is always on-topic, never refuse it.
+- If asked "what does X do" or "what is X" for any company (in this comparison or not), answer normally with a business description.
+- Answer questions about CEOs, executives, share prices, company history, products, competitors, or comparisons for any company freely.
+- Only use the refusal message below if the question is truly unrelated to business/finance/companies/technology, such as asking for a recipe, a poem, or medical advice.
+Refusal message (use ONLY for clearly unrelated requests like recipes or medical advice): "I'm focused on semiconductor equity analysis and can't help with that. Feel free to ask me about these tickers, market factors, or the comparison above!"
+"""
+                st.session_state.compare_followup_history.append({"role": "user", "content": compare_followup_q})
+                from graph.nodes import llm
+                from langchain_core.messages import SystemMessage, HumanMessage
+                messages = [SystemMessage(content=context), HumanMessage(content=compare_followup_q)]
+                with st.chat_message("assistant"):
+                    try:
+                        response_text = st.write_stream(chunk.content for chunk in llm.stream(messages) if hasattr(chunk, "content") and chunk.content)
+                    except GeneratorExit:
+                        response_text = ""
+                st.session_state.compare_followup_history.append({"role": "assistant", "content": response_text})
+                st.session_state.compare_input_counter += 1
+                if st.session_state.current_compare_session_id:
+                    update_compare_followup(st.session_state.current_compare_session_id, st.session_state.compare_followup_history)
+                st.rerun()
+
+            if st.button("Clear comparison"):
+                st.session_state.compare_results = {}
+                st.session_state.ticker_count = None
+                st.session_state.compare_followup_history = []
+                st.session_state.current_compare_session_id = None
+                st.session_state.compare_followup_history = []
+                st.rerun()
+
+        st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:24px 0'>", unsafe_allow_html=True)
+        st.markdown("<div style='font-family:Space Grotesk,sans-serif;font-size:0.95rem;font-weight:600;color:#D0E8FF;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
+
+        cem1, cem2 = st.columns([4, 1])
+        with cem1:
+            compare_user_email = st.text_input("", placeholder="Enter your email to receive comparison summary...", label_visibility="collapsed", key="compare_email_input")
+        with cem2:
+            compare_send_button = st.button("Send", use_container_width=True, key="compare_send_email_btn")
+
+        if compare_send_button and compare_user_email:
+            try:
+                sections = []
+                for t in tickers_list:
+                    r = st.session_state.compare_results[t]
+                    p = parse_result(r)
+                    bull_text = "\n".join([f"  + {b}" for b in p['bullish'][:3]])
+                    bear_text = "\n".join([f"  - {b}" for b in p['bearish'][:3]])
+                    sections.append(f"""
+{display_name(t)}
+{'-' * 40}
+UP: {p['up_prob']}% | DOWN: {p['down_prob']}% | Confidence: {p['confidence']}
+BULLISH:
+{bull_text}
+BEARISH:
+{bear_text}
+REASONING: {p['reasoning']}
+""")
+
+                compare_email_body = f"""SEMICONDUCTOR MULTI-TICKER COMPARISON REPORT
+=====================================
+Tickers: {', '.join(tickers_list)} | Date: {time.strftime("%d %B %Y, %H:%M")}
+Generated by: SemiBot - 18-Factor Agentic RAG System
+University of Warwick MSc Applied AI Research
+
+{"".join(sections)}
+
+DISCLAIMER: AI research tool only. Not financial advice.
+SemiBot v1.0 | University of Warwick | MSc Applied AI | ACM FinNLP
+"""
+                sender_email = os.getenv("SENDER_EMAIL")
+                sender_password = os.getenv("SENDER_APP_PASSWORD")
+                msg = MIMEMultipart()
+                msg['From'] = sender_email
+                msg['To'] = compare_user_email
+                msg['Subject'] = f"SemiBot Comparison - {len(tickers_list)} tickers - {time.strftime('%d %b %Y')}"
+                msg.attach(MIMEText(compare_email_body, 'plain'))
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.starttls()
+                server.login(sender_email, sender_password)
+                server.sendmail(sender_email, compare_user_email, msg.as_string())
+                server.quit()
+                st.success(f"Comparison report sent to {compare_user_email}")
+            except Exception as e:
+                st.error(f"Email failed: {str(e)}")
+        elif compare_send_button and not compare_user_email:
+            st.markdown("<div class='val-error'>Warning: Please enter your email address.</div>", unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class='disclaimer'>
+            Warning: This analysis is generated by an AI research tool for informational and academic purposes only.
+            It does NOT constitute financial advice. Always consult a qualified financial advisor.
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+        render_ticker_tape()
+        st.stop()
 
 if not st.session_state.result:
     st.markdown(f"""
@@ -541,11 +1082,17 @@ if not st.session_state.result:
             <div class='robot-cloud'>AMD: Bullish 📈</div>
             <div class='robot-cloud'>Chips, decoded 🔍</div>
             <div class='robot-cloud'>SemiBot for semiconductor 📡</div>
+            <div class='robot-cloud'>ASML: Bullish 📈</div>
+            <div class='robot-cloud'>Real-time data 🔄</div>
+            <div class='robot-cloud'>Powered by GPT-4o-mini 🤖</div>
+            <div class='robot-cloud'>Warwick research 🎓</div>
+            <div class='robot-cloud'>Deterministic scoring ✅</div>
+            <div class='robot-cloud'>60 tickers supported 🌐</div>
         </div>
         <div class='hero-greeting'>Hi! I am <em>SemiBot</em></div>
         <div class='hero-sub'>
             AI-powered semiconductor equity analyser - 18 real-time factors<br>
-            Geopolitics · Supply Chain · Macro · Fundamentals · Market Intelligence
+            Geopolitics - Supply Chain - Macro - Fundamentals - Market Intelligence
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -553,23 +1100,14 @@ if not st.session_state.result:
     print(f"[TIMING] Before search bar: {_time.time() - _t0:.2f}s", flush=True)
     col_l, col_m, col_r = st.columns([1, 4, 1])
     with col_m:
-        ticker_input = st.text_input(
+        selected_option = st.selectbox(
             "",
-            placeholder="Enter ticker or company name — MU, Micron, NVIDIA, AMD...",
-            label_visibility="collapsed"
-        ).strip()
-        analyse = st.button("Analyse →", use_container_width=True)
-
-        st.markdown("""
-        <div class='quick-chips'>
-            <span class='quick-chip'>MU · Micron</span>
-            <span class='quick-chip'>NVDA · NVIDIA</span>
-            <span class='quick-chip'>AMD</span>
-            <span class='quick-chip'>INTC · Intel</span>
-            <span class='quick-chip'>TSM · TSMC</span>
-            <span class='quick-chip'>ASML</span>
-        </div>
-        """, unsafe_allow_html=True)
+            options=["Enter ticker or company name..."] + TICKER_OPTIONS,
+            label_visibility="collapsed",
+            key="single_ticker_select"
+        )
+        ticker_input = extract_ticker_from_option(selected_option) if selected_option != "Enter ticker or company name..." else ""
+        analyse = st.button("Analyse ->", use_container_width=True)
 
 else:
     col_h1, col_h2 = st.columns([5, 1])
@@ -579,7 +1117,7 @@ else:
             <div style='font-family:Space Grotesk,sans-serif;font-size:1.3rem;font-weight:700;color:#D0E8FF;margin-bottom:4px'>
                 Factor Analysis <span class='ticker-chip'>{st.session_state.ticker}</span>
             </div>
-            <div style='font-size:0.75rem;color:#5A8AAF'>18-Factor Agentic RAG · Real-time APIs · University of Warwick</div>
+            <div style='font-size:0.75rem;color:#5A8AAF'>18-Factor Agentic RAG - Real-time APIs - University of Warwick</div>
         </div>
         """, unsafe_allow_html=True)
     with col_h2:
@@ -608,6 +1146,7 @@ if analyse and ticker_input:
         st.markdown("<div style='padding:0 32px'>", unsafe_allow_html=True)
 
         progress_bar = st.progress(0, text="Starting analysis...")
+        
 
         ph_macro    = st.empty()
         ph_fund     = st.empty()
@@ -799,12 +1338,14 @@ if st.session_state.result:
 
     fq1, fq2 = st.columns([5, 1])
     with fq1:
+        if "followup_input_counter" not in st.session_state:
+            st.session_state.followup_input_counter = 0
         followup_q = st.text_input(
             "", placeholder="e.g. How does P/E ratio affect MU? What if Fed rate drops?",
-            label_visibility="collapsed", key="followup_input"
+            label_visibility="collapsed", key=f"followup_input_{st.session_state.followup_input_counter}"
         )
     with fq2:
-        ask_button = st.button("Ask →", use_container_width=True, key="ask_btn")
+        ask_button = st.button("Ask ->", use_container_width=True, key="ask_btn")
 
     if ask_button and followup_q:
         historical_context = get_historical_context(ticker)
@@ -828,8 +1369,8 @@ IDENTITY (HIGHEST PRIORITY): You are SemiBot, an 18-factor agentic RAG system fo
 - If asked "who created you" or "who is Raj" or "who made you": say "I was created by Raj Tejpal Khatik, an MSc Applied AI student at the University of Warwick."
 - Never say you are ChatGPT, Claude, or any other AI.
 
-TOPIC RULES: Answer questions about companies, stocks, markets, finance, economics, business, or technology freely and helpfully — including CEOs, executives, share prices, company history, products, competitors, or comparisons for {ticker} or ANY other company.
-Only refuse if the question has absolutely nothing to do with business, finance, companies, or technology — such as asking for a recipe, a poem, medical advice, or help with unrelated homework. If there is any plausible connection to business/finance/tech, just answer it.
+TOPIC RULES: Answer questions about companies, stocks, markets, finance, economics, business, or technology freely and helpfully, including CEOs, executives, share prices, company history, products, competitors, or comparisons for {ticker} or ANY other company.
+Only refuse if the question has absolutely nothing to do with business, finance, companies, or technology, such as asking for a recipe, a poem, medical advice, or help with unrelated homework. If there is any plausible connection to business/finance/tech, just answer it.
 Refusal message (use only for clearly unrelated requests): "I'm focused on semiconductor equity analysis and can't help with that. Feel free to ask me about {ticker}, market factors, or the analysis above!"
 """
 
@@ -846,7 +1387,7 @@ Refusal message (use only for clearly unrelated requests): "I'm focused on semic
                 messages.append(AIMessage(content=prev_msg["content"]))
         messages.append(HumanMessage(content=followup_q))
 
-        with st.chat_message("assistant", avatar="📡"):
+        with st.chat_message("assistant"):
             try:
                 response_text = st.write_stream(
                     chunk.content for chunk in llm.stream(messages)
@@ -858,6 +1399,7 @@ Refusal message (use only for clearly unrelated requests): "I'm focused on semic
         st.session_state.followup_history.append({"role": "assistant", "content": response_text})
         if st.session_state.current_history_id:
             update_followup(st.session_state.current_history_id, st.session_state.followup_history)
+        st.session_state.followup_input_counter += 1
         st.rerun()
 
     elif ask_button and not followup_q:
@@ -935,53 +1477,4 @@ SemiBot v1.0 | University of Warwick | MSc Applied AI | ACM FinNLP
     """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-TICKER_TAPE = ["MU", "NVDA", "AMD", "INTC", "TSM", "ASML", "QCOM", "AVGO", "AMAT", "LRCX", "ARM", "TXN", "ADI", "MCHP", "ON"]
-
-@st.cache_data(ttl=900)
-def get_ticker_prices():
-    try:
-        data = yf.download(tickers=" ".join(TICKER_TAPE), period="5d", interval="1d", group_by="ticker", threads=True, progress=False)
-        results = []
-        for t in TICKER_TAPE:
-            try:
-                closes = data[t]["Close"].dropna()
-                if len(closes) < 2:
-                    raise ValueError("not enough price history")
-                price = round(float(closes.iloc[-1]), 2)
-                prev = round(float(closes.iloc[-2]), 2)
-                change = round(price - prev, 2)
-                pct = round((change / prev) * 100, 2)
-                arrow = "▲" if change >= 0 else "▼"
-                color = "#34D399" if change >= 0 else "#F87171"
-                results.append(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#E8F4FF'>${price}</span> <span style='color:{color}'>{arrow} {pct}%</span></span>")
-            except Exception as e:
-                print(f"[TICKER ERROR] {t}: {e}", flush=True)
-                results.append(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#888'>N/A</span></span>")
-        return "".join(results)
-    except Exception as e:
-        print(f"[TICKER TAPE BATCH ERROR]: {e}", flush=True)
-        return "".join(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#888'>N/A</span></span>" for t in TICKER_TAPE)
-ticker_html = get_ticker_prices()
-
-st.markdown(f"""
-<style>
-.ticker-wrap {{
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-    background: #1a1a2e;
-    border-top: 1px solid rgba(0,140,255,0.2);
-    padding: 8px 0; overflow: hidden;
-}}
-.ticker-move {{
-    display: inline-block; white-space: nowrap;
-    animation: ticker-scroll 60s linear infinite;
-    font-size: 0.78rem; font-family: 'Inter', sans-serif;
-}}
-@keyframes ticker-scroll {{
-    0% {{ transform: translateX(100vw); }}
-    100% {{ transform: translateX(-100%); }}
-}}
-</style>
-<div class='ticker-wrap'>
-    <div class='ticker-move'>{ticker_html}&nbsp;&nbsp;&nbsp;&nbsp;{ticker_html}</div>
-</div>
-""", unsafe_allow_html=True)  
+render_ticker_tape()

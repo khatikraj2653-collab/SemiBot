@@ -175,6 +175,14 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
 </style>
 </head>
 <body>
+<div id="welcomeModal" style="display:none;position:fixed;inset:0;background:rgba(0,4,12,0.85);z-index:500;align-items:center;justify-content:center;">
+  <div style="background:#0A1428;border:1px solid rgba(0,140,255,0.3);border-radius:18px;padding:36px;max-width:440px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="font-size:2rem;margin-bottom:12px;">📡</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:#E8F4FF;margin-bottom:10px;">Welcome to SemiBot</div>
+    <div style="font-size:0.85rem;color:#5A8AAF;line-height:1.7;margin-bottom:22px;">An AI-powered semiconductor equity analyser using 18 real-time causal factors. Analyse a single stock, or compare up to 5 tickers side-by-side. Built as MSc Applied AI research at the University of Warwick.</div>
+    <button onclick="closeWelcomeModal()" style="background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;border-radius:10px;padding:12px 32px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 0 20px rgba(0,140,255,0.4);">Get Started</button>
+  </div>
+</div>
 <div id="mainsite">
 <nav class="nav">
   <div class="nav-logo">
@@ -184,6 +192,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
   <div class="nav-links">
     <a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'});return false;">Features</a>
     <a href="#howitworks" onclick="document.getElementById('howitworks').scrollIntoView({behavior:'smooth'});return false;">How it works</a>
+    <a href="#compare" onclick="document.getElementById('compare').scrollIntoView({behavior:'smooth'});return false;">Compare</a>
     <a href="#" onclick="showResearch();return false;">Research</a>
   </div>
   <button class="nav-cta" onclick="goApp()">Get Started →</button>
@@ -195,7 +204,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="left">
       <div class="badge"><div class="bdot"></div> LIVE · 18-Factor AI Analysis</div>
       <h1 class="hero-title">Semiconductor<br><em>Equity Intelligence</em><br>Powered by AI</h1>
-      <p class="hero-desc">Real-time analysis of semiconductor stocks using <strong>18 causal factors</strong> — geopolitics, supply chain, macro signals, and market intelligence — generating a deterministic weighted UP%/DOWN% prediction.</p>
+      <p class="hero-desc">Real-time analysis of semiconductor stocks using <strong>18 causal factors</strong> — geopolitics, supply chain, macro signals, and market intelligence — generating a deterministic weighted UP%/DOWN% prediction. Analyse a single stock, or <strong>compare up to 5 tickers side-by-side</strong> with a ranked view and cross-ticker Q&A.</p>
       <div class="chips">
         <span class="chip">LangGraph</span><span class="chip">RAG · FAISS</span><span class="chip">GPT-4o-mini</span>
         <span class="chip">FRED API</span><span class="chip">SEC EDGAR</span><span class="chip">yfinance</span><span class="chip">DuckDuckGo</span>
@@ -296,6 +305,22 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
       <div class="factor-card"><div class="fc-icon">📦</div><div class="fc-title">Market Cap</div><div class="fc-desc">Market capitalisation as size signal — large cap semis have different volatility profiles vs mid-cap.</div><span class="fc-tag">FUNDAMENTAL</span></div>
       <div class="factor-card"><div class="fc-icon">〽️</div><div class="fc-title">Beta</div><div class="fc-desc">Beta coefficient measuring market sensitivity — high beta semis amplify bull and bear moves.</div><span class="fc-tag">FUNDAMENTAL</span></div>
       <div class="factor-card"><div class="fc-icon">⚙️</div><div class="fc-title">Energy Prices</div><div class="fc-desc">Energy cost signals affecting fab operating costs — high energy prices compress margins at TSMC.</div><span class="fc-tag">MACROECONOMIC</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-badge">📊 Multi-Ticker Comparison</div>
+    <h2 class="section-title">Compare up to 5 semiconductor stocks at once</h2>
+    <p class="section-sub">Run the full 18-factor analysis across multiple tickers in parallel, ranked by predicted upside, with a combined follow-up Q&A that reasons across all compared stocks together.</p>
+    <div class="factors-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="factor-card"><div class="fc-icon">⚡</div><div class="fc-title">Parallel Analysis</div><div class="fc-desc">All selected tickers run concurrently, each with its own isolated LangGraph instance and checkpointer — full results in seconds, not minutes.</div><span class="fc-tag">CONCURRENCY</span></div>
+      <div class="factor-card"><div class="fc-icon">🏆</div><div class="fc-title">Priority Ranking</div><div class="fc-desc">Compared tickers are automatically ranked by predicted upside, so the strongest opportunity is immediately visible at a glance.</div><span class="fc-tag">RANKING</span></div>
+      <div class="factor-card"><div class="fc-icon">💬</div><div class="fc-title">Cross-Ticker Q&A</div><div class="fc-desc">Ask one question — "which has the strongest fundamentals?" — and get an answer that reasons across every compared ticker's full factor set together.</div><span class="fc-tag">COMPARATIVE REASONING</span></div>
+      <div class="factor-card"><div class="fc-icon">🧠</div><div class="fc-title">Long-Term Memory</div><div class="fc-desc">Every comparison session is saved. Ask "how has NVDA's prediction changed?" and SemiBot cites real past sessions with timestamps.</div><span class="fc-tag">PERSISTENCE</span></div>
+      <div class="factor-card"><div class="fc-icon">🔍</div><div class="fc-title">Hover for Detail</div><div class="fc-desc">Compact Bullish/Bearish labels by default — hover any factor to expand the full underlying data and reasoning behind each score.</div><span class="fc-tag">UI DESIGN</span></div>
+      <div class="factor-card"><div class="fc-icon">🔄</div><div class="fc-title">Cached Reproducibility</div><div class="fc-desc">Factor data is cached per ticker (24h for macro/fundamental data, 15min for live news signals), so repeat comparisons stay consistent and fast.</div><span class="fc-tag">RELIABILITY</span></div>
     </div>
   </div>
 </section>
@@ -404,7 +429,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
 </div>code D:\SEMIBOT\landing.html
 
 <script>
-function goApp(){window.location.href='http://localhost:8505';}
+function goApp(){window.location.href='http://localhost:8501';}
 function showResearch(){document.getElementById('mainsite').style.display='none';document.getElementById('researchpage').style.display='block';window.scrollTo(0,0);}
 function hideResearch(){document.getElementById('researchpage').style.display='none';document.getElementById('mainsite').style.display='block';}
 
@@ -442,6 +467,14 @@ setInterval(function(){
 
 buildTape();
 setInterval(jiggle,3000);
+
+function closeWelcomeModal(){
+  document.getElementById('welcomeModal').style.display='none';
+  localStorage.setItem('semibot_welcomed','true');
+}
+if(!localStorage.getItem('semibot_welcomed')){
+  document.getElementById('welcomeModal').style.display='flex';
+}
 </script>
 </body>
 </html>

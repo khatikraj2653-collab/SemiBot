@@ -3,10 +3,12 @@ import yfinance as yf
 import requests
 from langchain_core.tools import tool
 from dotenv import load_dotenv
+from tools.cache_utils import cached_tool, TTL_SLOW
 
 load_dotenv()
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_pe_ratio(ticker: str) -> str:
     """Fetches trailing P/E ratio for a given semiconductor ticker."""
     try:
@@ -17,6 +19,7 @@ def get_pe_ratio(ticker: str) -> str:
         return f"P/E Ratio: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_market_cap(ticker: str) -> str:
     """Fetches current market capitalization for a given ticker."""
     try:
@@ -27,6 +30,7 @@ def get_market_cap(ticker: str) -> str:
         return f"Market Cap: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_earnings_guidance(ticker: str) -> str:
     """Fetches next earnings date and forward EPS estimate for a given ticker."""
     try:
@@ -38,6 +42,7 @@ def get_earnings_guidance(ticker: str) -> str:
         return f"Earnings Guidance: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_insider_selling(ticker: str) -> str:
     """Fetches recent insider transaction data from Yahoo Finance."""
     try:

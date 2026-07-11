@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 fred = Fred(api_key=os.getenv("FRED_API_KEY"))
 
+from tools.cache_utils import cached_tool, TTL_SLOW
 @tool
+@cached_tool(TTL_SLOW)
 def get_cpi() -> str:
     """Fetches latest CPI value from FRED as inflation signal."""
     try:
@@ -16,6 +18,7 @@ def get_cpi() -> str:
         return f"CPI: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_ppi() -> str:
     """Fetches latest PPI value from FRED as producer cost signal."""
     try:
@@ -25,6 +28,7 @@ def get_ppi() -> str:
         return f"PPI: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_fed_rate() -> str:
     """Fetches current Federal Funds Rate from FRED."""
     try:
@@ -34,6 +38,7 @@ def get_fed_rate() -> str:
         return f"Fed Rate: Data unavailable ({str(e)})"
 
 @tool
+@cached_tool(TTL_SLOW)
 def get_usd_index() -> str:
     """Fetches current USD Index (DXY) value as dollar strength signal."""
     try:
