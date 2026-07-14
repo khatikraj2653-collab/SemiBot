@@ -1,0 +1,1268 @@
+{
+  "label": "Backtest 1b - MA200 proxy",
+  "total": 140,
+  "correct": 97,
+  "accuracy_pct": 69.28571428571428,
+  "details": [
+    {
+      "id": 1,
+      "ticker": "MU",
+      "predicted": "DOWN",
+      "proxy_price": 452.18,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 2,
+      "ticker": "SNDK",
+      "predicted": "DOWN",
+      "proxy_price": 719.24,
+      "current_price": 1673.97,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 3,
+      "ticker": "AMD",
+      "predicted": "DOWN",
+      "proxy_price": 281.93,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 4,
+      "ticker": "NVDA",
+      "predicted": "DOWN",
+      "proxy_price": 191.25,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 5,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.25,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 6,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.25,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 7,
+      "ticker": "SNDK",
+      "predicted": "UP",
+      "proxy_price": 719.24,
+      "current_price": 1673.97,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 8,
+      "ticker": "MU",
+      "predicted": "DOWN",
+      "proxy_price": 456.02,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 9,
+      "ticker": "MU",
+      "predicted": "DOWN",
+      "proxy_price": 460.23,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 10,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1329.57,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 11,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 460.23,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 13,
+      "ticker": "INTC",
+      "predicted": "UP",
+      "proxy_price": 62.06,
+      "current_price": 103.12,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 14,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 285.67,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 15,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 16,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 17,
+      "ticker": "TSM",
+      "predicted": "DOWN",
+      "proxy_price": 346.87,
+      "current_price": 421.58,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 18,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 19,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 20,
+      "ticker": "AVGO",
+      "predicted": "UP",
+      "proxy_price": 361.25,
+      "current_price": 384.05,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 21,
+      "ticker": "NVDA",
+      "predicted": "DOWN",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 22,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 23,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 24,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 25,
+      "ticker": "AVGO",
+      "predicted": "UP",
+      "proxy_price": 361.25,
+      "current_price": 384.05,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 26,
+      "ticker": "AMD",
+      "predicted": "DOWN",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 27,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 28,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 29,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 30,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 31,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 32,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 33,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 35,
+      "ticker": "MU",
+      "predicted": "DOWN",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 36,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 37,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 38,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 39,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 40,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 41,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 43,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 44,
+      "ticker": "AMD",
+      "predicted": "DOWN",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 45,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 46,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 47,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 48,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 49,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 50,
+      "ticker": "TSM",
+      "predicted": "UP",
+      "proxy_price": 346.87,
+      "current_price": 421.58,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 52,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 54,
+      "ticker": "TSM",
+      "predicted": "UP",
+      "proxy_price": 346.87,
+      "current_price": 421.58,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 55,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 56,
+      "ticker": "005930.KS",
+      "predicted": "DOWN",
+      "proxy_price": 181070.43,
+      "current_price": 255000.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 57,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 58,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 59,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 60,
+      "ticker": "TSM",
+      "predicted": "UP",
+      "proxy_price": 346.87,
+      "current_price": 421.58,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 62,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 63,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 64,
+      "ticker": "TSM",
+      "predicted": "UP",
+      "proxy_price": 346.87,
+      "current_price": 421.58,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 65,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 67,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 69,
+      "ticker": "TSM",
+      "predicted": "UP",
+      "proxy_price": 346.87,
+      "current_price": 421.58,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 70,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 71,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 72,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 73,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 74,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 75,
+      "ticker": "ARM",
+      "predicted": "DOWN",
+      "proxy_price": 181.34,
+      "current_price": 298.99,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 76,
+      "ticker": "ALGM",
+      "predicted": "DOWN",
+      "proxy_price": 36.68,
+      "current_price": 50.855,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 77,
+      "ticker": "AVGO",
+      "predicted": "DOWN",
+      "proxy_price": 361.25,
+      "current_price": 384.05,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 78,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 80,
+      "ticker": "NVDA",
+      "predicted": "DOWN",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 81,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 82,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 83,
+      "ticker": "AMD",
+      "predicted": "DOWN",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 84,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 86,
+      "ticker": "SNDK",
+      "predicted": "DOWN",
+      "proxy_price": 745.23,
+      "current_price": 1673.97,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 87,
+      "ticker": "ACMR",
+      "predicted": "UP",
+      "proxy_price": 54.77,
+      "current_price": 94.08,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 88,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 89,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 90,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 91,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 92,
+      "ticker": "AMD",
+      "predicted": "DOWN",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 93,
+      "ticker": "CEVA",
+      "predicted": "DOWN",
+      "proxy_price": 27.56,
+      "current_price": 42.71,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 94,
+      "ticker": "QRVO",
+      "predicted": "DOWN",
+      "proxy_price": 87.32,
+      "current_price": 84.35,
+      "actual_direction": "DOWN",
+      "correct": true
+    },
+    {
+      "id": 95,
+      "ticker": "ALGM",
+      "predicted": "DOWN",
+      "proxy_price": 36.68,
+      "current_price": 50.855,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 96,
+      "ticker": "POWI",
+      "predicted": "UP",
+      "proxy_price": 51.96,
+      "current_price": 69.44,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 97,
+      "ticker": "POWI",
+      "predicted": "UP",
+      "proxy_price": 51.96,
+      "current_price": 69.44,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 98,
+      "ticker": "DIOD",
+      "predicted": "DOWN",
+      "proxy_price": 71.87,
+      "current_price": 92.29,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 99,
+      "ticker": "MRVL",
+      "predicted": "UP",
+      "proxy_price": 126.68,
+      "current_price": 217.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 100,
+      "ticker": "ACMR",
+      "predicted": "UP",
+      "proxy_price": 54.77,
+      "current_price": 94.08,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 101,
+      "ticker": "CRUS",
+      "predicted": "UP",
+      "proxy_price": 140.12,
+      "current_price": 146.51,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 102,
+      "ticker": "AMBA",
+      "predicted": "UP",
+      "proxy_price": 71.47,
+      "current_price": 72.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 103,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 104,
+      "ticker": "ALGM",
+      "predicted": "DOWN",
+      "proxy_price": 36.68,
+      "current_price": 50.855,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 105,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 106,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 107,
+      "ticker": "AVGO",
+      "predicted": "DOWN",
+      "proxy_price": 361.25,
+      "current_price": 384.05,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 108,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 109,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 110,
+      "ticker": "AVGO",
+      "predicted": "DOWN",
+      "proxy_price": 361.25,
+      "current_price": 384.05,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 111,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 112,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 113,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 114,
+      "ticker": "ARM",
+      "predicted": "DOWN",
+      "proxy_price": 181.34,
+      "current_price": 298.99,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 115,
+      "ticker": "AVGO",
+      "predicted": "DOWN",
+      "proxy_price": 361.25,
+      "current_price": 384.05,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 116,
+      "ticker": "MU",
+      "predicted": "UP",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 117,
+      "ticker": "ARM",
+      "predicted": "DOWN",
+      "proxy_price": 181.34,
+      "current_price": 298.99,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 118,
+      "ticker": "2454.TW",
+      "predicted": "UP",
+      "proxy_price": 2129.52,
+      "current_price": 3550.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 119,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 120,
+      "ticker": "MCHP",
+      "predicted": "DOWN",
+      "proxy_price": 73.68,
+      "current_price": 84.23,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 121,
+      "ticker": "AMAT",
+      "predicted": "DOWN",
+      "proxy_price": 348.66,
+      "current_price": 575.39,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 124,
+      "ticker": "ON",
+      "predicted": "UP",
+      "proxy_price": 72.14,
+      "current_price": 90.37,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 125,
+      "ticker": "MCHP",
+      "predicted": "DOWN",
+      "proxy_price": 73.68,
+      "current_price": 84.23,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 126,
+      "ticker": "AMAT",
+      "predicted": "DOWN",
+      "proxy_price": 348.66,
+      "current_price": 575.39,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 129,
+      "ticker": "ON",
+      "predicted": "UP",
+      "proxy_price": 72.14,
+      "current_price": 90.37,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 130,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 131,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 132,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 133,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 134,
+      "ticker": "MU",
+      "predicted": "DOWN",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 136,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 137,
+      "ticker": "MU",
+      "predicted": "DOWN",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 138,
+      "ticker": "TSM",
+      "predicted": "UP",
+      "proxy_price": 346.87,
+      "current_price": 421.58,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 139,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 140,
+      "ticker": "285A.T",
+      "predicted": "DOWN",
+      "proxy_price": 29574.09,
+      "current_price": 64550.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 141,
+      "ticker": "LRCX",
+      "predicted": "DOWN",
+      "proxy_price": 227.93,
+      "current_price": 329.92,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 142,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 143,
+      "ticker": "005930.KS",
+      "predicted": "DOWN",
+      "proxy_price": 182001.33,
+      "current_price": 255000.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 146,
+      "ticker": "TXN",
+      "predicted": "DOWN",
+      "proxy_price": 217.13,
+      "current_price": 298.57,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 147,
+      "ticker": "AVGO",
+      "predicted": "UP",
+      "proxy_price": 361.25,
+      "current_price": 384.05,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 148,
+      "ticker": "AMBA",
+      "predicted": "UP",
+      "proxy_price": 71.47,
+      "current_price": 72.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 149,
+      "ticker": "2454.TW",
+      "predicted": "UP",
+      "proxy_price": 2141.56,
+      "current_price": 3550.0,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 150,
+      "ticker": "SNDK",
+      "predicted": "DOWN",
+      "proxy_price": 745.23,
+      "current_price": 1673.97,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 152,
+      "ticker": "AMD",
+      "predicted": "DOWN",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 153,
+      "ticker": "ASML",
+      "predicted": "UP",
+      "proxy_price": 1333.79,
+      "current_price": 1726.04,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 154,
+      "ticker": "INTC",
+      "predicted": "DOWN",
+      "proxy_price": 62.47,
+      "current_price": 103.12,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 155,
+      "ticker": "SNDK",
+      "predicted": "DOWN",
+      "proxy_price": 745.23,
+      "current_price": 1673.97,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 156,
+      "ticker": "MU",
+      "predicted": "DOWN",
+      "proxy_price": 464.3,
+      "current_price": 937.0,
+      "actual_direction": "UP",
+      "correct": false
+    },
+    {
+      "id": 157,
+      "ticker": "AMD",
+      "predicted": "UP",
+      "proxy_price": 287.66,
+      "current_price": 534.39,
+      "actual_direction": "UP",
+      "correct": true
+    },
+    {
+      "id": 158,
+      "ticker": "NVDA",
+      "predicted": "UP",
+      "proxy_price": 191.47,
+      "current_price": 203.53,
+      "actual_direction": "UP",
+      "correct": true
+    }
+  ]
+}

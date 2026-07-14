@@ -1,0 +1,15 @@
+{
+  "logistic_regression": {
+    "beta": 0.32654601447780585,
+    "pvalue": 4.9880993627099436e-08,
+    "odds_ratio": 1.386172032277752
+  },
+  "chi_square": {
+    "chi2": 26.324741764630794,
+    "pvalue": 2.885681442104959e-07,
+    "mega_correct": 122,
+    "mega_total": 158,
+    "mid_correct": 30,
+    "mid_total": 72
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "item4_sector_controlled": {
+    "log_mcap_beta": 0.2911272739191515,
+    "log_mcap_pvalue": 0.0005955924210780501
+  },
+  "item5_date_subsets": {
+    "weakest_3_dates": [
+      "2026-03-23",
+      "2026-02-19",
+      "2025-08-15"
+    ],
+    "strongest_3_dates": [
+      "2025-10-01",
+      "2026-05-01",
+      "2026-04-27"
+    ],
+    "weakest_mega_acc": 55.319148936170215,
+    "weakest_mid_acc": 33.33333333333333,
+    "strongest_mega_acc": 95.91836734693877,
+    "strongest_mid_acc": 50.0
+  }
+}
