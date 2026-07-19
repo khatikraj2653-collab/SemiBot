@@ -1,0 +1,51 @@
+{
+  "tiers": {
+    ">$1T": {
+      "semibot_correct": 42,
+      "soxx_correct": 38,
+      "total": 50
+    },
+    "$100B-$500B": {
+      "semibot_correct": 86,
+      "soxx_correct": 90,
+      "total": 123
+    },
+    "$500B-$1T": {
+      "semibot_correct": 27,
+      "soxx_correct": 25,
+      "total": 35
+    },
+    "$10B-$50B": {
+      "semibot_correct": 40,
+      "soxx_correct": 45,
+      "total": 77
+    },
+    "<$10B": {
+      "semibot_correct": 30,
+      "soxx_correct": 44,
+      "total": 72
+    },
+    "$50B-$100B": {
+      "semibot_correct": 36,
+      "soxx_correct": 43,
+      "total": 69
+    }
+  },
+  "overall": {
+    "semibot_correct": 261,
+    "soxx_correct": 285,
+    "total": 426
+  },
+  "date_trends": {
+    "2025-08-15": "UP",
+    "2025-09-04": "UP",
+    "2025-10-01": "UP",
+    "2025-11-07": "UP",
+    "2025-12-04": "UP",
+    "2026-01-22": "UP",
+    "2026-02-19": "UP",
+    "2026-03-23": "DOWN",
+    "2026-04-27": "UP",
+    "2026-05-01": "UP"
+  }
+}

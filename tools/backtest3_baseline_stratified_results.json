@@ -1,0 +1,75 @@
+{
+  "tiers_6": {
+    ">$1T": {
+      "semibot_correct": 42,
+      "always_up_correct": 43,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 50
+    },
+    "$100B-$500B": {
+      "semibot_correct": 86,
+      "always_up_correct": 101,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 123
+    },
+    "$500B-$1T": {
+      "semibot_correct": 27,
+      "always_up_correct": 29,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 35
+    },
+    "$10B-$50B": {
+      "semibot_correct": 40,
+      "always_up_correct": 54,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 77
+    },
+    "<$10B": {
+      "semibot_correct": 30,
+      "always_up_correct": 51,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 72
+    },
+    "$50B-$100B": {
+      "semibot_correct": 36,
+      "always_up_correct": 49,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 69
+    }
+  },
+  "tiers_5": {
+    "Mega-cap": {
+      "semibot_correct": 122,
+      "always_up_correct": 133,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 158
+    },
+    "Large-cap": {
+      "semibot_correct": 109,
+      "always_up_correct": 143,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 196
+    },
+    "Mid-cap": {
+      "semibot_correct": 30,
+      "always_up_correct": 51,
+      "soxx_correct": 0,
+      "soxx_total": 0,
+      "total": 72
+    }
+  },
+  "overall": {
+    "semibot_correct": 261,
+    "always_up_correct": 327,
+    "soxx_correct": 0,
+    "total": 426
+  }
+}
