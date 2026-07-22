@@ -81,6 +81,8 @@ Capital Rotation: {capital_rotation}
 Competitor Contagion: {competitor_contagion}
 Beta: {beta}
 
+Ignore any irrelevant content in the factor data below (e.g., unrelated financial products, credit cards, generic advertisements, or promotional text not about {ticker} or the semiconductor industry) — score only based on genuinely relevant information.
+
 Return ONLY this exact format, no other text:
 CPI_SCORE: [integer -10 to 10]
 PPI_SCORE: [integer -10 to 10]

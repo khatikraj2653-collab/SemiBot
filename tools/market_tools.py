@@ -61,7 +61,7 @@ def get_analyst_ratings(ticker: str) -> str:
 def get_sell_the_news(ticker: str) -> str:
     """Searches for sell-the-news risk signals around upcoming earnings."""
     try:
-        result = web_search(f"{ticker} semiconductor earnings sell the news risk")
+        result = web_search(f"{ticker} stock price reaction after earnings report semiconductor company")
         return f"Sell-the-News Signal: {result}"
     except Exception as e:
         return f"Sell-the-News: Data unavailable ({str(e)})"

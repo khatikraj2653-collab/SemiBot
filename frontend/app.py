@@ -875,11 +875,11 @@ if st.session_state.result is None:
                         for _t, _r in compare_results.items():
                             _p = parse_result(_r)
                             _up_str = f"{_p['up_prob']}%"
-                            save_history(_t, _up_str, time.strftime("%H:%M"), _r, [])
+                            save_history(_t, _up_str, time.strftime("%Y-%m-%d %H:%M"), _r, [])
 
                         save_compare_session(
                             list(compare_results.keys()),
-                            time.strftime("%H:%M"),
+                            time.strftime("%Y-%m-%d %H:%M"),
                             compare_results,
                             []
                         )
@@ -1248,7 +1248,7 @@ if analyse and ticker_input:
                     up_prob_hist = line.split(":")[-1].strip()[:5]
                     break
 
-            save_history(final_ticker, up_prob_hist, time.strftime("%H:%M"), result, st.session_state.followup_history)
+            save_history(final_ticker, up_prob_hist, time.strftime("%Y-%m-%d %H:%M"), result, st.session_state.followup_history)
             st.session_state.history = load_history()
             if st.session_state.history:
                 st.session_state.current_history_id = st.session_state.history[0]["id"]

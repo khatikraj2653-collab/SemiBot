@@ -7,6 +7,7 @@ import threading
 import yfinance as yf
 from ddgs import DDGS
 from tools.cache_utils import cached_tool, TTL_SLOW, TTL_FAST
+from rag.retriever import retriever
 from langchain_core.tools import tool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from dotenv import load_dotenv
@@ -142,10 +143,31 @@ def tavily_search(query: str, max_results: int = 5) -> str:
 
 def web_search(query: str, max_results: int = 5, retries: int = 3) -> str:
     try:
-        return tavily_search(query, max_results=max_results)
+        result = tavily_search(query, max_results=max_results)
     except Exception as e:
         print(f"[TAVILY FALLBACK] {e}", flush=True)
-        return ddgs_search(query, max_results=max_results, retries=retries)
+        result = ddgs_search(query, max_results=max_results, retries=retries)
+    return filter_noise(result)
+
+
+NOISE_PATTERNS = [
+    "best 0% apr", "balance transfer card", "high-yield savings",
+    "money market account", "checking account", "credit card",
+    "tax bracket", "freightamigo", "logistics expert", "ship overseas",
+    "convenient and suitable solution", "book a demo", "free trial",
+    "subscribe now", "sign up today", "click here",
+]
+
+def filter_noise(text: str) -> str:
+    """Removes sentences matching known irrelevant financial-marketing patterns
+    (credit cards, generic logistics/marketing copy) that unrelated web search
+    results sometimes surface, before the text reaches the LLM."""
+    if not text:
+        return text
+    sentences = text.split(". ")
+    clean = [s for s in sentences if not any(pat in s.lower() for pat in NOISE_PATTERNS)]
+    result = ". ".join(clean).strip()
+    return result if result else text
 
 
 def sentence_truncate(text: str, limit: int = 300) -> str:
@@ -266,7 +288,7 @@ def get_geopolitics() -> str:
 def get_news_sentiment(ticker: str) -> str:
     """Searches for latest news sentiment around a given semiconductor ticker."""
     try:
-        result = web_search(f"{ticker} semiconductor stock news analyst 2025")
+        result = web_search(f"{ticker} stock analyst rating price target semiconductor company news")
         if not result or "unavailable" in result.lower() or "No results" in result:
             result = web_search(f"{ticker} semiconductor earnings forecast")
         if not result or "unavailable" in result.lower():
@@ -281,7 +303,7 @@ def get_news_sentiment(ticker: str) -> str:
 def get_capital_rotation() -> str:
     """Searches for capital rotation signals between tech IPOs and semiconductors."""
     try:
-        result = web_search("capital rotation semiconductor tech IPO investment 2025")
+        result = web_search("institutional investor fund flows semiconductor sector rotation 2025")
         if not result or "unavailable" in result.lower() or "No results" in result:
             result = web_search("semiconductor sector fund flows institutional 2025")
         if not result or "unavailable" in result.lower():
@@ -324,16 +346,40 @@ def get_beta(ticker: str) -> str:
         return f"Beta: Data unavailable ({str(e)})"
 
 
+def get_rag_context(query: str) -> str:
+    """Retrieves the most relevant curated sentences from the local FAISS
+    knowledge base via MMR search. Returns empty string if unavailable."""
+    if retriever is None:
+        return ""
+    try:
+        docs = retriever.invoke(query)
+        if not docs:
+            return ""
+        return " ".join(d.page_content for d in docs)
+    except Exception as e:
+        print(f"[RAG ERROR] {e}", flush=True)
+        return ""
+
+
 @tool
 @cached_tool(TTL_FAST)
 def get_supply_chain(ticker: str) -> str:
-    """Searches for supply chain signals for a semiconductor ticker."""
+    """Searches for supply chain signals for a semiconductor ticker, augmented
+    with retrieved curated context from a local FAISS knowledge base (RAG)."""
+    rag_context = get_rag_context(f"{ticker} semiconductor supply chain dependencies")
+
     try:
         result = web_search(f"{ticker} semiconductor supply chain TSMC ASML manufacturing 2025")
         if not result or "unavailable" in result.lower() or "No results" in result:
             result = web_search("semiconductor supply chain shortage TSMC 2025")
         if not result or "unavailable" in result.lower():
+            if rag_context:
+                return f"Supply Chain: {rag_context}"
             return "Supply Chain: Global semiconductor supply chain remains constrained. TSMC capacity tight, ASML EUV tools in high demand. Lead times elevated across logic and memory."
+        if rag_context:
+            return f"Supply Chain: {result} [Background context: {rag_context}]"
         return f"Supply Chain: {result}"
     except Exception as e:
+        if rag_context:
+            return f"Supply Chain: {rag_context}"
         return "Supply Chain: Global semiconductor supply chain remains constrained. TSMC capacity tight, ASML EUV tools in high demand."
