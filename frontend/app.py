@@ -729,7 +729,7 @@ with st.sidebar:
     <div style='font-size:0.72rem;color:#AAAAAA;margin-bottom:18px'>18-Factor Agentic RAG</div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<a href='https://bejewelled-hamster-fb4dd2.netlify.app/landing.html' target='_self' style='display:block;width:100%;text-align:center;background:linear-gradient(135deg,#0055FF,#00AAFF);color:white;padding:10px;border-radius:10px;font-weight:600;font-size:0.9rem;text-decoration:none;margin-bottom:8px;'>Home</a>", unsafe_allow_html=True)
+    st.markdown("<a href='https://bejewelled-hamster-fb4dd2.netlify.app/landing.html' target='_top' style='display:block;width:100%;text-align:center;background:linear-gradient(135deg,#0055FF,#00AAFF);color:white;padding:10px;border-radius:10px;font-weight:600;font-size:0.9rem;text-decoration:none;margin-bottom:8px;'>Home</a>", unsafe_allow_html=True)
     if st.button("+ New Analysis", use_container_width=True):
         st.session_state.result = None
         st.session_state.ticker = None
