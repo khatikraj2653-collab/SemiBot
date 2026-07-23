@@ -742,7 +742,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     # PATH FIX 5: Use st.page_link for same-tab navigation to Home page
-    st.page_link("Home.py", label="Home", use_container_width=True)
+    st.page_link("app.py", label="Home", use_container_width=True)
     if st.button("+ New Analysis", use_container_width=True):
         st.session_state.result = None
         st.session_state.ticker = None
