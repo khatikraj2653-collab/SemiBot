@@ -8,6 +8,13 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 import time
+from zoneinfo import ZoneInfo
+from datetime import datetime
+
+UK_TZ = ZoneInfo("Europe/London")
+
+def uk_time_str():
+    return datetime.now(UK_TZ).strftime("%Y-%m-%d %H:%M")
 import smtplib
 import yfinance as yf
 from email.mime.multipart import MIMEMultipart
@@ -875,11 +882,11 @@ if st.session_state.result is None:
                         for _t, _r in compare_results.items():
                             _p = parse_result(_r)
                             _up_str = f"{_p['up_prob']}%"
-                            save_history(_t, _up_str, time.strftime("%Y-%m-%d %H:%M"), _r, [])
+                            save_history(_t, _up_str, uk_time_str(), _r, [])
 
                         save_compare_session(
                             list(compare_results.keys()),
-                            time.strftime("%Y-%m-%d %H:%M"),
+                            uk_time_str(),
                             compare_results,
                             []
                         )
@@ -1248,7 +1255,7 @@ if analyse and ticker_input:
                     up_prob_hist = line.split(":")[-1].strip()[:5]
                     break
 
-            save_history(final_ticker, up_prob_hist, time.strftime("%Y-%m-%d %H:%M"), result, st.session_state.followup_history)
+            save_history(final_ticker, up_prob_hist, uk_time_str(), result, st.session_state.followup_history)
             st.session_state.history = load_history()
             if st.session_state.history:
                 st.session_state.current_history_id = st.session_state.history[0]["id"]
