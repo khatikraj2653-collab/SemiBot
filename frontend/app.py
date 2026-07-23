@@ -111,4 +111,4 @@ body {
 html_content = html_content.replace('<head>', '<head>' + iframe_fixes)
 
 # Render landing page
-st.components.v1.html(html_content, height=6000, scrolling=True)
+st.components.v1.html(html_content, height=3400, scrolling=True)
