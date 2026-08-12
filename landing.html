@@ -220,7 +220,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
         <div><div class="stat-num">18</div><div class="stat-lbl">CAUSAL FACTORS</div></div>
         <div><div class="stat-num">RAG</div><div class="stat-lbl">SUPPLY CHAIN</div></div>
         <div><div class="stat-num">MSc</div><div class="stat-lbl">WARWICK AI</div></div>
-        <div><div class="stat-num">ACM</div><div class="stat-lbl">FINNLP TARGET</div></div>
+        <div><div class="stat-num">SSRN</div><div class="stat-lbl">LIVE PREPRINT</div></div>
       </div>
     </div>
     <div class="right">
@@ -361,14 +361,14 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="research-card">
       <div>
         <div class="rc-label">Paper 4 · ACM FinNLP Target</div>
-        <div class="rc-title">A Hallucination-Resistant Deterministic-Weighted Multi-Factor RAG Agent for Semiconductor Equity Directional Prediction</div>
+        <div class="rc-title">SemiBot: A Domain-Specific Causal Chain RAG System for Semiconductor Equity Analysis</div>
         <div class="rc-desc">This paper presents SemiBot — an 18-factor agentic RAG system for semiconductor equity analysis. The key contribution is a novel architecture where LLM qualitative scoring is decoupled from quantitative probability calculation, eliminating hallucination in financial prediction tasks.</div>
         <div class="rc-tags"><span class="rc-tag">LangGraph</span><span class="rc-tag">RAG · FAISS</span><span class="rc-tag">Financial NLP</span><span class="rc-tag">Semiconductor Markets</span><span class="rc-tag">Agentic AI</span><span class="rc-tag">GPT-4o-mini</span></div>
         <div class="rc-meta" style="margin-top:16px;">
           <div class="rc-meta-item"><strong>Raj Tejpal Khatik</strong>Author</div>
           <div class="rc-meta-item"><strong>University of Warwick</strong>Institution</div>
           <div class="rc-meta-item"><strong>MSc Applied AI</strong>Programme</div>
-          <div class="rc-meta-item"><strong>ACM FinNLP</strong>Target Venue</div>
+          <div class="rc-meta-item"><strong>SSRN Preprint</strong>Status</div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-end;">
@@ -408,12 +408,12 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
   </div>
   <div class="rp-content">
     <div class="rp-category">Paper 4 · ACM FinNLP · 2026</div>
-    <h1 class="rp-title">A Hallucination-Resistant Deterministic-Weighted Multi-Factor RAG Agent for Semiconductor Equity Directional Prediction</h1>
+    <h1 class="rp-title">SemiBot: A Domain-Specific Causal Chain RAG System for Semiconductor Equity Analysis</h1>
     <div class="rp-authors">Raj Tejpal Khatik</div>
     <div class="rp-venue">MSc Applied AI · University of Warwick · Target: ACM FinNLP Workshop</div>
     <div class="rp-divider"></div>
     <div class="rp-section-title">Abstract</div>
-    <div class="rp-body">We present SemiBot, an 18-factor agentic RAG system for semiconductor equity directional prediction. Existing LLM chatbots such as ChatGPT and Claude exhibit critical failure modes when applied to financial prediction tasks: they hallucinate probability estimates, rely on stale training data, and lack domain-specific causal chain knowledge. SemiBot addresses these limitations through a novel decoupled architecture where LLM qualitative scoring is separated from quantitative probability calculation, with domain-expert weights applied deterministically in Python to eliminate hallucination.</div>
+    <div class="rp-body">Large language models applied to equity analysis frequently suffer from shallow reasoning, surfacing correlated market signals without modeling the causal mechanisms linking macroeconomic conditions to firm-level outcomes. We present SemiBot, an agentic retrieval-augmented generation (RAG) system that scores semiconductor equities across an 18-factor causal chain, combining a LangGraph multi-agent orchestration layer, a FAISS-backed causal-chain retriever, and SQLite-based long-term memory. A designed fixed-horizon experiment on a 48-ticker production universe (426 observations) shows 61.3% overall directional accuracy, but accuracy is strongly and monotonically related to market capitalization: mega-cap tickers achieve 77.2% accuracy versus 41.7% for mid-cap tickers.</div>
     <div class="rp-highlight"><p>Key contribution: The LLM scores each of 18 causal factors on a -10 to +10 scale qualitatively. Python then applies locked domain-expert weights (summing to 100) to calculate UP%/DOWN% probabilities mathematically. The LLM never outputs probabilities directly — eliminating the hallucination problem that affects all existing financial AI chatbots.</p></div>
     <div class="rp-section-title">Problem Statement</div>
     <div class="rp-body">General-purpose LLMs fail at real-time semiconductor equity analysis for four reasons: (1) hallucinated probability estimates with no mathematical grounding, (2) knowledge cutoffs preventing access to current market data, (3) absence of semiconductor supply chain causal knowledge (ASML→TSMC→NVIDIA→Micron dependency chain), and (4) inconsistent factor weighting across sessions. SemiBot was designed to solve each of these problems systematically.</div>
@@ -422,7 +422,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="rp-section-title">18-Factor Framework with Weights</div>
     <div class="rp-body">The framework covers four categories: Macroeconomic (CPI, PPI, Fed Rate, USD Index, Energy Prices), Fundamental (P/E Ratio, Market Cap, Earnings Guidance, Insider Selling, Beta), Market Intelligence (Sector Rally/SOXX, Technical Signal, Analyst Ratings, Sell-the-News), and External Signals (Geopolitics/Hormuz, Supply Chain RAG, News Sentiment, Capital Rotation, Competitor Contagion). Key weights: Geopolitics (9), Supply Chain (9), Fed Rate (8), Competitor Contagion (8), Insider Selling (7), Sell-the-News (7), CPI (7).</div>
     <div class="rp-section-title">Results</div>
-    <div class="rp-body">SemiBot was evaluated on five semiconductor tickers: MU (Micron), NVDA (NVIDIA), AMD, INTC (Intel), and TSM (TSMC). The deterministic weighting architecture produced consistent, reproducible predictions across sessions. Real-time data integration via FRED, yfinance, and news APIs ensured predictions reflected current market conditions rather than stale training data.</div>
+    <div class="rp-body">SemiBot was evaluated on its full 48-ticker production universe across 10 stratified historical dates (426 valid observations). Results were benchmarked against comparable literature (Ploutos-7B, TRACE, Vidal 2024), with SemiBot's mega-cap and >$1 Trillion subsets exceeding every comparable published figure. Full methodology, statistical validation, and limitations are available in the complete paper on SSRN.</div>
     <div class="rp-tags">
       <span class="rp-tag">LangGraph</span><span class="rp-tag">RAG · FAISS</span><span class="rp-tag">Financial NLP</span>
       <span class="rp-tag">Semiconductor Markets</span><span class="rp-tag">Agentic AI</span>
