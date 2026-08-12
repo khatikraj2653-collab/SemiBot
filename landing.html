@@ -175,6 +175,23 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
 .rp-highlight p{font-size:0.8rem;color:#4A8AAA;line-height:1.8;}
 .rp-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px;}
 .rp-tag{background:rgba(0,60,140,0.15);border:1px solid rgba(0,100,200,0.18);color:#3A6A90;border-radius:6px;padding:4px 12px;font-size:10.5px;font-weight:600;}
+.rp-links{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 26px;}
+.rp-ssrn-btn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border-radius:9px;padding:11px 22px;font-size:12.5px;font-weight:600;text-decoration:none;box-shadow:0 0 18px rgba(0,140,255,0.35);transition:all 0.2s;}
+.rp-ssrn-btn:hover{box-shadow:0 0 28px rgba(0,180,255,0.55);transform:translateY(-1px);}
+.rp-ssrn-btn-outline{display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(0,140,255,0.3);color:#5AADFF;border-radius:9px;padding:10px 21px;font-size:12.5px;font-weight:600;text-decoration:none;transition:all 0.2s;}
+.rp-ssrn-btn-outline:hover{border-color:rgba(0,140,255,0.6);background:rgba(0,80,200,0.1);}
+.rp-h2{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:#D0E8FF;margin:36px 0 14px;letter-spacing:-0.2px;}
+.rp-h3{font-size:0.9rem;font-weight:700;color:#8ABFDD;margin:22px 0 10px;}
+.rp-table-wrap{overflow-x:auto;margin:14px 0 22px;border-radius:10px;border:1px solid rgba(0,100,200,0.2);}
+.rp-table{width:100%;border-collapse:collapse;font-size:0.72rem;}
+.rp-table caption{text-align:left;font-size:0.72rem;font-weight:600;color:#5A8AAF;padding:8px 12px;background:rgba(0,30,80,0.5);}
+.rp-table th{background:rgba(0,40,100,0.5);color:#8ABFDD;text-align:left;padding:7px 11px;font-weight:600;white-space:nowrap;border-bottom:1px solid rgba(0,100,200,0.25);}
+.rp-table td{padding:6px 11px;color:#2A5070;border-bottom:1px solid rgba(0,80,160,0.1);white-space:nowrap;}
+.rp-table tr:last-child td{border-bottom:none;}
+.rp-table tr.rp-total td{color:#5AADFF;font-weight:700;}
+.rp-refs{font-size:0.72rem;color:#1E4060;line-height:2;}
+.rp-refs p{margin-bottom:8px;}
+.rp-caption{font-size:0.72rem;color:#5A8AAF;font-weight:600;margin:18px 0 8px;}
 </style>
 </head>
 <body>
@@ -357,10 +374,10 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
   <div style="max-width:1100px;margin:0 auto;">
     <div class="section-badge">📄 Academic Research</div>
     <h2 class="section-title">Published Research</h2>
-    <p class="section-sub">SemiBot is the foundation for an academic paper targeting ACM FinNLP — combining financial NLP, agentic AI, and semiconductor domain expertise.</p>
+    <p class="section-sub">SemiBot is the foundation for an academic paper, live as a preprint on SSRN and currently under review at a peer-reviewed journal.</p>
     <div class="research-card">
       <div>
-        <div class="rc-label">Paper 4 · ACM FinNLP Target</div>
+        <div class="rc-label">Paper 4 · Live SSRN Preprint</div>
         <div class="rc-title">SemiBot: A Domain-Specific Causal Chain RAG System for Semiconductor Equity Analysis</div>
         <div class="rc-desc">This paper presents SemiBot — an 18-factor agentic RAG system for semiconductor equity analysis. The key contribution is a novel architecture where LLM qualitative scoring is decoupled from quantitative probability calculation, eliminating hallucination in financial prediction tasks.</div>
         <div class="rc-tags"><span class="rc-tag">LangGraph</span><span class="rc-tag">RAG · FAISS</span><span class="rc-tag">Financial NLP</span><span class="rc-tag">Semiconductor Markets</span><span class="rc-tag">Agentic AI</span><span class="rc-tag">GPT-4o-mini</span></div>
@@ -373,6 +390,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-end;">
         <button class="rc-btn" onclick="showResearch()">Read Paper →</button>
+        <a class="rc-btn" style="text-decoration:none;" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">View on SSRN ↗</a>
         <div style="font-size:10px;color:#1A3A55;text-align:center;">Full paper details</div>
       </div>
     </div>
@@ -393,7 +411,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#3A6A90;">SemiBot</span>
   </div>
   <div class="footer-text" style="color:#5AADFF;font-weight:600;font-size:13px;">Built by <span style="color:#90D0FF;font-weight:700;">Raj Tejpal Khatik</span> · MSc Applied AI · University of Warwick · 2026</div>
-  <div class="footer-right">Paper 4 · ACM FinNLP<br>Not financial advice</div>
+  <div class="footer-right">Paper 4 · SSRN Preprint<br>Not financial advice</div>
 </footer>
 </div>
 
@@ -407,22 +425,287 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div style="font-size:10px;color:#1A4060;">MSc Applied AI · University of Warwick</div>
   </div>
   <div class="rp-content">
-    <div class="rp-category">Paper 4 · ACM FinNLP · 2026</div>
-    <h1 class="rp-title">SemiBot: A Domain-Specific Causal Chain RAG System for Semiconductor Equity Analysis</h1>
-    <div class="rp-authors">Raj Tejpal Khatik</div>
-    <div class="rp-venue">MSc Applied AI · University of Warwick · Target: ACM FinNLP Workshop</div>
+    <div class="rp-category">Paper 4 · SSRN Preprint · 2026</div>
+    <h1 class="rp-title">A Domain-Specific Causal Chain RAG System for Semiconductor Equity Analysis</h1>
+    <div class="rp-authors">Raj Tejpal Khatik · MSc Applied AI, University of Warwick</div>
+    <div class="rp-venue">Live preprint on SSRN · Currently under review at a peer-reviewed journal</div>
+    <div class="rp-links">
+      <a class="rp-ssrn-btn" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">📄 Read Live on SSRN ↗</a>
+      <a class="rp-ssrn-btn-outline" href="https://semibot-raj.streamlit.app" target="_blank" rel="noopener">Live Demo ↗</a>
+    </div>
     <div class="rp-divider"></div>
+
     <div class="rp-section-title">Abstract</div>
-    <div class="rp-body">Large language models applied to equity analysis frequently suffer from shallow reasoning, surfacing correlated market signals without modeling the causal mechanisms linking macroeconomic conditions to firm-level outcomes. We present SemiBot, an agentic retrieval-augmented generation (RAG) system that scores semiconductor equities across an 18-factor causal chain, combining a LangGraph multi-agent orchestration layer, a FAISS-backed causal-chain retriever, and SQLite-based long-term memory. A designed fixed-horizon experiment on a 48-ticker production universe (426 observations) shows 61.3% overall directional accuracy, but accuracy is strongly and monotonically related to market capitalization: mega-cap tickers achieve 77.2% accuracy versus 41.7% for mid-cap tickers.</div>
-    <div class="rp-highlight"><p>Key contribution: The LLM scores each of 18 causal factors on a -10 to +10 scale qualitatively. Python then applies locked domain-expert weights (summing to 100) to calculate UP%/DOWN% probabilities mathematically. The LLM never outputs probabilities directly — eliminating the hallucination problem that affects all existing financial AI chatbots.</p></div>
-    <div class="rp-section-title">Problem Statement</div>
-    <div class="rp-body">General-purpose LLMs fail at real-time semiconductor equity analysis for four reasons: (1) hallucinated probability estimates with no mathematical grounding, (2) knowledge cutoffs preventing access to current market data, (3) absence of semiconductor supply chain causal knowledge (ASML→TSMC→NVIDIA→Micron dependency chain), and (4) inconsistent factor weighting across sessions. SemiBot was designed to solve each of these problems systematically.</div>
-    <div class="rp-section-title">Architecture</div>
-    <div class="rp-body">SemiBot is built on LangGraph with MemorySaver for stateful conversation management. The 18 factors are executed in parallel via RunnableParallel, each as a LangChain tool calling live APIs (FRED, yfinance, SEC EDGAR, DuckDuckGo). A FAISS vector store indexed with HuggingFace sentence-transformers encodes the semiconductor supply chain causal document, retrieved via MMR for supply chain factor analysis. The scoring node aggregates all 18 factor outputs and passes them to GPT-4o-mini for qualitative scoring, after which Python applies locked weights to produce the final UP%/DOWN% prediction.</div>
-    <div class="rp-section-title">18-Factor Framework with Weights</div>
-    <div class="rp-body">The framework covers four categories: Macroeconomic (CPI, PPI, Fed Rate, USD Index, Energy Prices), Fundamental (P/E Ratio, Market Cap, Earnings Guidance, Insider Selling, Beta), Market Intelligence (Sector Rally/SOXX, Technical Signal, Analyst Ratings, Sell-the-News), and External Signals (Geopolitics/Hormuz, Supply Chain RAG, News Sentiment, Capital Rotation, Competitor Contagion). Key weights: Geopolitics (9), Supply Chain (9), Fed Rate (8), Competitor Contagion (8), Insider Selling (7), Sell-the-News (7), CPI (7).</div>
-    <div class="rp-section-title">Results</div>
-    <div class="rp-body">SemiBot was evaluated on its full 48-ticker production universe across 10 stratified historical dates (426 valid observations). Results were benchmarked against comparable literature (Ploutos-7B, TRACE, Vidal 2024), with SemiBot's mega-cap and >$1 Trillion subsets exceeding every comparable published figure. Full methodology, statistical validation, and limitations are available in the complete paper on SSRN.</div>
+    <div class="rp-body">Large language models (LLMs) applied to equity analysis frequently suffer from shallow reasoning: they surface correlated market signals without modeling the causal mechanisms that connect macroeconomic conditions to firm-level outcomes. This paper presents SemiBot, an agentic retrieval-augmented generation (RAG) system that scores semiconductor equities across an 18-factor causal chain spanning macroeconomic, fundamental, market-intelligence, and external-signal categories. SemiBot combines a LangGraph multi-agent orchestration layer, a FAISS-backed causal-chain retriever, real-time data acquisition via the Model Context Protocol (MCP) and Tavily search, and SQLite-based long-term memory to produce ticker-level directional predictions with per-factor attribution. We describe the system's architecture and three engineering failure modes discovered during development, together with their resolutions.</div>
+    <div class="rp-body">We evaluate SemiBot through three complementary backtests. Backtest 1, using 140 valid predictions accumulated from development-period usage, shows 61.4% directional accuracy under an MA50 price-proxy and 69.3% under an MA200 proxy (a disclosed sensitivity check, not a precise point estimate). Backtest 2, a deliberately designed experiment on SemiBot's finalized 48-ticker production universe at 10 stratified historical dates with a genuine fixed 20-trading-day forward-return outcome (426 valid observations), shows 61.3% overall directional accuracy. Critically, accuracy is strongly and monotonically related to market capitalization: mega-cap tickers (&gt;$200B) achieve 77.2% accuracy versus 41.7% for mid-cap tickers ($2B–$10B), with a clean six-tier breakdown ranging from 84.0% (&gt;$1 trillion) down to 41.7% (&lt;$10B). This relationship is statistically confirmed via logistic regression (b=0.327, p&lt;0.001) and a chi-square test comparing the mega- and mid-cap tiers directly (chi-square=26.32, p&lt;0.001), with 95% confidence intervals reported for every tier, and is shown to be robust to controlling for sub-sector composition (b=0.291, p&lt;0.001) and to persist, albeit at reduced magnitude, even on the sample's weakest-performing dates.</div>
+    <div class="rp-body">Backtest 3 tests SemiBot against two naive baselines — an Always-UP strategy and a SOXX prior-trend-following strategy — stratified across the same six market-capitalization tiers as Backtest 2, using the identical 426-observation production dataset. Against Always-UP, SemiBot underperforms in every tier (overall 61.3% vs. 76.8%, a 15.5-point gap, narrowing from 29.1 points at the smallest tier to 2.0 points at the largest). Against the more sophisticated SOXX-trend baseline, the picture is more nuanced: SemiBot underperforms overall (61.3% vs. 66.9%) but outperforms in its two largest tiers — by 8.0 points at &gt;$1 Trillion and 5.7 points at $500B–$1T — while underperforming at every tier below $500B. This is, to our knowledge, the first market-capitalization-stratified naive-baseline comparison reported for a causal-chain equity-analysis system, and it demonstrates that whether causal-chain reasoning adds value over naive momentum depends jointly on company size and on which naive strategy is used as the comparison point — a nuance a single aggregate accuracy figure, or a single unstratified baseline comparison, would entirely conceal.</div>
+    <div class="rp-body">We situate these results against directly comparable literature benchmarks (Ploutos-7B: 61.2%/59.9%; Vidal 2024's 250-stock LLM study: 59.4% average; TRACE: 55.1%; a "Crystal Ball" human-trader experiment: 51.5%), finding SemiBot's mega-cap and &gt;$1 Trillion subsets exceed every comparable published figure. We argue that explicit causal-chain scaffolding produces interpretable, well-attributed equity signals with genuine, quantifiable value at the largest end of the market-capitalization spectrum, and that market-capitalization-stratified naive-baseline comparison — not literature benchmarking alone — should be standard practice for evaluating this class of system.</div>
+    <div class="rp-body" style="font-size:0.75rem;">*Live demo: <a href="https://semibot-raj.streamlit.app" target="_blank" rel="noopener" style="color:#5AADFF;">https://semibot-raj.streamlit.app</a><br><strong style="color:#3A7090;">Keywords:</strong> retrieval-augmented generation, agentic AI, LangGraph, equity analysis, causal inference, market capitalization, semiconductor industry, baseline comparison</div>
+
+    <div class="rp-h2">1. Problem</div>
+    <div class="rp-body">Equity research for the semiconductor sector is unusually dependent on multi-layered causal reasoning. A single macro event — a Federal Reserve rate decision, a shift in the CHIPS Act, a geopolitical flashpoint involving Taiwan — propagates through export controls, foundry capacity, wafer fabrication equipment (WFE) spending, and ultimately firm-level revenue and margin, often with a multi-quarter lag. Conventional LLM-based financial assistants tend to treat these signals as a flat bag of features: they retrieve recent news, summarize sentiment, and produce a directional call without making the intermediate causal steps explicit or auditable.</div>
+    <div class="rp-body">This creates three practical problems for a user trying to evaluate a semiconductor equity such as ASML or Micron: (1) <strong style="color:#3A7090;">Opacity</strong> — a single "bullish/bearish" verdict gives no insight into which causal layer is driving the call, making it impossible to stress-test the reasoning against a different macro scenario; (2) <strong style="color:#3A7090;">Staleness or hallucination</strong> — models trained on a fixed corpus either answer from outdated internal knowledge or hallucinate specifics (price targets, analyst ratings) that must instead come from live sources; (3) <strong style="color:#3A7090;">Non-generalizability</strong> — a system tuned to reason well about one ticker often cannot be trivially extended to another without re-engineering the entire prompt and retrieval pipeline, because the causal relationships are treated implicitly rather than as a reusable schema.</div>
+    <div class="rp-body">A fourth problem, which this paper's backtesting results surface empirically rather than motivate a priori, is that the reliability of macro/fundamental causal reasoning is not uniform across the equity universe — it plausibly depends on how efficiently a company's information environment (analyst coverage, institutional ownership, trading liquidity) translates macro and fundamental signals into price. Small, thinly-covered companies may be dominated by idiosyncratic, low-liquidity price action that a macro-causal framework is not designed to capture. SemiBot's design does not originally anticipate this, but its evaluation is structured to test for it directly (Section 4.2.1).</div>
+    <div class="rp-body">A fifth, related problem, which Backtest 3 (Section 4.5) surfaces directly, is that causal-chain reasoning's added value is not guaranteed relative to the simplest possible alternative: doing nothing more than following the prevailing market trend, or simply predicting that markets rise. A system can simultaneously beat random chance, be competitive with published literature, and still lose to a zero-effort momentum strategy — and whether it does so can itself depend on company size and on which naive strategy is chosen as the comparison. These are separate, non-redundant evaluative questions, and a complete evaluation should answer all of them rather than only the one or two that present the system most favorably.</div>
+    <div class="rp-body">SemiBot addresses the first three problems by design: an explicit 18-node causal chain gives auditable per-factor attribution, a live MCP/Tavily retrieval layer keeps external signals current, and every retrieval query is parameterized by ticker, making the same causal schema directly reusable across the semiconductor equity universe. The fourth and fifth problems — market-capitalization-dependent reliability, and performance relative to naive baselines, itself further stratified by company size — are the central empirical findings of this paper.</div>
+
+    <div class="rp-h2">2. Theory</div>
+    <div class="rp-h3">2.1 The Semiconductor Causal Chain</div>
+    <div class="rp-body">SemiBot's core theoretical contribution is a 7-layer, 18-factor causal chain (originally scoped as 22 layers during early research and trimmed to 18 for production). This design follows the broader principle, established in the retrieval-augmented generation literature [3], that grounding LLM outputs in retrieved, structured evidence reduces hallucination relative to relying on parametric knowledge alone — but extends it by requiring the retrieved evidence to be organized around an explicit causal schema rather than an unstructured document corpus. Each factor is assigned to one of four categories:</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>Category</th><th>Factors</th><th>Rationale</th></tr>
+      <tr><td>Macroeconomic</td><td>CPI, PPI, Fed Rate, USD Index</td><td style="white-space:normal;">Sets the discount-rate and input-cost environment common to all equities</td></tr>
+      <tr><td>Fundamental</td><td>P/E Ratio, Market Cap, Earnings Guidance, Insider Selling</td><td style="white-space:normal;">Firm-specific valuation and insider-confidence signals</td></tr>
+      <tr><td>Market Intelligence</td><td>Sector Rally, Technical Signal, Analyst Ratings, Sell-the-News</td><td style="white-space:normal;">Reflects how the broader market and sell-side community are currently pricing the name</td></tr>
+      <tr><td>External Signals</td><td>Geopolitics, Supply Chain, News Sentiment, Capital Rotation, Competitor Contagion, Beta</td><td style="white-space:normal;">Captures second-order effects specific to a globally concentrated, geopolitically exposed supply chain</td></tr>
+    </table></div>
+    <div class="rp-body">Each factor is independently retrieved, scored on a bounded integer scale (-10 to +10), and combined into a single upside/downside probability split with an explicit list of the top-3 bullish and top-3 bearish drivers. This deterministic, Python-side weighting (rather than asking the LLM to produce a final probability directly) is a deliberate design choice to reduce end-to-end hallucination risk in the final numeric output, consistent with recent critical literature on LLM financial forecasting reliability [6].</div>
+    <div class="rp-h3">2.2 Retrieval-Augmented Grounding</div>
+    <div class="rp-body">Rather than relying on the LLM's parametric knowledge for factor-relationship reasoning, SemiBot retrieves supporting context for each factor from a FAISS vector index built over a hand-authored causal-chain document. This document encodes the mechanism by which each factor is believed to affect semiconductor equities (e.g., "rising real yields increase the discount rate applied to long-duration growth names, disproportionately affecting high P/E semiconductor equities"). The retriever uses maximal marginal relevance (MMR) search [3] to avoid retrieving redundant passages for closely related factors (e.g., Fed Rate and USD Index).</div>
+    <div class="rp-h3">2.3 Agentic Orchestration</div>
+    <div class="rp-body">SemiBot is implemented as a LangGraph state machine. Data-acquisition nodes for each factor category (macroeconomic, fundamental, market intelligence, external signals) execute as parallel subgraphs, writing their results into a shared typed state (<code>SemiBotState</code>). A downstream <code>generate_prediction</code> node consumes the completed state, retrieves causal-chain context per factor via <code>RunnableParallel</code>, and invokes the scoring LLM (GPT-4o-mini) with a structured prompt requiring machine-parseable per-factor scores. SQLite-backed checkpointing (via LangGraph's <code>SqliteSaver</code>) persists the state per analysis thread, enabling both crash recovery and long-term memory of prior sessions for trend-aware reasoning in follow-up question answering. This orchestration pattern is broadly consistent with the emerging literature on agentic financial systems combining specialist sub-agents with a coordinating synthesis step [1, 2].</div>
+
+    <div class="rp-h2">3. Practical Implementation</div>
+    <div class="rp-h3">3.1 System Architecture</div>
+    <div class="rp-body">SemiBot is deployed as a Streamlit application (<code>frontend/app.py</code>) backed by a compiled LangGraph workflow (<code>graph/workflow.py</code>). Data acquisition tools are organized by category (<code>tools/macro_tools.py</code>, <code>tools/market_tools.py</code>, <code>tools/external_tools.py</code>, <code>tools/fundamental_tools.py</code>), with external/qualitative signals retrieved via a Tavily search MCP server rather than static web scraping, ensuring news-sentiment and geopolitical factors reflect current conditions at analysis time.</div>
+    <div class="rp-body">Key implementation choices: (1) <strong style="color:#3A7090;">Multi-ticker Compare mode</strong>, implemented via <code>ThreadPoolExecutor</code>, allowing concurrent analysis of multiple tickers for direct side-by-side comparison; (2) <strong style="color:#3A7090;">Streaming UX</strong>, where analysis results are streamed to the frontend as each subgraph node completes, rather than blocking on the full pipeline, improving perceived latency for a multi-second, multi-API-call pipeline; (3) <strong style="color:#3A7090;">Long-term memory</strong>, where prior analysis sessions are queried from SQLite and summarized into a trend line (e.g., "upside probability rose from 52% to 57% over the last three sessions"), which is injected into both the reasoning prompt and the follow-up question-answering context; (4) <strong style="color:#3A7090;">Observability</strong>, where all LLM calls are traced via LangSmith, enabling factor-level latency and cost auditing during development.</div>
+    <div class="rp-h3">3.2 Engineering Failure Modes</div>
+    <div class="rp-body">Three concrete bugs were discovered and resolved during development, each illustrative of a general class of failure in multi-agent LangGraph systems:</div>
+    <div class="rp-body">
+      <strong style="color:#3A7090;">1. Shared SQLite connection race condition.</strong> Under Compare mode's concurrent ticker analysis, multiple threads shared a single SQLite connection object, producing intermittent "database is locked" errors. Resolved by ensuring each thread obtains its own connection via <code>check_same_thread=False</code> combined with a connection-per-thread pattern.<br><br>
+      <strong style="color:#3A7090;">2. LangGraph subgraph state overwrite.</strong> Parallel subgraphs writing to overlapping keys in the shared <code>SemiBotState</code> occasionally caused one subgraph's result to silently overwrite another's due to LangGraph's default "last write wins" reducer behavior on non-annotated fields. Resolved by ensuring every state field has an explicit reducer (<code>Annotated[str, lambda old, new: new]</code>) and that no two subgraphs write to the same key.<br><br>
+      <strong style="color:#3A7090;">3. Caching inconsistency.</strong> An early caching layer applied a uniform TTL across factors with fundamentally different update frequencies (e.g., CPI, which updates monthly, cached identically to a live stock price). This was corrected via a tiered TTL scheme aligned to each factor's actual real-world update cadence — a pattern subsequently reapplied to two companion projects, GoldBot and SilverBot, built on the same architectural template.
+    </div>
+    <div class="rp-body">These failures generalize beyond SemiBot: any LangGraph system with concurrent subgraphs and a shared persistence layer is exposed to the same class of race conditions and reducer misconfigurations.</div>
+
+    <div class="rp-h2">4. Backtesting</div>
+    <div class="rp-h3">4.1 Backtest 1a and 1b: Incidental Development-Period Directional Consistency Check</div>
+    <div class="rp-body">We evaluated SemiBot's directional predictions using its persisted analysis history: stored analysis sessions accumulated during iterative development, testing, and live usage. Of these, 140 sessions contained both a well-formed, parseable prediction and complete MA50/MA200 technical-signal data, and were retained for analysis.</div>
+    <div class="rp-body">For each session, we extracted (a) SemiBot's directional call, defined as UP when UP_PROBABILITY exceeded DOWN_PROBABILITY and DOWN otherwise, and (b) two candidate price-at-prediction-time proxies — the 50-day moving average (MA50) and the 200-day moving average (MA200), both reported by the Technical Signal factor at analysis time. We then compared each proxy against the ticker's live market price at time of evaluation.</div>
+    <div class="rp-highlight"><p><strong>Backtest 1a (MA50 proxy): 86/140 = 61.4% directional accuracy.</strong><br><strong>Backtest 1b (MA200 proxy, sensitivity check): 97/140 = 69.3% directional accuracy.</strong></p></div>
+    <div class="rp-body">The 7.9-percentage-point gap between 1a and 1b on the identical 140 predictions demonstrates that this backtest's accuracy is materially sensitive to an essentially arbitrary methodological choice. During a period of broad market appreciation (evident throughout Backtest 2's results, Section 4.4), the more slowly-adjusting MA200 sits further below the current price than MA50 does, mechanically making "current price &gt; MA200" easier to satisfy regardless of whether SemiBot's underlying prediction was accurate. Neither figure should be read as a precise point estimate; both are reported to establish that SemiBot's real-world usage predictions are broadly directionally sound, while Backtest 2 (below) is the paper's primary evidentiary source given its more rigorous, proxy-free design.</div>
+    <div class="rp-body">One further methodological note: Backtest 1's 140 retained sessions were accumulated across active development, during which the factor-weighting scheme was revised once (per version-control history, July 8, 2026). Because analysis-session timestamps record time-of-day only, not calendar date, we cannot determine what fraction of the 140 sessions were scored under pre- versus post-rebalancing weights. This is a specific instance of the broader caveat already noted above — that Backtest 1 should not be read as a precise point estimate — and further supports treating Backtest 2, run as a single pass on the finalized, frozen codebase, as the paper's primary evidentiary source.</div>
+
+    <div class="rp-h3">4.2 Backtest 2: Designed Fixed-Horizon Point-in-Time Experiment</div>
+    <div class="rp-body">To address Backtest 1's limitations — no fixed holding period, and dependence on a moving-average proxy for price-at-prediction-time — we conducted a second, deliberately designed backtest on SemiBot's finalized 48-ticker production universe (Table 3), evaluated at 10 stratified historical dates (2025-08-15 through 2026-05-01, selected via a reproducible seeded random procedure across the available historical window), with a genuine fixed 20-trading-day forward-return outcome rather than comparison against "today's" price. Two tickers originally considered for the production universe (ASMI.AS, BE.NA) were excluded after repeated data-fetch failures via the underlying market-data API; two additional tickers representing duplicate cross-listings of companies already present (2330.TW/TSM and 2303.TW/UMC, both confirmed identical entities via corporate investor-relations documentation) were also excluded, alongside nine tickers below a $4B market-capitalization threshold, on the pre-registered principle that duplicate-entity and micro-capitalization names add noise rather than genuine coverage.</div>
+    <div class="rp-body">This yielded 426 valid observations from 480 attempted (48 tickers x 10 dates), with 54 exclusions for genuine NEUTRAL ties, insufficient MA200 history for early dates on certain tickers, or insufficient forward-return data for the most recent date.</div>
+    <div class="rp-body"><strong style="color:#3A7090;">Tiered factor methodology:</strong> given that 6 of 18 factors depend on Tavily web search (which has no historical archive), factors were tiered by genuine historical feasibility: 9 factors were computed from true point-in-time data (CPI, PPI, Fed Rate, USD Index, Sector Rally, Technical Signal via historical FRED/yfinance series; Market Cap via historical price x current shares; Insider Selling via date-filtered transaction records; P/E Ratio via historical price / implied trailing EPS), 3 factors used a disclosed current-value proxy (Earnings Guidance, Analyst Ratings, Beta), and 6 factors were set to Neutral (Geopolitics, Supply Chain, News Sentiment, Capital Rotation, Competitor Contagion, Sell-the-News).</div>
+    <div class="rp-highlight"><p><strong>Overall result: 261/426 = 61.3% directional accuracy.</strong></p></div>
+
+    <div class="rp-h3">4.2.1 Stratification by Market Capitalization</div>
+    <div class="rp-body">Market capitalization for each ticker was computed at analysis time (converted to USD using standard FX rates for non-US-currency listings) and used to stratify results into two complementary tier schemes. This same tier scheme is reused throughout Backtest 3 (Section 4.5), ensuring direct comparability between SemiBot's raw accuracy and its performance against naive baselines within each tier.</div>
+    <div class="rp-caption">Table 1 — Analysis by Valuation Range (6-Tier)</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>Valuation Range</th><th>Companies</th><th>N (valid)</th><th>Correct</th><th>Accuracy</th></tr>
+      <tr><td>&gt;$1 Trillion</td><td>5</td><td>50</td><td>42</td><td>84.0%</td></tr>
+      <tr><td>$500B–$1T</td><td>4</td><td>35</td><td>27</td><td>77.1%</td></tr>
+      <tr><td>$100B–$500B</td><td>14</td><td>123</td><td>86</td><td>69.9%</td></tr>
+      <tr><td>$50B–$100B</td><td>8</td><td>69</td><td>36</td><td>52.2%</td></tr>
+      <tr><td>$10B–$50B</td><td>9</td><td>77</td><td>40</td><td>51.9%</td></tr>
+      <tr><td>&lt;$10B</td><td>8</td><td>72</td><td>30</td><td>41.7%</td></tr>
+      <tr class="rp-total"><td>TOTAL</td><td>48</td><td>426</td><td>261</td><td>61.3%</td></tr>
+    </table></div>
+    <div class="rp-caption">Table 2 — Analysis by Market Cap (5-Tier Standard Classification)</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>Cap Tier</th><th>Companies</th><th>N (valid)</th><th>Correct</th><th>Accuracy</th></tr>
+      <tr><td>Mega-cap (&gt;$200B)</td><td>17</td><td>158</td><td>122</td><td>77.2%</td></tr>
+      <tr><td>Large-cap ($10B–$200B)</td><td>23</td><td>196</td><td>109</td><td>55.6%</td></tr>
+      <tr><td>Mid-cap ($2B–$10B)</td><td>8</td><td>72</td><td>30</td><td>41.7%</td></tr>
+      <tr><td>Small-cap ($300M–$2B)</td><td>0</td><td>—</td><td>—</td><td>N/A</td></tr>
+      <tr><td>Micro-cap (&lt;$300M)</td><td>0</td><td>—</td><td>—</td><td>N/A</td></tr>
+      <tr class="rp-total"><td>TOTAL</td><td>48</td><td>426</td><td>261</td><td>61.3%</td></tr>
+    </table></div>
+    <div class="rp-body" style="font-size:0.72rem;">*No Small-cap or Micro-cap tickers remain in the production universe following the market-cap filtering described in Section 4.2.</div>
+    <div class="rp-body">Both tables show a striking, essentially monotonic relationship: accuracy declines steadily as market capitalization decreases, from 84.0% at the top to 41.7% at the bottom — a 42.3-percentage-point spread. Notably, SemiBot's production universe contains no Small-cap or Micro-cap names at all following the market-cap filtering already applied, meaning this gradient is observed even among companies that are all already reasonably large and institutionally covered (the smallest, Diodes Incorporated, is a $4.3B company) — this is a stronger and less obvious finding than "small companies are hard to predict," since the effect persists well within what most practitioners would consider an investable, liquid universe.</div>
+
+    <div class="rp-h3">4.2.2 Statistical Validation of the Market-Cap Effect</div>
+    <div class="rp-body">To confirm this gradient is not attributable to chance, we fit a logistic regression of prediction correctness (0/1) on log market capitalization across all 426 valid observations: <em>logit(P(correct)) = b0 + b1 × log(market cap)</em></div>
+    <div class="rp-body">Result: b1 = 0.327 (SE = 0.060), z = 5.452, p &lt; 0.001 (likelihood-ratio p = 1.29 × 10⁻⁸), corresponding to an odds ratio of 1.386 per unit increase in log market cap. This confirms a statistically significant positive relationship between company size and directional-prediction accuracy — the observed gradient is a genuine, robust pattern in this sample, not an artifact of small-sample noise across arbitrarily chosen tier boundaries.</div>
+    <div class="rp-body">As a complementary, more directly interpretable test, we compared the Mega-cap tier (&gt;$200B: 122/158 correct) against the Mid-cap tier ($2B–$10B: 30/72 correct) via a chi-square test of independence: chi-square = 26.32, p &lt; 0.001, confirming the 77.2% vs. 41.7% gap is highly statistically significant and not plausibly due to sampling variation.</div>
+    <div class="rp-caption">Table 4 — 95% Confidence Intervals (Wilson score method) by tier</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>Tier</th><th>N</th><th>Accuracy</th><th>95% CI</th></tr>
+      <tr><td>&gt;$1 Trillion</td><td>50</td><td>84.0%</td><td>[71.5%, 91.7%]</td></tr>
+      <tr><td>$500B–$1T</td><td>35</td><td>77.1%</td><td>[61.0%, 87.9%]</td></tr>
+      <tr><td>$100B–$500B</td><td>123</td><td>69.9%</td><td>[61.3%, 77.3%]</td></tr>
+      <tr><td>$50B–$100B</td><td>69</td><td>52.2%</td><td>[40.6%, 63.5%]</td></tr>
+      <tr><td>$10B–$50B</td><td>77</td><td>51.9%</td><td>[41.0%, 62.7%]</td></tr>
+      <tr><td>&lt;$10B</td><td>72</td><td>41.7%</td><td>[31.0%, 53.2%]</td></tr>
+      <tr class="rp-total"><td>Overall</td><td>426</td><td>61.3%</td><td>[56.6%, 65.8%]</td></tr>
+    </table></div>
+    <div class="rp-body">The &gt;$1 Trillion tier's confidence interval [71.5%, 91.7%] is necessarily wide given its small sample (n=50, 5 companies), and we explicitly flag this as the paper's least statistically robust individual tier estimate — but its lower bound (71.5%) still sits above the upper bound of the &lt;$10B tier's interval (53.2%), meaning the two tiers are statistically distinguishable at conventional confidence levels despite the small top-tier sample. The overall trend's significance is more robustly established by the full-sample logistic regression above, which uses all 426 observations rather than relying on any single tier's interval in isolation.</div>
+    <div class="rp-body">We note one further caveat: SemiBot's Mega-cap tier is compositionally weighted toward foundries and diversified large-cap names (e.g., TSM, ASML, Samsung), while the weaker mid-cap tier contains a higher proportion of specialty/niche equipment and analog names (e.g., ACMR, STM, ONTO). We cannot fully rule out that the observed effect partially reflects sub-sector composition rather than market capitalization per se; we test this directly below.</div>
+
+    <div class="rp-h3">4.2.3 Controlling for Sub-Sector Composition and Bull-Market Confound</div>
+    <div class="rp-body">To test whether the market-cap effect survives controlling for sub-sector composition, we re-estimated the logistic regression with category dummies (Memory, Fabless, Equipment, Analog, Foundry, Diversified, Emerging, Consumer, International; Analog as reference category) alongside log market capitalization. The log market cap coefficient remains significant after this control: b = 0.291 (SE = 0.085), p = 0.0006 — only modestly attenuated from the uncontrolled estimate (b = 0.327), indicating the market-cap effect is not simply a proxy for sub-sector membership. We disclose one estimation caveat honestly: the Memory category (MU: 10/10, SNDK: 6/6, both 100% correct) exhibits quasi-complete separation, producing an unstable coefficient and non-convergence flag for that specific dummy; this does not affect the stability or interpretation of the log market cap coefficient itself, which is well-identified across the remaining, more heterogeneous categories.</div>
+    <div class="rp-body">To partially address the confound that our entire evaluation window (August 2025–May 2026) was broadly bullish, we tested whether the Mega-cap vs. Mid-cap accuracy gap persists specifically on the sample's weakest-performing dates, not just on average. Splitting the 10 evaluation dates by their overall (all-ticker) accuracy:</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>Date subset</th><th>Mega-cap accuracy</th><th>Mid-cap accuracy</th><th>Gap</th></tr>
+      <tr><td style="white-space:normal;">3 weakest-performing dates (28.6%–57.1% overall)</td><td>55.3% (26/47)</td><td>33.3% (7/21)</td><td>+22.0 pts</td></tr>
+      <tr><td style="white-space:normal;">3 strongest-performing dates (70.5%–78.6% overall)</td><td>95.9% (47/49)</td><td>50.0% (11/22)</td><td>+45.9 pts</td></tr>
+    </table></div>
+    <div class="rp-body">The Mega-cap advantage persists on the market's weakest days in this sample (+22.0 points), providing partial evidence the effect is not purely a bull-market artifact — though the gap is substantially larger on strong days (+45.9 points), suggesting the broadly bullish evaluation window likely amplifies, without fully creating, the underlying market-cap effect.</div>
+
+    <div class="rp-caption">Table 3 — Per-ticker accuracy, all 48 tickers, descending order</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>Ticker</th><th>N</th><th>Correct</th><th>Acc.</th></tr>
+      <tr><td>MU</td><td>10</td><td>10</td><td>100%</td></tr>
+      <tr><td>SNDK</td><td>6</td><td>6</td><td>100%</td></tr>
+      <tr><td>005930.KS</td><td>10</td><td>10</td><td>100%</td></tr>
+      <tr><td>2308.TW</td><td>8</td><td>8</td><td>100%</td></tr>
+      <tr><td>3711.TW</td><td>9</td><td>9</td><td>100%</td></tr>
+      <tr><td>ASML</td><td>10</td><td>9</td><td>90%</td></tr>
+      <tr><td>TSM</td><td>10</td><td>9</td><td>90%</td></tr>
+      <tr><td>000660.KS</td><td>10</td><td>9</td><td>90%</td></tr>
+      <tr><td>8035.T</td><td>10</td><td>9</td><td>90%</td></tr>
+      <tr><td>2454.TW</td><td>7</td><td>6</td><td>86%</td></tr>
+      <tr><td>285A.T</td><td>7</td><td>6</td><td>86%</td></tr>
+      <tr><td>AMAT</td><td>10</td><td>8</td><td>80%</td></tr>
+      <tr><td>LRCX</td><td>10</td><td>8</td><td>80%</td></tr>
+      <tr><td>KLAC</td><td>10</td><td>8</td><td>80%</td></tr>
+      <tr><td>MKSI</td><td>9</td><td>7</td><td>78%</td></tr>
+      <tr><td>CRUS</td><td>9</td><td>7</td><td>78%</td></tr>
+      <tr><td>6723.T</td><td>9</td><td>7</td><td>78%</td></tr>
+      <tr><td>IFX.DE</td><td>9</td><td>7</td><td>78%</td></tr>
+      <tr><td>ADI</td><td>7</td><td>5</td><td>71%</td></tr>
+      <tr><td>AVGO</td><td>10</td><td>7</td><td>70%</td></tr>
+      <tr><td>ON</td><td>9</td><td>6</td><td>67%</td></tr>
+      <tr><td>6857.T</td><td>9</td><td>6</td><td>67%</td></tr>
+      <tr><td>SLAB</td><td>8</td><td>5</td><td>62%</td></tr>
+      <tr><td>NVDA</td><td>10</td><td>6</td><td>60%</td></tr>
+      <tr><td>AMD</td><td>10</td><td>6</td><td>60%</td></tr>
+      <tr><td>INTC</td><td>5</td><td>3</td><td>60%</td></tr>
+      <tr><td>SMTC</td><td>10</td><td>6</td><td>60%</td></tr>
+      <tr><td>SITM</td><td>10</td><td>6</td><td>60%</td></tr>
+      <tr><td>MTSI</td><td>5</td><td>3</td><td>60%</td></tr>
+      <tr><td>QCOM</td><td>10</td><td>5</td><td>50%</td></tr>
+      <tr><td>ARM</td><td>10</td><td>5</td><td>50%</td></tr>
+      <tr><td>UMC</td><td>10</td><td>5</td><td>50%</td></tr>
+      <tr><td>ALGM</td><td>10</td><td>5</td><td>50%</td></tr>
+      <tr><td>DIOD</td><td>6</td><td>3</td><td>50%</td></tr>
+      <tr><td>QRVO</td><td>10</td><td>4</td><td>40%</td></tr>
+      <tr><td>GFS</td><td>10</td><td>4</td><td>40%</td></tr>
+      <tr><td>RMBS</td><td>10</td><td>4</td><td>40%</td></tr>
+      <tr><td>MCHP</td><td>8</td><td>3</td><td>38%</td></tr>
+      <tr><td>MPWR</td><td>8</td><td>3</td><td>38%</td></tr>
+      <tr><td>MRVL</td><td>9</td><td>3</td><td>33%</td></tr>
+      <tr><td>TXN</td><td>10</td><td>3</td><td>30%</td></tr>
+      <tr><td>SWKS</td><td>10</td><td>3</td><td>30%</td></tr>
+      <tr><td>NXPI</td><td>8</td><td>2</td><td>25%</td></tr>
+      <tr><td>ALAB</td><td>10</td><td>2</td><td>20%</td></tr>
+      <tr><td>FORM</td><td>10</td><td>2</td><td>20%</td></tr>
+      <tr><td>ONTO</td><td>6</td><td>1</td><td>17%</td></tr>
+      <tr><td>STM</td><td>6</td><td>1</td><td>17%</td></tr>
+      <tr><td>ACMR</td><td>9</td><td>1</td><td>11%</td></tr>
+    </table></div>
+
+    <div class="rp-h3">4.3 Diagnostic Discussion</div>
+    <div class="rp-body">Consistent with the market-cap gradient, the weakest performers (ACMR, STM, ONTO, ALAB, FORM: all &lt;=20%) are concentrated in the Mid-cap tier, though notably TXN and SWKS (both Large-cap by market value) also underperform substantially, indicating market cap is a strong but not perfectly deterministic predictor of per-ticker accuracy. Across nearly all wrong predictions in this backtest, the dominant pattern is SemiBot predicting DOWN or a weak UP immediately preceding a subsequent large positive move, rather than the reverse — suggesting a mild systematic bearish bias on borderline calls during this specific, broadly bullish 10-month window, rather than random error. We disclose this as an observed pattern in this sample rather than a proven general property of the model.</div>
+
+    <div class="rp-h3">4.4 Reconciling Backtest 1 and Backtest 2</div>
+    <div class="rp-body">Backtest 1 (61.4% MA50 / 69.3% MA200, incidental data, 140 observations) and Backtest 2 (61.3%, designed fixed-horizon experiment, 426 observations) converge closely around 61% despite using different tickers, different time windows, and structurally different methodologies. This convergence is evidence that SemiBot's blended, full-universe directional accuracy sits stably around this figure — while Backtest 2's market-cap stratification (Section 4.2.1) reveals that this blended average masks a wide and systematic underlying range (42%–84%) that is far more informative than the aggregate alone.</div>
+
+    <div class="rp-h3">4.5 Backtest 3: Naive-Baseline Comparison, Stratified by Market Capitalization</div>
+    <div class="rp-body">Backtests 1 and 2 establish that SemiBot performs above random chance and is broadly competitive with published literature benchmarks (Section 5). Neither, however, answers whether SemiBot's 18-factor causal-chain reasoning outperforms the simplest possible alternative during the same period, nor whether any such comparison holds uniformly across the market-capitalization gradient documented in Section 4.2.1. We address both questions directly, using the identical 426-observation, 48-ticker, market-cap-tagged dataset as Backtest 2 and the same six-tier valuation scheme as Table 1, against two naive baselines of increasing sophistication: an <strong style="color:#3A7090;">Always-UP</strong> strategy, which predicts UP on every observation regardless of any input; and a <strong style="color:#3A7090;">SOXX prior-trend-following</strong> strategy, which predicts a ticker's direction based purely on whether the semiconductor sector ETF (SOXX) rose or fell over the 20 trading days immediately preceding each analysis date — the same window length as Backtest 2's forward-return horizon, and using no ticker-specific reasoning at all.</div>
+    <div class="rp-caption">Table 5 — SemiBot vs. Always-UP Baseline, Stratified by Market Capitalization (n=426)</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>Tier</th><th>N</th><th>SemiBot</th><th>Always-UP</th><th>Gap</th></tr>
+      <tr><td>&gt;$1 Trillion</td><td>50</td><td>84.0%</td><td>86.0%</td><td>-2.0 pts</td></tr>
+      <tr><td>$500B–$1T</td><td>35</td><td>77.1%</td><td>82.9%</td><td>-5.8 pts</td></tr>
+      <tr><td>$100B–$500B</td><td>123</td><td>69.9%</td><td>82.1%</td><td>-12.2 pts</td></tr>
+      <tr><td>$50B–$100B</td><td>69</td><td>52.2%</td><td>71.0%</td><td>-18.8 pts</td></tr>
+      <tr><td>$10B–$50B</td><td>77</td><td>51.9%</td><td>70.1%</td><td>-18.2 pts</td></tr>
+      <tr><td>&lt;$10B</td><td>72</td><td>41.7%</td><td>70.8%</td><td>-29.1 pts</td></tr>
+      <tr class="rp-total"><td>Overall</td><td>426</td><td>61.3%</td><td>76.8%</td><td>-15.5 pts</td></tr>
+    </table></div>
+    <div class="rp-caption">Table 6 — SemiBot vs. SOXX-Trend Baseline, Stratified by Market Capitalization (n=426)</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>Tier</th><th>N</th><th>SemiBot</th><th>SOXX-Trend</th><th>Gap</th></tr>
+      <tr><td>&gt;$1 Trillion</td><td>50</td><td>84.0%</td><td>76.0%</td><td>+8.0 pts</td></tr>
+      <tr><td>$500B–$1T</td><td>35</td><td>77.1%</td><td>71.4%</td><td>+5.7 pts</td></tr>
+      <tr><td>$100B–$500B</td><td>123</td><td>69.9%</td><td>73.2%</td><td>-3.3 pts</td></tr>
+      <tr><td>$50B–$100B</td><td>69</td><td>52.2%</td><td>62.3%</td><td>-10.1 pts</td></tr>
+      <tr><td>$10B–$50B</td><td>77</td><td>51.9%</td><td>58.4%</td><td>-6.5 pts</td></tr>
+      <tr><td>&lt;$10B</td><td>72</td><td>41.7%</td><td>61.1%</td><td>-19.4 pts</td></tr>
+      <tr class="rp-total"><td>Overall</td><td>426</td><td>61.3%</td><td>66.9%</td><td>-5.6 pts</td></tr>
+    </table></div>
+    <div class="rp-body"><strong style="color:#3A7090;">Result:</strong> against Always-UP, SemiBot underperforms in every tier without exception; against SOXX-trend, SemiBot outperforms in its two largest tiers and underperforms in every tier below $500B. This joint result is more informative than either comparison in isolation. Against the weaker Always-UP baseline — which contains no market information whatsoever beyond the assumption that markets tend to rise — SemiBot's causal-chain reasoning does not add value at any capitalization level during this bullish window, though the magnitude of underperformance shrinks sharply and monotonically with company size, from 29.1 points at the smallest tier to 2.0 points at the largest. Against the more sophisticated SOXX-trend baseline — which does incorporate genuine, if unsophisticated, market information — SemiBot's causal-chain reasoning demonstrably adds value at the top of the market-capitalization spectrum: an 8.0-point advantage at &gt;$1 Trillion and a 5.7-point advantage at $500B–$1T, both concentrated in exactly the tiers where Backtest 2 (Section 4.2.1) already shows SemiBot's highest absolute accuracy.</div>
+    <div class="rp-body">Three points contextualize this result. First, it is consistent with, and provides an independent line of evidence for, the mechanism identified in Section 4.3: SemiBot's causal-chain reasoning weighs genuine headwinds (valuation, insider selling, sell-the-news patterns) that produce bearish or neutral calls when a persistently rising market continues upward regardless — a cost that is smallest, and in the SOXX-trend comparison reverses into an advantage, precisely where SemiBot's own predictive accuracy is highest. Second, the qualitative difference between the two baseline comparisons is itself a methodological finding: a system's value-add over "naive" reasoning is not a single fact about the system, but a joint function of company size and of which naive strategy is chosen as the comparison point, and reporting only one baseline — as is standard practice in the comparable literature we are aware of (Section 5) — can produce a materially incomplete picture. Third, both results should be interpreted as properties of this specific, broadly bullish 10-month evaluation window rather than general properties of the system: an Always-UP baseline is, by construction, guaranteed to perform well during any sustained bull market and to fail during any sustained decline, since it contains no actual predictive mechanism, and a SOXX-trend baseline shares this vulnerability to a lesser degree. SemiBot's bearish and neutral calls — a source of relative cost in this bull-market sample — would plausibly become a source of relative advantage in a genuine downturn, which this evaluation window (August 2025–May 2026) does not contain. A dedicated bear-market or mixed-regime replication of this same stratified comparison is the single most valuable extension of this work and is left to future research (Section 7), since no such period exists within the data available for this study.</div>
+    <div class="rp-body">We are not aware of comparable work in the literature that reports a market-capitalization-stratified naive-baseline comparison against multiple baselines of differing sophistication, and we argue this joint approach — rather than a single unstratified baseline check — should become standard practice for evaluating causal-chain and macro-driven equity systems.</div>
+
+    <div class="rp-h2">5. Comparison to Prior Work</div>
+    <div class="rp-body">The LLM-for-finance literature splits into two largely incomparable evaluation traditions: (a) binary directional accuracy on a fixed classification task, and (b) portfolio-level return/risk metrics under a specific trading strategy. We report both for context, cautioning against direct comparison across them. We additionally distinguish both from a third, underused evaluative frame: stratified comparison against naive, zero-reasoning baselines (Section 4.5), which answers a different question than either literature comparison — not "how does this system compare to other published systems" but "does this system's reasoning add value over doing nothing, and if so, for whom."</div>
+    <div class="rp-caption">Directly comparable (directional accuracy)</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>System</th><th>Accuracy</th><th>Notes</th></tr>
+      <tr><td>SemiBot (Backtest 1a / 1b)</td><td>61.4% / 69.3%</td><td style="white-space:normal;">This work</td></tr>
+      <tr><td>SemiBot (Backtest 2, full universe)</td><td>61.3%</td><td style="white-space:normal;">This work — 48 tickers, fixed 20-day forward window</td></tr>
+      <tr><td>SemiBot (Backtest 2, Mega-cap only)</td><td>77.2%</td><td style="white-space:normal;">This work — 17 tickers, &gt;$200B</td></tr>
+      <tr><td>SemiBot (Backtest 2, &gt;$1T only)</td><td>84.0%</td><td style="white-space:normal;">This work — 5 tickers</td></tr>
+      <tr><td>Always-UP baseline (overall)</td><td>76.8%</td><td style="white-space:normal;">This work — same 426 observations</td></tr>
+      <tr><td>SOXX-trend baseline (overall)</td><td>66.9%</td><td style="white-space:normal;">This work — same 426 observations</td></tr>
+      <tr><td>Ploutos-7B (fine-tuned, ACL18/CIKM18) [8]</td><td>61.2% / 59.9%</td><td style="white-space:normal;">Best LLM-based result on standard benchmarks</td></tr>
+      <tr><td>SLOT (best non-LLM hybrid) [9]</td><td>58.7% / 55.9% / 54.8%</td><td style="white-space:normal;">Current best-in-class hybrid baseline</td></tr>
+      <tr><td>Vidal (2024) — 4 commercial LLMs, 250 S&amp;P 500 stocks [10]</td><td>51.6–65.6% (avg 59.4%)</td><td style="white-space:normal;">Closest task match: 30-day forward UP/DOWN</td></tr>
+      <tr><td>TRACE (knowledge-graph + LLM, S&amp;P 500) [7]</td><td>55.1%</td><td style="white-space:normal;">Beat XGBoost (52.9%) and FinMem (54.4%) baselines</td></tr>
+      <tr><td>"Crystal Ball" experiment [6]</td><td>51.5%</td><td style="white-space:normal;">Real human traders given actual next-day headlines; 45% still lost money</td></tr>
+    </table></div>
+    <div class="rp-body">SemiBot's full-universe accuracy (61.3%) is competitive with, but not clearly superior to, the strongest comparable benchmarks (Ploutos-7B: 61.2–59.9%; Vidal average: 59.4%). SemiBot's mega-cap and &gt;$1T subsets (77.2% and 84.0%) substantially exceed every benchmark identified in this literature, none of which report a market-cap-stratified breakdown, and none of which report comparison against a naive baseline at all. We interpret the combined picture — literature-competitive full-universe accuracy, literature-exceeding mega-cap accuracy, and naive-baseline-exceeding performance specifically in the two largest tiers against a trend-following comparison — as evidence that explicit causal-chain scaffolding provides a genuine, multiply-corroborated edge specifically for large, liquid, well-covered companies, while offering no clear advantage over even simple heuristics for smaller names during this evaluation window.</div>
+    <div class="rp-caption">Not directly comparable (portfolio return metrics, included for context only)</div>
+    <div class="rp-table-wrap"><table class="rp-table">
+      <tr><th>System</th><th>Metric</th><th>Result</th></tr>
+      <tr><td>MarketSenseAI 2.0 [1]</td><td>Cumulative return vs. index</td><td style="white-space:normal;">125.9% vs. 73.5% (S&amp;P 100, 2023–2024)</td></tr>
+      <tr><td>TradingAgents</td><td>Cumulative return</td><td style="white-space:normal;">23–25%, beat baselines by 6–25% (single-quarter backtest; authors explicitly caveat this window as insufficient)</td></tr>
+      <tr><td>AlphaAgents [2]</td><td>Portfolio outperformance</td><td style="white-space:normal;">Outperformed benchmark in risk-neutral setting; no single accuracy figure reported</td></tr>
+    </table></div>
+    <div class="rp-body">These systems report substantially higher headline numbers, but measure a fundamentally different quantity — realized portfolio return under a specific position-sizing strategy, not the correctness of a directional call — and none report comparison against a naive baseline either. We do not claim SemiBot outperforms these systems; we report them to situate our results within the broader landscape of evaluation practices, and to reinforce — consistent with recent critical commentary on the field [6] — that headline financial metrics, classification accuracy, and naive-baseline comparison are three distinct measures that should not be used interchangeably or selectively.</div>
+
+    <div class="rp-h2">6. Generalization: Cross-Ticker and Cross-Capitalization</div>
+    <div class="rp-body">SemiBot's causal-chain schema is ticker-agnostic by design: every retrieval query and scoring prompt is parameterized by ticker symbol rather than hard-coded to a single company. The Compare mode operationalizes this by running the full 18-factor pipeline concurrently across multiple tickers. Backtest 2 provides direct evidence of cross-ticker generalization at the level of pipeline mechanics: the same pipeline, retriever, and prompt template — with no per-ticker engineering — produced complete, well-scored analyses across all 48 tickers spanning foundries, equipment makers, memory, fabless design firms, analog/mixed-signal names, and four international listing venues (Korea, Taiwan, Japan, Europe).</div>
+    <div class="rp-body">However, Section 4.2.1's central finding qualifies this generalization claim in an important way: generalization of pipeline completeness does not imply generalization of predictive accuracy. Section 4.5 adds a further, third-order qualification: generalization of predictive accuracy does not imply generalization of added value over naive baselines, and even this third property is not a single fact but depends on which baseline is used for comparison. We consider this three-way distinction — between architectural generalization, empirical predictive generalization, and baseline-relative value-added generalization — to be a useful conceptual separation for evaluating any causal-chain or macro-driven equity system, and one that is easy to conflate if only an aggregate accuracy figure, or a single unstratified baseline comparison, is reported.</div>
+
+    <div class="rp-h2">7. Limitations and Future Work</div>
+    <div class="rp-body"><strong style="color:#3A7090;">Price-proxy sensitivity (Backtest 1).</strong> Backtest 1's accuracy is measurably sensitive to the choice between MA50 (61.4%) and MA200 (69.3%) as a substitute for the missing spot price. Neither should be read as precise; Backtest 1's role is establishing directional soundness broadly, not providing an exact figure.</div>
+    <div class="rp-body"><strong style="color:#3A7090;">Tiered-factor methodology (Backtest 2).</strong> 9 of 18 factors use genuinely historical data, 3 use a disclosed current-value proxy, and 6 are set to Neutral, since no historical archive exists for Tavily-dependent qualitative signals. Extending genuine historical treatment to these factors — via a properly time-stamped news archive — is an important direction for future work.</div>
+    <div class="rp-body">The market-cap-accuracy relationship (Sections 4.2.1–4.2.3) is the paper's most significant finding, now statistically confirmed (b=0.327, p&lt;0.001 uncontrolled; b=0.291, p&lt;0.001 controlling for sub-sector category) and shown to persist, at reduced magnitude, even on the sample's weakest-performing dates (+22.0 points, vs. +45.9 on strong dates) — partially, though not conclusively, addressing the bull-market confound. The residual open question is mechanistic: whether the effect reflects genuinely lower information efficiency in smaller companies, SemiBot's factor set being better calibrated to mega-cap fundamentals, or some combination. A concrete falsification design for future work: regressing prediction accuracy against analyst-coverage count and average daily trading volume, independently of log market capitalization, would further isolate an information-efficiency explanation from a pure size effect.</div>
+    <div class="rp-body"><strong style="color:#3A7090;">No bear-market or mixed-regime replication of Backtest 3 exists.</strong> This is the paper's most significant remaining limitation. Both naive baselines used in Section 4.5 are structurally advantaged by a sustained bull market; a genuine downturn or mixed-regime period would provide a substantially stronger test of whether SemiBot's causal-chain reasoning — and specifically its bearish and neutral calls, currently a source of cost relative to naive momentum in the smaller tiers — becomes a source of relative advantage when the market's prevailing direction reverses. We regard a stratified Backtest 3 replication across a genuine bear-market window as the single highest-priority extension of this work.</div>
+    <div class="rp-body"><strong style="color:#3A7090;">Evaluation window.</strong> Backtest 2 spans roughly 10 months (August 2025–May 2026), a period of broad market appreciation across nearly all tested tickers; it does not include a genuine downturn, following the two-year evaluation window used by comparable work [1].</div>
+    <div class="rp-body">The 18-factor weighting is LLM-scored per analysis rather than learned from realized returns; a natural extension is regressing realized returns against factor scores (e.g., via a Fama-French-style multi-factor attribution [4, 5]) once a larger, fixed-horizon sample exists, potentially separately by market-cap tier.</div>
+    <div class="rp-body">SemiBot's production universe was reduced from an initial 61 tickers to 48 following discovery of two duplicate cross-listings and nine sub-$4B tickers during this study; two additional tickers (ASMI.AS, BE.NA) were excluded due to persistent data-fetch failures rather than principled market-cap filtering, and their inclusion (with a corrected data source) is left to future work.</div>
+    <div class="rp-body">As with any system depending on a third-party search API (Tavily) for qualitative signals, availability and rate-limit constraints can degrade individual factor completeness; SemiBot degrades gracefully to a neutral score under such conditions rather than fabricating a signal from absent data — a design pattern validated in practice during companion development of GoldBot and SilverBot, where an identical fallback mechanism was engineered after discovering an LLM tendency to hallucinate non-neutral scores from background context when live data was genuinely unavailable.</div>
+    <div class="rp-body">RAG-augmented retrieval, described in Section 2.2 as part of SemiBot's per-factor scoring architecture, was integrated into the live scoring pipeline for the Supply Chain factor following completion of the backtests reported in this paper. Backtests 1–3 therefore reflect the system's performance without RAG-based context injection for any factor; the reported accuracy figures are unaffected by this subsequent addition. RAG's marginal contribution to accuracy — for Supply Chain specifically, and its extension to the remaining 17 factors — remains untested and is left to future work.</div>
+
+    <div class="rp-h2">8. Conclusion</div>
+    <div class="rp-body">SemiBot demonstrates that an explicit, retrieval-grounded causal chain — rather than end-to-end LLM inference over a flat feature set — produces auditable, per-factor-attributed equity analysis with directional accuracy (61.3% full-universe; 61.4–69.3% under alternative incidental-data proxies) that is competitive with the strongest published benchmarks for this task. The paper's principal contribution is methodological on two fronts. First, by stratifying results by market capitalization, we surface a striking, previously unreported 42-percentage-point accuracy gradient (84.0% for &gt;$1T companies down to 41.7% for $2–10B companies) that a single aggregate figure would have entirely concealed, and that substantially exceeds every comparable literature benchmark once restricted to the mega-cap segment. Second, by testing SemiBot against two naive baselines of differing sophistication, each independently stratified across the same market-capitalization tiers, we find a genuinely nuanced result: SemiBot underperforms a zero-information Always-UP baseline at every capitalization level during this bullish evaluation window, yet outperforms a more sophisticated sector-momentum baseline specifically in its two largest tiers — an 8.0-point advantage at &gt;$1 Trillion and a 5.7-point advantage at $500B–$1T. Both patterns trace to a single, diagnosable mechanism: a systematic bearish bias on borderline calls during a sustained bull market, a cost that shrinks and eventually reverses into an advantage precisely where SemiBot's underlying causal-chain reasoning is most accurate.</div>
+    <div class="rp-body">We are not aware of prior work reporting a market-capitalization-stratified comparison against naive baselines of differing sophistication, and we argue this joint approach — rather than literature benchmarking or a single unstratified baseline check alone — should become standard reporting practice for causal-chain and macro-driven equity analysis systems, since any one evaluation lens in isolation can substantially overstate or understate a system's genuine, size-dependent practical value.</div>
+
+    <div class="rp-h2">Availability</div>
+    <div class="rp-body">SemiBot is publicly deployed at <a href="https://semibot-raj.streamlit.app" target="_blank" rel="noopener" style="color:#5AADFF;">https://semibot-raj.streamlit.app</a>, where readers may run live analyses on any supported semiconductor ticker. Source code is maintained in a private repository; access requests may be directed to the corresponding author at khatikraj2653@gmail.com.</div>
+
+    <div class="rp-h2">References</div>
+    <div class="rp-refs">
+      <p>[1] Fatouros, G., Metaxas, K., Soldatos, J., &amp; Karathanassis, M. (2025). MarketSenseAI 2.0: Enhancing Stock Analysis through LLM Agents. arXiv preprint arXiv:2502.00415.</p>
+      <p>[2] Zhao, T., Lyu, J., Jones, S., Garber, H., Pasquali, S., &amp; Mehta, D. (2025). AlphaAgents: Large Language Model based Multi-Agents for Equity Portfolio Constructions. arXiv preprint arXiv:2508.11152.</p>
+      <p>[3] Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., Kuttler, H., Lewis, M., Yih, W., Rocktaschel, T., et al. (2020). Retrieval-augmented generation for knowledge-intensive NLP tasks. Advances in Neural Information Processing Systems, 33, 9459–9474.</p>
+      <p>[4] Carhart, M. M. (1997). On persistence in mutual fund performance. The Journal of Finance, 52(1), 57–82.</p>
+      <p>[5] Fama, E. F., &amp; French, K. R. (2015). A five-factor asset pricing model. Journal of Financial Economics, 116(1), 1–22.</p>
+      <p>[6] Zhang, O., &amp; Zhang, Z. (2026). A Review of Large Language Models for Stock Price Forecasting from a Hedge-Fund Perspective. IEEE Conference on Artificial Intelligence. arXiv preprint arXiv:2605.05211.</p>
+      <p>[7] (2026). TRACE: Temporal Rule-Anchored Chain-of-Evidence on Knowledge Graphs for Interpretable Stock Movement Prediction. arXiv preprint arXiv:2603.12500.</p>
+      <p>[8] Tong, H., et al. (2024). Ploutos: Towards interpretable stock movement prediction with financial large language model. arXiv preprint arXiv:2403.00782.</p>
+      <p>[9] Soun, Y., Yoo, J., Cho, M., Jeon, J., &amp; Kang, U. (2022). Accurate stock movement prediction with self-supervised learning from sparse noisy tweets. IEEE International Conference on Big Data.</p>
+      <p>[10] Vidal, J. (2024). Efficacy of AI and Other Large Language Models in Predicting Stock Prices. SSRN.</p>
+      <p>[11] Yang, H., Liu, X.-Y., &amp; Wang, C. D. (2023). FinGPT: Open-source financial large language models. arXiv preprint arXiv:2306.06031.</p>
+      <p>[12] Xie, Q., Han, W., Zhang, X., Lai, Y., Peng, M., Lopez-Lira, A., &amp; Huang, J. (2023). PIXIU: A large language model, instruction data and evaluation benchmark for finance. arXiv preprint arXiv:2306.05443.</p>
+      <p>[13] Wu, S., Irsoy, O., Lu, S., Dabravolski, V., Dredze, M., Gehrmann, S., Kambadur, P., Rosenberg, D., &amp; Mann, G. (2023). BloombergGPT: A large language model for finance. arXiv preprint arXiv:2303.17564.</p>
+    </div>
+
+    <div class="rp-h2">AI Disclosure Statement</div>
+    <div class="rp-body">This paper was developed with the assistance of Claude (Anthropic), an AI language model, which was used for: system architecture design and implementation guidance, statistical analysis scripting (logistic regression, chi-square tests, confidence intervals), and drafting and editing of the manuscript text. All experimental results, data, and findings reported are derived from the author's own code execution and evaluation runs. The author reviewed, verified, and takes full responsibility for all content, analyses, and conclusions presented in this paper.</div>
+
+    <div class="rp-divider"></div>
+    <div class="rp-links">
+      <a class="rp-ssrn-btn" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">📄 Read Live on SSRN ↗</a>
+    </div>
     <div class="rp-tags">
       <span class="rp-tag">LangGraph</span><span class="rp-tag">RAG · FAISS</span><span class="rp-tag">Financial NLP</span>
       <span class="rp-tag">Semiconductor Markets</span><span class="rp-tag">Agentic AI</span>
