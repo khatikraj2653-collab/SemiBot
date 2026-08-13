@@ -95,11 +95,21 @@ BUBBLE_CSS = """
     font-size: 0.8rem; color: #F0F8FF; line-height: 1.55;
     max-width: 88%;
 }
+.st-key-semibot_bubble_panel [data-baseweb="base-input"],
+.st-key-semibot_bubble_panel [data-baseweb="input"] {
+    background: #0C1526 !important;
+    border: 1px solid rgba(0,140,255,0.3) !important;
+    border-radius: 8px !important;
+}
 .st-key-semibot_bubble_panel .stTextInput input {
-    background: rgba(255,255,255,0.04) !important;
-    border: 1px solid rgba(0,140,255,0.2) !important;
+    background: #0C1526 !important;
     color: #E8F4FF !important;
     font-size: 0.82rem !important;
+    -webkit-text-fill-color: #E8F4FF !important;
+}
+.st-key-semibot_bubble_panel .stTextInput input::placeholder {
+    color: #5A8AAF !important;
+    opacity: 1 !important;
 }
 </style>
 """
@@ -162,6 +172,7 @@ def render_chat_bubble(get_system_prompt=None):
                 system_prompt = GENERIC_SYSTEM_PROMPT
 
             st.session_state.bubble_history.append({"role": "user", "content": question})
+            st.markdown(f"<div class='semibot-bubble-user'>{question}</div>", unsafe_allow_html=True)
 
             from graph.nodes import llm
 
@@ -174,7 +185,8 @@ def render_chat_bubble(get_system_prompt=None):
             messages.append(HumanMessage(content=question))
 
             try:
-                reply = llm.invoke(messages).content
+                with st.spinner("Thinking..."):
+                    reply = llm.invoke(messages).content
             except Exception:
                 reply = "Sorry, I couldn't process that right now. Please try again shortly."
 
