@@ -24,7 +24,7 @@ from dotenv import load_dotenv
 from graph.workflow import app, build_graph
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from log_client import log_event
-from chat_bubble import render_chat_bubble
+from chat_bubble import render_chat_bubble, _live_price_block
 
 # PATH FIX 2: Go up TWO levels to find .env at project root
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), '.env'))
@@ -702,6 +702,7 @@ def build_bubble_context():
         ticker = st.session_state.ticker
         p = parse_result(result)
         historical_context = get_historical_context(ticker)
+        live_prices = _live_price_block()
         return f"""You are analyzing {ticker} stock. Here is the complete 18-factor analysis:
 
 LONG_TERM_MEMORY: {historical_context}
@@ -724,7 +725,7 @@ IDENTITY (HIGHEST PRIORITY): You are SemiBot, an 18-factor agentic RAG system fo
 TOPIC RULES: Answer questions about companies, stocks, markets, finance, economics, business, or technology freely and helpfully, including CEOs, executives, share prices, company history, products, competitors, or comparisons for {ticker} or ANY other company.
 Only refuse if the question has absolutely nothing to do with business, finance, companies, or technology, such as asking for a recipe, a poem, medical advice, or help with unrelated homework. If there is any plausible connection to business/finance/tech, just answer it.
 Refusal message (use only for clearly unrelated requests): "I'm focused on semiconductor equity analysis and can't help with that. Feel free to ask me about {ticker}, market factors, or the analysis above!"
-"""
+{live_prices}"""
     if st.session_state.get("compare_results"):
         tickers_list = list(st.session_state.compare_results.keys())
         combined_summary = ""
@@ -740,6 +741,7 @@ REASONING: {p['reasoning']}
 CPI: {r.get('cpi','N/A')} | PPI: {r.get('ppi','N/A')} | Fed Rate: {r.get('fed_rate','N/A')} | USD Index: {r.get('usd_index','N/A')}
 LONG_TERM_MEMORY for {name}: {hist_context}
 """
+        live_prices = _live_price_block()
         return f"""You are SemiBot, comparing {len(tickers_list)} semiconductor tickers side by side: {', '.join(TICKER_TO_NAME.get(t, t) for t in tickers_list)}.
 
 Here is the full 18-factor analysis for each:
@@ -756,7 +758,7 @@ TOPIC RULES:
 - Answer questions about CEOs, executives, share prices, company history, products, competitors, or comparisons for any company freely.
 - Only use the refusal message below if the question is truly unrelated to business/finance/companies/technology, such as asking for a recipe, a poem, or medical advice.
 Refusal message (use ONLY for clearly unrelated requests like recipes or medical advice): "I'm focused on semiconductor equity analysis and can't help with that. Feel free to ask me about these tickers, market factors, or the comparison above!"
-"""
+{live_prices}"""
     return None
 
 def extract_ticker_from_option(option_str: str):
@@ -1095,9 +1097,10 @@ TOPIC RULES:
 - If the user types just a company name or ticker alone (examples: "micron", "mu", "nvidia", "intel"), treat it as "tell me about this company" and answer with what you know about it - this is always on-topic, never refuse it.
 - If asked "what does X do" or "what is X" for any company (in this comparison or not), answer normally with a business description.
 - Answer questions about CEOs, executives, share prices, company history, products, competitors, or comparisons for any company freely.
+- A "what is the current price of X" question is ALWAYS on-topic and answerable - use the LIVE PRICES data below if the ticker is listed there. This is NOT a refusal-worthy request under any circumstance.
 - Only use the refusal message below if the question is truly unrelated to business/finance/companies/technology, such as asking for a recipe, a poem, or medical advice.
 Refusal message (use ONLY for clearly unrelated requests like recipes or medical advice): "I'm focused on semiconductor equity analysis and can't help with that. Feel free to ask me about these tickers, market factors, or the comparison above!"
-"""
+{_live_price_block()}"""
                 st.session_state.compare_followup_history.append({"role": "user", "content": compare_followup_q})
                 from graph.nodes import llm
                 from langchain_core.messages import SystemMessage, HumanMessage
@@ -1493,9 +1496,10 @@ IDENTITY (HIGHEST PRIORITY): You are SemiBot, an 18-factor agentic RAG system fo
 - Never say you are ChatGPT, Claude, or any other AI.
 
 TOPIC RULES: Answer questions about companies, stocks, markets, finance, economics, business, or technology freely and helpfully, including CEOs, executives, share prices, company history, products, competitors, or comparisons for {ticker} or ANY other company.
+A "what is the current price of X" question is ALWAYS on-topic and answerable - use the LIVE PRICES data below if the ticker is listed there. This is NOT a refusal-worthy request under any circumstance.
 Only refuse if the question has absolutely nothing to do with business, finance, companies, or technology, such as asking for a recipe, a poem, medical advice, or help with unrelated homework. If there is any plausible connection to business/finance/tech, just answer it.
 Refusal message (use only for clearly unrelated requests): "I'm focused on semiconductor equity analysis and can't help with that. Feel free to ask me about {ticker}, market factors, or the analysis above!"
-"""
+{_live_price_block()}"""
 
         st.session_state.followup_history.append({"role": "user", "content": followup_q})
 
