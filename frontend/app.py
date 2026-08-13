@@ -1,5 +1,9 @@
 import streamlit as st
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from log_client import log_event
+from chat_bubble import render_chat_bubble
 
 st.set_page_config(
     page_title="SemiBot - AI Semiconductor Equity Analyser",
@@ -7,6 +11,10 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+if "visit_logged" not in st.session_state:
+    log_event("visit", detail="landing page")
+    st.session_state.visit_logged = True
 
 # Hide ALL Streamlit chrome including sidebar and page nav
 st.markdown("""
@@ -111,4 +119,6 @@ body {
 html_content = html_content.replace('<head>', '<head>' + iframe_fixes)
 
 # Render landing page
-st.components.v1.html(html_content, height=3400, scrolling=True)
+st.components.v1.html(html_content, height=3650, scrolling=True)
+
+render_chat_bubble()

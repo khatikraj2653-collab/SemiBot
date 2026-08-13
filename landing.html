@@ -156,6 +156,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .cta-sub{font-size:0.85rem;color:#1E4060;margin-bottom:32px;line-height:1.8;}
 .cta-btn{background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;border-radius:12px;padding:16px 40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 0 28px rgba(0,140,255,0.45);transition:all 0.22s;}
 .cta-btn:hover{box-shadow:0 0 42px rgba(0,180,255,0.65);transform:translateY(-2px);}
+#contact{position:relative;z-index:5;padding:64px 48px;text-align:center;background:#04080F;border-top:1px solid rgba(0,140,255,0.08);}
+.contact-title{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#D0E8FF;margin-bottom:8px;}
+.contact-sub{font-size:0.8rem;color:#1E4060;margin-bottom:28px;}
+.contact-links{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;}
+.contact-link{display:flex;align-items:center;gap:8px;background:rgba(0,20,55,0.6);border:1px solid rgba(0,80,160,0.25);border-radius:10px;padding:10px 18px;font-size:12px;color:#8AB8E0;text-decoration:none;transition:all 0.2s;}
+.contact-link:hover{border-color:#0090FF;color:#D0E8FF;box-shadow:0 0 16px rgba(0,140,255,0.3);transform:translateY(-1px);}
 footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0,140,255,0.08);display:flex;align-items:center;justify-content:space-between;}
 .footer-text{font-size:11px;color:#1A3A55;}
 .footer-right{font-size:11px;color:#1A3A55;text-align:right;}
@@ -403,6 +409,17 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
   <p class="cta-sub">Enter any ticker — MU, NVDA, AMD, INTC, TSM, ASML — and get an 18-factor<br>AI-powered UP%/DOWN% prediction in seconds.</p>
   <button class="cta-btn" onclick="goApp()">Launch SemiBot →</button>
   <div style="margin-top:16px;font-size:11px;color:#1A3A55;">Free to use · No signup required · MSc Applied AI · University of Warwick</div>
+</section>
+
+<section id="contact">
+  <div class="contact-title">Built by Raj Tejpal Khatik</div>
+  <div class="contact-sub">MSc Applied AI, University of Warwick — open to AI/ML Engineer &amp; Agentic AI roles</div>
+  <div class="contact-links">
+    <a class="contact-link" href="https://www.linkedin.com/in/raj-khatik-6ab086395" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a class="contact-link" href="mailto:khatikraj2653@gmail.com">Email ↗</a>
+    <a class="contact-link" href="https://wa.me/447799394985" target="_blank" rel="noopener">WhatsApp / Call ↗</a>
+    <a class="contact-link" href="https://portfolio-raj.pages.dev" target="_blank" rel="noopener">Portfolio ↗</a>
+  </div>
 </section>
 
 <footer>

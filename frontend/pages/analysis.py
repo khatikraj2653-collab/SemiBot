@@ -22,6 +22,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
 from graph.workflow import app, build_graph
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from log_client import log_event
+from chat_bubble import render_chat_bubble
 
 # PATH FIX 2: Go up TWO levels to find .env at project root
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), '.env'))
@@ -690,6 +693,72 @@ def build_ticker_options():
 
 TICKER_OPTIONS = build_ticker_options()
 
+def build_bubble_context():
+    """Richer system prompt for the floating chat bubble when an analysis
+    (single-ticker or compare) already exists in this session; otherwise
+    returns None so the bubble falls back to its generic identity prompt."""
+    if st.session_state.get("result") and st.session_state.get("ticker"):
+        result = st.session_state.result
+        ticker = st.session_state.ticker
+        p = parse_result(result)
+        historical_context = get_historical_context(ticker)
+        return f"""You are analyzing {ticker} stock. Here is the complete 18-factor analysis:
+
+LONG_TERM_MEMORY: {historical_context}
+The above line lists ONLY past UP% values for {ticker} with timestamps, most recent first - nothing else.
+
+PREDICTION: UP {p['up_prob']}% / DOWN {p['down_prob']}% (Confidence: {p['confidence']})
+REASONING: {p['reasoning']}
+BULLISH FACTORS: {', '.join(p['bullish'])}
+BEARISH FACTORS: {', '.join(p['bearish'])}
+CPI: {result.get('cpi','N/A')} | PPI: {result.get('ppi','N/A')} | Fed Rate: {result.get('fed_rate','N/A')} | USD Index: {result.get('usd_index','N/A')}
+P/E Ratio: {result.get('pe_ratio','N/A')} | Market Cap: {result.get('market_cap','N/A')} | Earnings: {result.get('earnings_guidance','N/A')} | Insider: {result.get('insider_selling','N/A')}
+Sector Rally: {result.get('sector_rally','N/A')} | Technical: {result.get('technical_signal','N/A')} | Analyst: {result.get('analyst_ratings','N/A')}
+Geopolitics: {result.get('geopolitics','N/A')} | Supply Chain: {result.get('supply_chain','N/A')}
+
+IDENTITY (HIGHEST PRIORITY): You are SemiBot, an 18-factor agentic RAG system for semiconductor equity analysis, created by Raj Tejpal Khatik, an MSc Applied AI student at the University of Warwick, targeting ACM FinNLP.
+- If asked "who are you": say "I am SemiBot - an AI-powered semiconductor equity analyser built on 18 causal factors. Created by Raj Tejpal Khatik at the University of Warwick."
+- If asked "who created you" or "who is Raj" or "who made you": say "I was created by Raj Tejpal Khatik, an MSc Applied AI student at the University of Warwick."
+- Never say you are ChatGPT, Claude, or any other AI.
+
+TOPIC RULES: Answer questions about companies, stocks, markets, finance, economics, business, or technology freely and helpfully, including CEOs, executives, share prices, company history, products, competitors, or comparisons for {ticker} or ANY other company.
+Only refuse if the question has absolutely nothing to do with business, finance, companies, or technology, such as asking for a recipe, a poem, medical advice, or help with unrelated homework. If there is any plausible connection to business/finance/tech, just answer it.
+Refusal message (use only for clearly unrelated requests): "I'm focused on semiconductor equity analysis and can't help with that. Feel free to ask me about {ticker}, market factors, or the analysis above!"
+"""
+    if st.session_state.get("compare_results"):
+        tickers_list = list(st.session_state.compare_results.keys())
+        combined_summary = ""
+        for t in tickers_list:
+            r = st.session_state.compare_results[t]
+            p = parse_result(r)
+            hist_context = get_historical_context(t)
+            name = TICKER_TO_NAME.get(t, t)
+            combined_summary += f"""
+--- {name} ---
+PREDICTION: UP {p['up_prob']}% / DOWN {p['down_prob']}% (Confidence: {p['confidence']})
+REASONING: {p['reasoning']}
+CPI: {r.get('cpi','N/A')} | PPI: {r.get('ppi','N/A')} | Fed Rate: {r.get('fed_rate','N/A')} | USD Index: {r.get('usd_index','N/A')}
+LONG_TERM_MEMORY for {name}: {hist_context}
+"""
+        return f"""You are SemiBot, comparing {len(tickers_list)} semiconductor tickers side by side: {', '.join(TICKER_TO_NAME.get(t, t) for t in tickers_list)}.
+
+Here is the full 18-factor analysis for each:
+{combined_summary}
+
+Answer the user's question by comparing across these tickers where relevant. Reference specific tickers by name when making comparisons.
+
+IDENTITY (HIGHEST PRIORITY): You are SemiBot, an 18-factor agentic RAG system for semiconductor equity analysis, created by Raj Tejpal Khatik, an MSc Applied AI student at the University of Warwick, targeting ACM FinNLP.
+- If asked "who are you" or "who is Raj" or "who made you" or "who created you" or "who is Raj Tejpal Khatik": say "I am SemiBot, an AI-powered semiconductor equity analyser. I was created by Raj Tejpal Khatik, an MSc Applied AI student at the University of Warwick."
+- Never say you are ChatGPT, Claude, or any other AI.
+
+TOPIC RULES:
+- If the user types just a company name or ticker alone, treat it as "tell me about this company" and answer with what you know about it - this is always on-topic, never refuse it.
+- Answer questions about CEOs, executives, share prices, company history, products, competitors, or comparisons for any company freely.
+- Only use the refusal message below if the question is truly unrelated to business/finance/companies/technology, such as asking for a recipe, a poem, or medical advice.
+Refusal message (use ONLY for clearly unrelated requests like recipes or medical advice): "I'm focused on semiconductor equity analysis and can't help with that. Feel free to ask me about these tickers, market factors, or the comparison above!"
+"""
+    return None
+
 def extract_ticker_from_option(option_str: str):
     if "(" in option_str and option_str.endswith(")"):
         return option_str.rsplit("(", 1)[1].rstrip(")").strip()
@@ -707,6 +776,12 @@ def validate_ticker(user_input: str):
     if input_upper not in VALID_TICKERS:
         return None, f"'{input_upper}' is not a recognised semiconductor ticker. SemiBot supports: MU, NVDA, AMD, INTC, TSM, ASML, QCOM, TXN, AMAT, LRCX, AVGO, MRVL, ON, NXPI, ADI, MCHP, KLAC, SWKS, MPWR."
     return input_upper, None
+
+if "visit_logged" not in st.session_state:
+    log_event("visit", detail="analysis page")
+    st.session_state.visit_logged = True
+
+render_chat_bubble(get_system_prompt=build_bubble_context)
 
 if "history" not in st.session_state:
     st.session_state.history = load_history()
@@ -842,6 +917,7 @@ if st.session_state.result is None:
                 if not chosen:
                     st.markdown("<div class='val-error'>Warning: Please select at least one ticker.</div>", unsafe_allow_html=True)
                 else:
+                    log_event("search", detail=f"Compared tickers: {', '.join(chosen)}")
                     from graph.nodes import resolve_ticker
                     compare_results = {}
                     progress = st.progress(0, text="Starting comparison...")
@@ -1032,6 +1108,7 @@ Refusal message (use ONLY for clearly unrelated requests like recipes or medical
                     except GeneratorExit:
                         response_text = ""
                 st.session_state.compare_followup_history.append({"role": "assistant", "content": response_text})
+                log_event("chat", question=compare_followup_q, reply=response_text)
                 st.session_state.compare_input_counter += 1
                 if st.session_state.current_compare_session_id:
                     update_compare_followup(st.session_state.current_compare_session_id, st.session_state.compare_followup_history)
@@ -1183,6 +1260,7 @@ if analyse and ticker_input:
     if error_msg:
         st.markdown(f"<div class='val-error'>Warning: {error_msg}</div>", unsafe_allow_html=True)
     else:
+        log_event("search", detail=f"Single ticker analysed: {resolved_ticker}")
         from graph.nodes import resolve_ticker
 
         with st.spinner("Resolving ticker..."):
@@ -1442,6 +1520,7 @@ Refusal message (use only for clearly unrelated requests): "I'm focused on semic
                 response_text = ""
 
         st.session_state.followup_history.append({"role": "assistant", "content": response_text})
+        log_event("chat", question=followup_q, reply=response_text)
         if st.session_state.current_history_id:
             update_followup(st.session_state.current_history_id, st.session_state.followup_history)
         st.session_state.followup_input_counter += 1
