@@ -273,18 +273,10 @@ def render_chat_bubble(get_system_prompt=None):
                 messages.append(AIMessage(content=prev["content"]))
         messages.append(HumanMessage(content=last_question))
 
-        from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
-
-        executor = ThreadPoolExecutor(max_workers=1)
         try:
-            future = executor.submit(lambda: llm.invoke(messages).content)
-            reply = future.result(timeout=30)
-        except FutureTimeoutError:
-            reply = "That took too long to answer. Please try again - it may just be a temporary slowdown."
+            reply = llm.invoke(messages).content
         except Exception:
             reply = "Sorry, I couldn't process that right now. Please try again shortly."
-        finally:
-            executor.shutdown(wait=False)
 
         st.session_state.bubble_history.append({"role": "assistant", "content": reply})
         log_event("chat", question=last_question, reply=reply)
