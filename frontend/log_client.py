@@ -4,6 +4,9 @@ Never raises — a failed/slow log call must never break the app.
 """
 import os
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()  # ensures PORTFOLIO_LOG_SECRET is loaded even on pages that don't call this themselves
 
 LOG_URL = "https://portfolio-raj.pages.dev/api/log"
 LOG_SECRET = os.getenv("PORTFOLIO_LOG_SECRET", "")
