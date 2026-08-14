@@ -12,6 +12,60 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# SEO tags injected into the real top-level document (st.markdown runs in
+# Streamlit's own DOM, unlike st.components.v1.html which sandboxes into an
+# iframe Google's crawler won't associate with this page's <head>).
+st.markdown("""
+<script>
+(function() {
+  document.title = "SemiBot — AI Semiconductor Equity Analyser";
+  function setMeta(attr, key, content) {
+    let el = document.querySelector(`meta[${attr}="${key}"]`);
+    if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
+    el.setAttribute('content', content);
+  }
+  const desc = "18-factor agentic RAG system for semiconductor equity analysis — real-time causal-chain prediction, built by Raj Tejpal Khatik.";
+  setMeta('name', 'description', desc);
+  setMeta('property', 'og:title', "SemiBot — AI Semiconductor Equity Analyser");
+  setMeta('property', 'og:description', desc);
+  setMeta('property', 'og:type', 'website');
+  setMeta('property', 'og:url', 'https://semibot-raj.streamlit.app/');
+  setMeta('name', 'twitter:card', 'summary_large_image');
+  setMeta('name', 'twitter:title', "SemiBot — AI Semiconductor Equity Analyser");
+  setMeta('name', 'twitter:description', desc);
+
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
+  canonical.setAttribute('href', 'https://semibot-raj.streamlit.app/');
+
+  if (!document.getElementById('semibot-jsonld')) {
+    const s = document.createElement('script');
+    s.type = 'application/ld+json';
+    s.id = 'semibot-jsonld';
+    s.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "SemiBot",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "url": "https://semibot-raj.streamlit.app/",
+      "description": desc,
+      "author": {
+        "@type": "Person",
+        "name": "Raj Tejpal Khatik",
+        "sameAs": [
+          "https://www.linkedin.com/in/raj-khatik-6ab086395",
+          "https://github.com/khatikraj2653-collab",
+          "https://portfolio-raj.pages.dev/"
+        ]
+      }
+    });
+    document.head.appendChild(s);
+  }
+})();
+</script>
+""", unsafe_allow_html=True)
+
 if "visit_logged" not in st.session_state:
     log_event("visit", detail="landing page")
     st.session_state.visit_logged = True
