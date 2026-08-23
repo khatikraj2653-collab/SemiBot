@@ -12,7 +12,7 @@ from tools.market_tools import get_sector_rally, get_technical_signal, get_analy
 from tools.external_tools import get_geopolitics, get_news_sentiment, get_capital_rotation, get_competitor_contagion, get_beta, get_supply_chain
 
 llm = ChatOpenAI(
-    model="gpt-5-nano",
+    model="gpt-4.1-nano",
     api_key=os.getenv("OPENAI_API_KEY"),
     temperature=0
 )
