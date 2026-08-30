@@ -4,6 +4,9 @@
 
 **Live app:** https://semibot-raj.streamlit.app/
 
+## Demo
+![SemiBot demo](semibot-demo-v3.gif)
+
 ## Stack
 - Streamlit (frontend)
 - LangGraph (agent orchestration)
