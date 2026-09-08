@@ -229,9 +229,9 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
 .rp-refs p{margin-bottom:8px;}
 .rp-caption{font-size:0.72rem;color:#5A8AAF;font-weight:600;margin:18px 0 8px;}
 
-.chat-fab{position:fixed;bottom:76px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:999;box-shadow:0 4px 20px rgba(0,140,255,0.5);display:flex;align-items:center;justify-content:center;transition:transform 0.2s,box-shadow 0.2s;}
+.chat-fab{position:absolute;top:500px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:999;box-shadow:0 4px 20px rgba(0,140,255,0.5);display:flex;align-items:center;justify-content:center;transition:transform 0.2s,box-shadow 0.2s;}
 .chat-fab:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(0,170,255,0.7);}
-.chat-hint{position:fixed;bottom:138px;right:14px;background:#EBF4FF;color:#04080F;border:1px solid rgba(0,140,255,0.25);border-radius:14px;padding:11px 30px 11px 14px;max-width:224px;font-size:12.5px;line-height:1.55;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:999;opacity:0;transform:translateY(6px);transition:opacity 0.35s,transform 0.35s;pointer-events:none;}
+.chat-hint{position:absolute;top:390px;right:14px;background:#EBF4FF;color:#04080F;border:1px solid rgba(0,140,255,0.25);border-radius:14px;padding:11px 30px 11px 14px;max-width:224px;font-size:12.5px;line-height:1.55;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:999;opacity:0;transform:translateY(6px);transition:opacity 0.35s,transform 0.35s;pointer-events:none;}
 .chat-hint.is-visible{opacity:1;transform:translateY(0);pointer-events:auto;}
 .chat-hint-close{position:absolute;top:5px;right:8px;background:none;border:none;font-size:15px;cursor:pointer;color:#2A5070;line-height:1;padding:0;}
 .chat-hint::after{content:'';position:absolute;bottom:-8px;right:18px;border:8px solid transparent;border-top-color:#EBF4FF;border-bottom:none;}
@@ -841,6 +841,19 @@ let hintT=[];
 function dismissHint(){hintT.forEach(clearTimeout);hintT=[];if(chatHint)chatHint.classList.remove('is-visible');}
 if(chatHint){hintT.push(setTimeout(()=>chatHint.classList.add('is-visible'),1500),setTimeout(dismissHint,9500));if(chatHintClose)chatHintClose.addEventListener('click',dismissHint);}
 document.getElementById('chatFab').addEventListener('click',dismissHint);
+
+function syncFab(){
+  try{
+    var fab=document.getElementById('chatFab'),hint=document.getElementById('chatHint');
+    if(!fab)return;
+    var vH=window.parent.innerHeight,iTop=window.frameElement.getBoundingClientRect().top;
+    var fabTop=Math.max(20,vH-76-52-iTop);
+    fab.style.top=fabTop+'px';
+    if(hint)hint.style.top=Math.max(10,fabTop-110)+'px';
+  }catch(e){}
+}
+try{window.parent.addEventListener('scroll',syncFab,{passive:true});}catch(e){}
+syncFab();setTimeout(syncFab,150);setTimeout(syncFab,600);
 </script>
 
 <div id="chatHint" class="chat-hint"><button id="chatHintClose" class="chat-hint-close">&#215;</button>&#128075; AI semiconductor market analysis<br>Hit <strong>Get Started &#8594;</strong> to begin</div>
