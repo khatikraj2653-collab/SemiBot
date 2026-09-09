@@ -206,9 +206,8 @@ def render_chat_bubble(get_system_prompt=None):
 
     with st.container(key="semibot_bubble_toggle"):
         icon = "×" if st.session_state.bubble_open else "💬"
-        if st.button(icon, key="semibot_bubble_toggle_btn"):
-            st.session_state.bubble_open = not st.session_state.bubble_open
-            st.rerun()
+        st.button(icon, key="semibot_bubble_toggle_btn",
+                                    on_click=lambda: st.session_state.update({"bubble_open": not st.session_state.bubble_open}))
 
     if not st.session_state.bubble_open:
         return
