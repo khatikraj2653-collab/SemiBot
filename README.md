@@ -4,6 +4,17 @@
 
 **Live app:** https://semibot-raj.streamlit.app/
 
+## Key results
+Backtest across 48 semiconductor tickers x 10 dates (480 combinations; 426 valid, 54 skipped for insufficient price history to compute the 200-day moving average). Raw results are in `tools/backtest2_final_results.json`; the regression is reproduced by `verify_regression.py` (run from the repo root).
+
+| Market-cap tier | Valid predictions | Correct | Accuracy |
+|---|---|---|---|
+| > $1T | 50 | 42 | 84.0% |
+| Mid-cap ($2B-$10B) | 72 | 30 | 41.7% |
+| All tiers | 426 | 261 | 61.3% |
+
+Accuracy rises with market capitalisation (logistic regression on log market cap, p<0.001). Research paper: SSRN 7199998 (under review).
+
 ## Demo
 ![SemiBot demo](semibot-demo-v3.gif)
 
