@@ -4,10 +4,15 @@ used by the existing inline follow-up Q&A, just presented as a persistent
 floating widget (like the portfolio site's chat bubble) instead of an
 inline box. Usable from both the landing page and the analysis page.
 """
+import os
 import streamlit as st
 import yfinance as yf
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from langchain_openai import ChatOpenAI
 from log_client import log_event
+
+def _get_llm():
+    return ChatOpenAI(model="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY"), temperature=0)
 
 LIVE_PRICE_TICKERS = ["MU", "NVDA", "AMD", "INTC", "TSM", "ASML", "QCOM", "AVGO", "AMAT", "LRCX", "ARM", "TXN", "ADI", "MCHP", "ON"]
 
@@ -263,7 +268,7 @@ def render_chat_bubble(get_system_prompt=None):
             system_prompt = build_generic_prompt()
 
         try:
-            from graph.nodes import llm
+            llm = _get_llm()
             messages = [SystemMessage(content=system_prompt)]
             for prev in st.session_state.bubble_history[-7:-1]:
                 if prev["role"] == "user":
