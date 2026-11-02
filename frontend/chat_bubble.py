@@ -262,17 +262,15 @@ def render_chat_bubble(get_system_prompt=None):
         if not system_prompt:
             system_prompt = build_generic_prompt()
 
-        from graph.nodes import llm
-
-        messages = [SystemMessage(content=system_prompt)]
-        for prev in st.session_state.bubble_history[-7:-1]:
-            if prev["role"] == "user":
-                messages.append(HumanMessage(content=prev["content"]))
-            else:
-                messages.append(AIMessage(content=prev["content"]))
-        messages.append(HumanMessage(content=last_question))
-
         try:
+            from graph.nodes import llm
+            messages = [SystemMessage(content=system_prompt)]
+            for prev in st.session_state.bubble_history[-7:-1]:
+                if prev["role"] == "user":
+                    messages.append(HumanMessage(content=prev["content"]))
+                else:
+                    messages.append(AIMessage(content=prev["content"]))
+            messages.append(HumanMessage(content=last_question))
             reply = llm.invoke(messages).content
         except Exception:
             reply = "Sorry, I couldn't process that right now. Please try again shortly."
