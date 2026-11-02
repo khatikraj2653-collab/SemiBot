@@ -24,7 +24,7 @@ TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 _loop = None
 _loop_ready = threading.Event()
 _mcp_tool = None
-_mcp_init_lock = asyncio.Lock()
+_mcp_init_lock = None
 
 
 def _ensure_background_loop():
@@ -32,9 +32,10 @@ def _ensure_background_loop():
     if _loop is not None:
         return
     def run_loop():
-        global _loop
+        global _loop, _mcp_init_lock
         _loop = asyncio.new_event_loop()
         asyncio.set_event_loop(_loop)
+        _mcp_init_lock = asyncio.Lock()
         _loop_ready.set()
         _loop.run_forever()
     thread = threading.Thread(target=run_loop, daemon=True)
