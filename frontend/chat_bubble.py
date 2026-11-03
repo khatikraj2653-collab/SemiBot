@@ -113,8 +113,8 @@ BUBBLE_CSS = """
     width: 380px !important;
     max-width: calc(100vw - 32px) !important;
     max-height: calc(100vh - 140px) !important;
-    background: #16243F !important;
-    border: 1px solid #3A4E78 !important;
+    background: #262F3E !important;
+    border: 1px solid #4A5870 !important;
     border-radius: 16px !important;
     padding: 0 !important;
     z-index: 999998 !important;
@@ -125,16 +125,16 @@ BUBBLE_CSS = """
 }
 .st-key-semibot_bubble_header {
     padding: 14px 18px 12px !important;
-    border-bottom: 1px solid #2A3B5E !important;
-    background: #1C2D4D !important;
+    border-bottom: 1px solid #3A4658 !important;
+    background: #2D3849 !important;
     flex-shrink: 0 !important;
 }
 .semibot-bubble-title {
     font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
-    color: #EAF0FA; margin-bottom: 2px;
+    color: #EDF0F5; margin-bottom: 2px;
 }
 .semibot-bubble-sub {
-    font-size: 0.74rem; color: #8DA0C0;
+    font-size: 0.74rem; color: #9AA6B8;
 }
 .st-key-semibot_bubble_messages {
     flex: 1 1 auto !important;
@@ -153,40 +153,40 @@ BUBBLE_CSS = """
     border: 1px solid rgba(91,155,255,0.3);
     border-radius: 14px 14px 4px 14px;
     padding: 9px 12px;
-    font-size: 0.84rem; color: #EAF0FA; line-height: 1.55;
+    font-size: 0.84rem; color: #EDF0F5; line-height: 1.55;
     max-width: 84%; align-self: flex-end;
 }
 .semibot-bubble-bot {
-    background: #1C2D4D;
-    border: 1px solid #2A3B5E;
+    background: #2D3849;
+    border: 1px solid #3A4658;
     border-radius: 14px 14px 14px 4px;
     padding: 10px 12px;
-    font-size: 0.84rem; color: #EAF0FA; line-height: 1.55;
+    font-size: 0.84rem; color: #EDF0F5; line-height: 1.55;
     max-width: 88%; align-self: flex-start;
 }
 .semibot-bubble-typing {
-    font-size: 0.78rem; color: #8DA0C0; align-self: flex-start;
+    font-size: 0.78rem; color: #9AA6B8; align-self: flex-start;
     padding: 2px 4px;
 }
 .st-key-semibot_bubble_inputrow {
     padding: 10px 14px 14px !important;
-    border-top: 1px solid #2A3B5E !important;
+    border-top: 1px solid #3A4658 !important;
     flex-shrink: 0 !important;
 }
 .st-key-semibot_bubble_panel [data-baseweb="base-input"],
 .st-key-semibot_bubble_panel [data-baseweb="input"] {
-    background: #0F1B33 !important;
-    border: 1px solid #3A4E78 !important;
+    background: #1E2633 !important;
+    border: 1px solid #4A5870 !important;
     border-radius: 8px !important;
 }
 .st-key-semibot_bubble_panel .stTextInput input {
-    background: #0F1B33 !important;
-    color: #EAF0FA !important;
+    background: #1E2633 !important;
+    color: #EDF0F5 !important;
     font-size: 0.86rem !important;
-    -webkit-text-fill-color: #EAF0FA !important;
+    -webkit-text-fill-color: #EDF0F5 !important;
 }
 .st-key-semibot_bubble_panel .stTextInput input::placeholder {
-    color: #8DA0C0 !important;
+    color: #9AA6B8 !important;
     opacity: 1 !important;
 }
 </style>

@@ -92,7 +92,7 @@ st.markdown("""
 [data-testid="stSidebarNav"] { display: none !important; }
 .block-container { padding: 0 !important; max-width: 100% !important; }
 [data-testid="stAppViewContainer"], [data-testid="stMain"] {
-    background: #0F1B33 !important;
+    background: #1E2633 !important;
 }
 
 /* Style the Get Started page link to match landing page nav button */
@@ -177,7 +177,7 @@ iframe_fixes = """
 
 /* Ensure body background matches original exactly */
 body {
-    background: #0F1B33 !important;
+    background: #1E2633 !important;
 }
 </style>
 """

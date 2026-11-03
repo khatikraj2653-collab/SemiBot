@@ -7,12 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>html,body{margin:0;background:#0F1B33;}</style>
+<style>html,body{margin:0;background:#1E2633;}</style>
 </head>
 <body>
 <!--CM-START-->
 <style>
-.cm{--bg:#0F1B33;--surface:#16243F;--surface-2:#1C2D4D;--line:#2A3B5E;--line-2:#3A4E78;--text:#EAF0FA;--text-2:#BAC8E0;--text-3:#8DA0C0;--accent:#5B9BFF;--accent-hi:#8BB8FF;--up:#34D399;--down:#F87171;--neutral:#4A5C80;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+.cm{--bg:#1E2633;--surface:#262F3E;--surface-2:#2D3849;--line:#3A4658;--line-2:#4A5870;--text:#EDF0F5;--text-2:#C2CAD6;--text-3:#9AA6B8;--accent:#5B9BFF;--accent-hi:#8BB8FF;--up:#34D399;--down:#F87171;--neutral:#55627A;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
   font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:18px;box-sizing:border-box;line-height:1.5;position:relative;}
 .cm *{box-sizing:border-box;}
 .cm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
@@ -102,7 +102,7 @@ var FACT = [
 ];
 var LAYERS = [['macro','Macroeconomic','#5B9BFF'],['fund','Fundamental','#A78BFA'],['market','Market intelligence','#34D399'],['ext','External signals','#FBBF24']];
 var NS = 'http://www.w3.org/2000/svg';
-var UP = '#34D399', DOWN = '#F87171', NEUTRAL = '#4A5C80';
+var UP = '#34D399', DOWN = '#F87171', NEUTRAL = '#55627A';
 
 var root = document.getElementById('cm');
 var svg = document.getElementById('cm-svg');
@@ -164,7 +164,7 @@ function build(){
     slot++;
   });
   // faint orbit
-  el('ellipse', {cx:G.cx, cy:G.cy, rx:G.rx, ry:G.ry, fill:'none', stroke:'#2A3B5E', 'stroke-width':1, 'stroke-dasharray':'2 6'}, gl);
+  el('ellipse', {cx:G.cx, cy:G.cy, rx:G.rx, ry:G.ry, fill:'none', stroke:'#3A4658', 'stroke-width':1, 'stroke-dasharray':'2 6'}, gl);
   FACT.forEach(function(f){
     var k = f[0], p = pos[k], r = G.nr(f[3]);
     var dx = G.cx - p.x, dy = G.cy - p.y, d = Math.sqrt(dx*dx+dy*dy);
@@ -195,7 +195,7 @@ function build(){
   // orb
   var C = 2*Math.PI*(G.orbR+8);
   orb.C = C;
-  el('circle', {cx:G.cx, cy:G.cy, r:G.orbR, fill:'#0F1B33', stroke:'#3A4E78', 'stroke-width':1}, go);
+  el('circle', {cx:G.cx, cy:G.cy, r:G.orbR, fill:'#1E2633', stroke:'#4A5870', 'stroke-width':1}, go);
   el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:DOWN, 'stroke-width':8, opacity:.9}, go);
   orb.gauge = el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:UP, 'stroke-width':8, 'class':'gauge', transform:'rotate(-90 ' + G.cx + ' ' + G.cy + ')', 'stroke-dasharray':'0 ' + C}, go);
   orb.num = el('text', {'class':'orbnum', x:G.cx, y:G.cy + 8, 'text-anchor':'middle', 'font-size':G.orbR*0.62}, go);
