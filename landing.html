@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#252D3B;--surface:#252D3B;--surface-2:#2D3849;--line:#3A4658;--line-2:#4A5870;
+  --bg:#1E2633;--surface:#262F3E;--surface-2:#2D3849;--line:#3A4658;--line-2:#4A5870;
   --text:#EDF0F5;--text-2:#C2CAD6;--text-3:#9AA6B8;
   --accent:#5B9BFF;--accent-hi:#8BB8FF;--accent-ink:#06101F;--accent-soft:rgba(91,155,255,0.12);
   --up:#34D399;--down:#F87171;--warn:#FBBF24;--violet:#A78BFA;
@@ -27,7 +27,7 @@ button{font-family:var(--sans);cursor:pointer;}
 :focus-visible{outline:2px solid var(--accent-hi);outline-offset:3px;border-radius:6px;}
 
 /* ---------- nav ---------- */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(37,45,59,0.82);backdrop-filter:blur(14px);}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(30,38,51,0.82);backdrop-filter:blur(14px);}
 .nav-logo{display:flex;align-items:center;gap:10px;}
 .nav-icon{width:32px;height:32px;border-radius:8px;background:var(--accent-soft);border:1px solid rgba(91,155,255,0.35);display:flex;align-items:center;justify-content:center;color:var(--accent-hi);}
 .nav-icon svg{width:18px;height:18px;}
@@ -171,7 +171,7 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
 
 /* ---------- research paper page ---------- */
 #researchpage{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;}
-.rp-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(37,45,59,0.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
+.rp-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(30,38,51,0.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
 .rp-back{background:var(--surface);border:1px solid var(--line-2);color:var(--text);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;transition:border-color .15s;}
 .rp-back:hover{border-color:var(--accent);}
 .rp-brand{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;color:var(--text);}
@@ -242,58 +242,6 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
   html{scroll-behavior:auto;}
   *{transition:none !important;}
 }
-
-/* ---------- neumorphism (soft UI): surfaces share the page colour, depth comes from paired light/dark shadows ---------- */
-:root{
-  --nm-dark:#171D28;--nm-light:#323D50;
-  --raise:7px 7px 16px var(--nm-dark),-7px -7px 16px var(--nm-light);
-  --raise-lg:12px 12px 28px var(--nm-dark),-12px -12px 28px var(--nm-light);
-  --raise-sm:4px 4px 9px var(--nm-dark),-4px -4px 9px var(--nm-light);
-  --inset:inset 6px 6px 12px var(--nm-dark),inset -6px -6px 12px var(--nm-light);
-  --inset-sm:inset 3px 3px 6px var(--nm-dark),inset -3px -3px 6px var(--nm-light);
-  --surface-2:#29323F;--line:#2F394A;--line-2:#3B4659;
-}
-.nav{border-bottom:0;box-shadow:0 8px 20px -8px var(--nm-dark);}
-.nav-icon{border:0;background:var(--bg);box-shadow:var(--raise-sm);}
-.nav-cta,.btn-primary,.rc-btn,.cta-btn,.rp-ssrn-btn{box-shadow:var(--raise-sm);transition:box-shadow .18s,transform .18s,background .18s;}
-.nav-cta:hover,.btn-primary:hover,.rc-btn:hover,.cta-btn:hover{box-shadow:var(--raise);transform:translateY(-1px);}
-.nav-cta:active,.btn-primary:active,.rc-btn:active,.cta-btn:active,.rp-ssrn-btn:active{transform:none;box-shadow:inset 4px 4px 9px rgba(5,25,60,.55),inset -3px -3px 8px rgba(160,200,255,.35);}
-.btn-secondary,.rp-back,.rp-ssrn-btn-outline{background:var(--bg);border:0;box-shadow:var(--raise-sm);transition:box-shadow .18s,color .18s;}
-.btn-secondary:hover,.rp-back:hover,.rp-ssrn-btn-outline:hover{background:var(--bg);box-shadow:var(--raise);color:var(--accent-hi);}
-.btn-secondary:active,.rp-back:active,.rp-ssrn-btn-outline:active{box-shadow:var(--inset-sm);}
-.strip{border:0;background:var(--bg);box-shadow:var(--inset-sm);}
-.chip,.rc-tag,.rp-tag,.rp-body code{background:var(--bg);border:0;box-shadow:var(--inset-sm);}
-.stats{border-top:0;box-shadow:0 -1px 0 var(--nm-dark),0 -2px 0 var(--nm-light);}
-.sample{border:0;box-shadow:var(--raise-lg);}
-.sample-head{background:transparent;border-bottom:0;box-shadow:0 1px 0 var(--nm-dark),0 2px 0 var(--nm-light);}
-.sample-badge{box-shadow:var(--inset-sm);border-color:transparent;}
-.sample-foot{border-top:0;box-shadow:0 -1px 0 var(--nm-dark),0 -2px 0 var(--nm-light);}
-.split{height:14px;padding:3px;box-shadow:var(--inset-sm);gap:3px;}
-.split i{border-radius:99px;}
-section.block.alt{background:var(--bg);border:0;}
-.layer,.card,.hiw-problems,.research-card{background:var(--bg);border:0;box-shadow:var(--raise);transition:box-shadow .22s,transform .22s;}
-.research-card{box-shadow:var(--raise-lg);}
-.layer:hover,.card:hover{box-shadow:var(--raise-lg);transform:translateY(-3px);}
-.f{border-top:0;box-shadow:0 -1px 0 var(--nm-dark),0 -2px 0 var(--nm-light);}
-.f:first-of-type{box-shadow:none;}
-.dr{border-top:0;box-shadow:0 -1px 0 var(--nm-dark),0 -2px 0 var(--nm-light);}
-.layer-name i{box-shadow:var(--raise-sm);}
-.step-num{border:0;background:var(--bg);box-shadow:var(--raise-sm);border-radius:50%;}
-.step:hover .step-num{box-shadow:var(--inset-sm);}
-.prob-item{border-left:0;padding:10px 14px;border-radius:12px;box-shadow:var(--inset-sm);}
-.contact-grid{background:transparent;border:0;gap:20px;overflow:visible;}
-.contact-grid a{background:var(--bg);border-radius:14px;box-shadow:var(--raise);transition:box-shadow .2s;}
-.contact-grid a:hover{background:var(--bg);box-shadow:var(--inset);}
-#contact{background:var(--bg);border-top:0;}
-footer{border-top:0;box-shadow:inset 0 6px 12px -6px var(--nm-dark);}
-.rp-nav{border-bottom:0;box-shadow:0 8px 20px -8px var(--nm-dark);}
-.rp-divider{height:3px;border-radius:3px;background:var(--bg);box-shadow:var(--inset-sm);}
-.rp-h2{border-top:0;}
-.rp-highlight{background:var(--bg);border:0;box-shadow:var(--inset);}
-.rp-table-wrap{border:0;box-shadow:var(--inset);padding:4px;}
-.rp-table caption,.rp-table th{background:transparent;}
-.chat-hint{box-shadow:var(--raise);}
-@media (prefers-reduced-motion:reduce){.layer:hover,.card:hover{transform:none;}}
 </style>
 </head>
 <body>
@@ -387,7 +335,7 @@ footer{border-top:0;box-shadow:inset 0 6px 12px -6px var(--nm-dark);}
     <h2 class="section-title">Move the factors. Watch the probability change.</h2>
     <p class="section-sub">SemiBot's UP% is not a guess from the language model. It is a weighted sum of 18 scores. Pick a factor, change its score, or switch a whole layer off, and see exactly how much it matters.</p>
 <style>
-.cm{--bg:#252D3B;--surface:#252D3B;--surface-2:#2D3849;--line:#3A4658;--line-2:#4A5870;--text:#EDF0F5;--text-2:#C2CAD6;--text-3:#9AA6B8;--accent:#5B9BFF;--accent-hi:#8BB8FF;--up:#34D399;--down:#F87171;--neutral:#55627A;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+.cm{--bg:#1E2633;--surface:#262F3E;--surface-2:#2D3849;--line:#3A4658;--line-2:#4A5870;--text:#EDF0F5;--text-2:#C2CAD6;--text-3:#9AA6B8;--accent:#5B9BFF;--accent-hi:#8BB8FF;--up:#34D399;--down:#F87171;--neutral:#55627A;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
   font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:18px;box-sizing:border-box;line-height:1.5;position:relative;}
 .cm *{box-sizing:border-box;}
 .cm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
@@ -446,33 +394,6 @@ footer{border-top:0;box-shadow:inset 0 6px 12px -6px var(--nm-dark);}
 .cm.stack .cm-body{grid-template-columns:1fr;}
 .cm.stack .cm-side{max-height:none;}
 @media (prefers-reduced-motion:reduce){.cm .flow{animation:none;}.cm *{transition:none !important;}}
-/* neumorphism for the widget */
-.cm{--nm-dark:#171D28;--nm-light:#323D50;--surface:#252D3B;--line:#2F394A;--line-2:#3B4659;
-  --raise:7px 7px 16px var(--nm-dark),-7px -7px 16px var(--nm-light);--raise-sm:4px 4px 9px var(--nm-dark),-4px -4px 9px var(--nm-light);
-  --inset:inset 6px 6px 12px var(--nm-dark),inset -6px -6px 12px var(--nm-light);--inset-sm:inset 3px 3px 6px var(--nm-dark),inset -3px -3px 6px var(--nm-light);
-  border:0;box-shadow:var(--raise);padding:22px;}
-.cm-btn{background:var(--bg);border:0;box-shadow:var(--raise-sm);border-radius:10px;transition:box-shadow .15s,color .15s;}
-.cm-btn:hover{background:var(--bg);color:var(--accent-hi);box-shadow:var(--raise);}
-.cm-btn:active{box-shadow:var(--inset-sm);}
-.cm-chip{background:var(--bg);border:0;box-shadow:var(--raise-sm);padding:6px 14px;transition:box-shadow .15s,opacity .15s;}
-.cm-chip:hover{border:0;box-shadow:var(--raise);}
-.cm-chip[aria-pressed="true"]{box-shadow:var(--inset-sm);opacity:.6;}
-.cm-stage{background:var(--bg);border:0;box-shadow:var(--inset);}
-.cm-side{background:var(--bg);border:0;box-shadow:var(--raise);}
-.cm-tag{border:0;box-shadow:var(--inset-sm);padding:2px 11px;}
-.cm-meter{height:10px;background:var(--bg);box-shadow:var(--inset-sm);padding:2px;}
-.cm-meter i{box-shadow:0 0 8px rgba(91,155,255,.5);}
-.cm-note{border-left:0;padding:10px 12px;border-radius:12px;box-shadow:var(--inset-sm);}
-.cm-driver{border-top:0;border-radius:10px;padding:9px 10px;margin-bottom:6px;transition:box-shadow .15s;}
-.cm-driver:hover{box-shadow:var(--raise-sm);}
-.cm-driver:active{box-shadow:var(--inset-sm);}
-.cm-tip{background:var(--bg);border:0;box-shadow:var(--raise);}
-.cm .node circle.body{filter:drop-shadow(4px 4px 5px rgba(10,14,22,.65)) drop-shadow(-3px -3px 4px rgba(80,98,128,.28));}
-.cm input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:26px;}
-.cm input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:99px;background:var(--bg);box-shadow:var(--inset-sm);}
-.cm input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-6px;border-radius:50%;background:var(--bg);border:0;box-shadow:var(--raise-sm),inset 0 0 0 6px var(--bg),inset 0 0 0 11px var(--accent);}
-.cm input[type=range]::-moz-range-track{height:10px;border-radius:99px;background:var(--bg);box-shadow:var(--inset-sm);}
-.cm input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);border:6px solid var(--bg);box-shadow:var(--raise-sm);}
 </style>
 <div class="cm" id="cm">
   <div class="cm-head">
@@ -597,7 +518,7 @@ function build(){
   // orb
   var C = 2*Math.PI*(G.orbR+8);
   orb.C = C;
-  el('circle', {cx:G.cx, cy:G.cy, r:G.orbR, fill:'#252D3B', stroke:'#4A5870', 'stroke-width':1}, go);
+  el('circle', {cx:G.cx, cy:G.cy, r:G.orbR, fill:'#1E2633', stroke:'#4A5870', 'stroke-width':1}, go);
   el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:DOWN, 'stroke-width':8, opacity:.9}, go);
   orb.gauge = el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:UP, 'stroke-width':8, 'class':'gauge', transform:'rotate(-90 ' + G.cx + ' ' + G.cy + ')', 'stroke-dasharray':'0 ' + C}, go);
   orb.num = el('text', {'class':'orbnum', x:G.cx, y:G.cy + 8, 'text-anchor':'middle', 'font-size':G.orbR*0.62}, go);

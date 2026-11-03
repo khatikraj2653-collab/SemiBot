@@ -266,7 +266,7 @@ def render_ticker_tape():
     <style>
     .ticker-wrap {{
         position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-        background: #252D3B;
+        background: #262F3E;
         border-top: 1px solid #3A4658;
         padding: 8px 0; overflow: hidden;
     }}
@@ -299,7 +299,7 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-    --bg:#252D3B; --surface:#252D3B; --surface-2:#2D3849; --line:#3A4658; --line-2:#4A5870;
+    --bg:#1E2633; --surface:#262F3E; --surface-2:#2D3849; --line:#3A4658; --line-2:#4A5870;
     --text:#EDF0F5; --text-2:#C2CAD6; --text-3:#9AA6B8;
     --accent:#5B9BFF; --accent-hi:#8BB8FF; --accent-ink:#06101F; --accent-soft:rgba(91,155,255,0.12);
     --up:#34D399; --down:#F87171; --warn:#FBBF24;
@@ -561,77 +561,6 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"], .stApp {
 }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
-
-/* ---------- neumorphism (soft UI) ---------- */
-:root {
-    --nm-dark:#171D28; --nm-light:#323D50;
-    --raise:7px 7px 16px var(--nm-dark),-7px -7px 16px var(--nm-light);
-    --raise-sm:4px 4px 9px var(--nm-dark),-4px -4px 9px var(--nm-light);
-    --inset:inset 6px 6px 12px var(--nm-dark),inset -6px -6px 12px var(--nm-light);
-    --inset-sm:inset 3px 3px 6px var(--nm-dark),inset -3px -3px 6px var(--nm-light);
-    --surface-2:#29323F; --line:#2F394A; --line-2:#3B4659;
-}
-[data-testid="stSidebar"] { border-right: 0 !important; box-shadow: 8px 0 18px -8px var(--nm-dark) !important; }
-.stButton > button,
-[data-testid="stSidebar"] .stButton > button,
-[data-testid="stSidebar"] [data-testid="stPageLink"] a {
-    background: var(--bg) !important;
-    border: 0 !important;
-    box-shadow: var(--raise-sm) !important;
-    transition: box-shadow 0.18s, transform 0.18s, color 0.18s !important;
-}
-.stButton > button:hover,
-[data-testid="stSidebar"] .stButton > button:hover,
-[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {
-    background: var(--bg) !important;
-    box-shadow: var(--raise) !important;
-    color: var(--accent-hi) !important;
-}
-.stButton > button:active,
-[data-testid="stSidebar"] .stButton > button:active { box-shadow: var(--inset-sm) !important; transform: none !important; }
-.stButton > button[kind="primary"],
-.stButton > button[data-testid="stBaseButton-primary"] {
-    background: var(--accent) !important;
-    border: 0 !important;
-    color: var(--accent-ink) !important;
-}
-.stButton > button[kind="primary"]:hover,
-.stButton > button[data-testid="stBaseButton-primary"]:hover { background: var(--accent) !important; color: var(--accent-ink) !important; filter: brightness(1.08); }
-.stButton > button[kind="primary"]:active,
-.stButton > button[data-testid="stBaseButton-primary"]:active {
-    box-shadow: inset 4px 4px 9px rgba(5,25,60,.55), inset -3px -3px 8px rgba(160,200,255,.35) !important;
-}
-.stTextInput input { border: 0 !important; box-shadow: none !important; background: transparent !important; }
-.stTextInput input:focus { box-shadow: none !important; }
-.stTextInput [data-baseweb="base-input"],
-.stTextInput [data-baseweb="input"],
-[data-baseweb="select"] > div {
-    background: var(--bg) !important;
-    border: 0 !important;
-    border-radius: 12px !important;
-    box-shadow: var(--inset) !important;
-}
-.stTextInput [data-baseweb="base-input"]:focus-within,
-.stTextInput [data-baseweb="input"]:focus-within,
-[data-baseweb="select"] > div:focus-within { box-shadow: var(--inset), 0 0 0 2px var(--accent) !important; }
-[data-baseweb="popover"] ul, [data-baseweb="menu"] { background: var(--bg) !important; box-shadow: var(--raise) !important; border-radius: 12px !important; }
-.semi-card, .metric-card, .reasoning-card, .bot-bubble, .hist-item {
-    background: var(--bg) !important;
-    border: 0 !important;
-    box-shadow: var(--raise-sm);
-}
-.semi-card, .metric-card { border-radius: 14px; box-shadow: var(--raise); }
-.semi-card { transition: box-shadow 0.2s, transform 0.2s; }
-.semi-card:hover { box-shadow: 10px 10px 22px var(--nm-dark), -10px -10px 22px var(--nm-light); transform: translateY(-2px); }
-.semi-card.hover-expand .hover-tooltip { background: var(--bg); border: 0; box-shadow: var(--raise); }
-.reasoning-card { border-left: 3px solid var(--accent) !important; border-radius: 4px 14px 14px 4px; }
-.user-bubble { border: 0; background: var(--bg); box-shadow: var(--inset-sm); }
-.sec-label::after { height: 3px; border-radius: 3px; background: var(--bg); box-shadow: var(--inset-sm); }
-.bar-track { height: 12px; padding: 2px; background: var(--bg); box-shadow: var(--inset-sm); }
-.disclaimer, .val-error { border: 0; box-shadow: var(--inset-sm); }
-.ticker-chip { border: 0; box-shadow: var(--inset-sm); }
-.ticker-wrap { border-top: 0 !important; box-shadow: 0 -8px 18px -8px var(--nm-dark); }
-@media (prefers-reduced-motion: reduce) { .semi-card:hover { transform: none; } }
 </style>
 """, unsafe_allow_html=True)
 
