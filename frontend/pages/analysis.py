@@ -25,6 +25,7 @@ from graph.workflow import app, build_graph
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from log_client import log_event
 from chat_bubble import render_chat_bubble, _live_price_block
+from causal_map import render_causal_map, FACTOR_KEYS
 
 # PATH FIX 2: Go up TWO levels to find .env at project root
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), '.env'))
@@ -1351,6 +1352,14 @@ if st.session_state.result:
     st.markdown("<div style='padding:0 32px'>", unsafe_allow_html=True)
 
     scores = result.get("scores", {})
+
+    if scores:
+        st.markdown("<div class='sec-label'>Interactive causal map</div>", unsafe_allow_html=True)
+        try:
+            render_causal_map(ticker, scores, {k: smart_truncate(result.get(k, ""), 700) for k in FACTOR_KEYS})
+        except Exception as e:
+            st.caption(f"Causal map unavailable: {e}")
+
     st.markdown("<div class='sec-label'>Macroeconomic</div>", unsafe_allow_html=True)
     for label, key in [("CPI","cpi"),("PPI","ppi"),("Fed Rate","fed_rate"),("USD Index","usd_index")]:
         st.markdown(f"<div class='semi-card'><div class='card-key'>{label}</div><div class='card-val'>{smart_truncate(result.get(key,'N/A'))}</div>{score_badge(key, scores)}</div>", unsafe_allow_html=True)

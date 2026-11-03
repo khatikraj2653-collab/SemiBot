@@ -78,8 +78,8 @@ button{font-family:var(--sans);cursor:pointer;}
 .prob-up small,.prob-down small{font-size:12px;font-weight:500;letter-spacing:.06em;margin-left:6px;color:var(--text-3);}
 .split{display:flex;height:10px;border-radius:99px;overflow:hidden;gap:3px;margin-bottom:22px;}
 .split i{display:block;height:100%;}
-.split .su{background:var(--up);width:58%;}
-.split .sd{background:var(--down);width:42%;}
+.split .su{background:var(--up);width:56%;}
+.split .sd{background:var(--down);width:44%;}
 .drivers{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .dr-h{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
 .dr{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px;color:var(--text-2);}
@@ -107,6 +107,7 @@ section[id]{scroll-margin-top:68px;}
 .f{padding:13px 0;border-top:1px solid var(--line);}
 .f b{display:block;font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:2px;}
 .f span{display:block;font-size:13.5px;color:var(--text-3);line-height:1.6;}
+.f b .w{display:inline;float:right;font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--text-3);}
 .l-macro i{background:var(--accent);} .l-fund i{background:var(--violet);} .l-mkt i{background:var(--up);} .l-ext i{background:var(--warn);}
 
 /* feature cards */
@@ -258,6 +259,7 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
     <span class="nav-name">SemiBot</span>
   </div>
   <div class="nav-links">
+    <a href="#playground" onclick="document.getElementById('playground').scrollIntoView({behavior:'smooth'});return false;">Playground</a>
     <a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'});return false;">Factors</a>
     <a href="#howitworks" onclick="document.getElementById('howitworks').scrollIntoView({behavior:'smooth'});return false;">How it works</a>
     <a href="#compare" onclick="document.getElementById('compare').scrollIntoView({behavior:'smooth'});return false;">Compare</a>
@@ -295,15 +297,15 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
     </div>
 
     <div class="right">
-      <div class="sample" role="img" aria-label="Illustrative example of a SemiBot analysis result: 58 percent up, 42 percent down, with top bullish and bearish drivers">
+      <div class="sample" role="img" aria-label="Illustrative example of a SemiBot analysis result: 56 percent up, 44 percent down, with top bullish and bearish drivers">
         <div class="sample-head">
           <span class="sample-title">Example analysis</span>
           <span class="sample-badge">Illustrative</span>
         </div>
         <div class="sample-body">
           <div class="prob-row">
-            <div class="prob-up">58%<small>UP</small></div>
-            <div class="prob-down">42%<small>DOWN</small></div>
+            <div class="prob-up">56%<small>UP</small></div>
+            <div class="prob-down">44%<small>DOWN</small></div>
           </div>
           <div class="split"><i class="su"></i><i class="sd"></i></div>
           <div class="drivers">
@@ -327,6 +329,368 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
   </div>
 </section>
 
+<section id="playground" class="block">
+  <div class="wrap">
+    <span class="section-badge">Playground</span>
+    <h2 class="section-title">Move the factors. Watch the probability change.</h2>
+    <p class="section-sub">SemiBot's UP% is not a guess from the language model. It is a weighted sum of 18 scores. Pick a factor, change its score, or switch a whole layer off, and see exactly how much it matters.</p>
+<style>
+.cm{--bg:#0A0D12;--surface:#10151C;--surface-2:#161C25;--line:#212A36;--line-2:#2E3A4B;--text:#E8ECF2;--text-2:#B4BFCE;--text-3:#8693A5;--accent:#5B9BFF;--accent-hi:#8BB8FF;--up:#34D399;--down:#F87171;--neutral:#4B586A;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:18px;box-sizing:border-box;line-height:1.5;position:relative;}
+.cm *{box-sizing:border-box;}
+.cm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+.cm-title{font-size:15px;font-weight:600;letter-spacing:-0.01em;}
+.cm-sub{font-size:13px;color:var(--text-3);max-width:620px;}
+.cm-btn{font-family:inherit;font-size:13px;font-weight:600;color:var(--text);background:transparent;border:1px solid var(--line-2);border-radius:8px;padding:7px 14px;cursor:pointer;transition:border-color .15s,background .15s;}
+.cm-btn:hover{border-color:var(--accent);background:rgba(91,155,255,.12);}
+.cm-btn:focus-visible,.cm-chip:focus-visible,.cm-driver:focus-visible,.cm input:focus-visible{outline:2px solid var(--accent-hi);outline-offset:2px;}
+.cm-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.cm-chip{font-family:inherit;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--text-2);background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;transition:border-color .15s,opacity .15s;}
+.cm-chip:hover{border-color:var(--line-2);}
+.cm-chip i{width:8px;height:8px;border-radius:2px;display:block;}
+.cm-chip b{font-family:var(--mono);font-weight:600;font-size:12px;}
+.cm-chip[aria-pressed="true"]{opacity:.55;text-decoration:line-through;text-decoration-color:var(--text-3);}
+.cm-body{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:stretch;}
+.cm-stage{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;min-height:300px;}
+.cm-stage svg{display:block;width:100%;height:auto;}
+.cm-side{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:13.5px;color:var(--text-2);overflow:auto;max-height:640px;}
+.cm-side h3{font-size:15px;font-weight:600;color:var(--text);margin:0 0 6px;letter-spacing:-0.01em;}
+.cm-side .k{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin:14px 0 6px;}
+.cm-tag{display:inline-block;font-family:var(--mono);font-size:11px;border:1px solid var(--line-2);border-radius:99px;padding:1px 9px;color:var(--text-2);}
+.cm-big{font-family:var(--mono);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text);}
+.cm-meter{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 2px;}
+.cm-meter i{display:block;height:100%;background:var(--accent);border-radius:99px;}
+.cm input[type=range]{width:100%;accent-color:var(--accent);margin:6px 0;height:24px;cursor:pointer;}
+.cm-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text-3);}
+.cm-note{font-size:13px;line-height:1.65;color:var(--text-2);max-height:190px;overflow:auto;border-left:2px solid var(--line-2);padding-left:10px;}
+.cm-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.cm-driver{font-family:inherit;display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;font-size:13px;color:var(--text-2);background:transparent;border:0;border-top:1px solid var(--line);padding:8px 2px;cursor:pointer;}
+.cm-driver:hover{color:var(--text);}
+.cm-driver b{font-family:var(--mono);font-weight:600;}
+.cm .pos{color:var(--up);} .cm .neg{color:var(--down);}
+.cm-hint{font-size:12.5px;color:var(--text-3);margin-top:10px;}
+.cm-foot{margin-top:12px;font-size:12px;color:var(--text-3);line-height:1.6;}
+.cm-tip{position:absolute;pointer-events:none;z-index:5;background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--text);box-shadow:0 10px 28px rgba(0,0,0,.55);opacity:0;transition:opacity .12s;max-width:230px;}
+.cm-tip.on{opacity:1;}
+.cm-tip small{display:block;color:var(--text-3);font-family:var(--mono);font-size:11px;margin-top:2px;}
+.cm-sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+/* svg bits */
+.cm .node{cursor:pointer;outline:none;}
+.cm .node circle.body{transition:fill-opacity .3s,stroke-width .15s;}
+.cm .node:hover circle.body,.cm .node:focus-visible circle.body{stroke-width:3.5;}
+.cm .node.sel circle.ring{opacity:1;}
+.cm .node circle.ring{fill:none;stroke:var(--accent-hi);stroke-width:2;opacity:0;stroke-dasharray:4 4;}
+.cm .node.dim{opacity:.28;}
+.cm .link{fill:none;transition:stroke-width .3s,opacity .3s;}
+.cm .flow{animation:cmflow 1.4s linear infinite;}
+@keyframes cmflow{to{stroke-dashoffset:-28;}}
+.cm text{font-family:'Inter',sans-serif;}
+.cm .lbl{font-size:16.5px;fill:var(--text-2);pointer-events:none;}
+.cm .snum{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;fill:var(--text);pointer-events:none;}
+.cm .orbnum{font-family:'JetBrains Mono',monospace;font-weight:600;fill:var(--text);}
+.cm .orbsub{font-size:15px;fill:var(--text-3);}
+.cm .gauge{transition:stroke-dasharray .45s ease;}
+.cm.compact .lbl{display:none;}
+.cm.stack .cm-body{grid-template-columns:1fr;}
+.cm.stack .cm-side{max-height:none;}
+@media (prefers-reduced-motion:reduce){.cm .flow{animation:none;}.cm *{transition:none !important;}}
+</style>
+<div class="cm" id="cm">
+  <div class="cm-head">
+    <div>
+      <div class="cm-title" id="cm-title">Interactive causal map</div>
+      <div class="cm-sub">Click a factor, then drag its score to ask “what if?”. Click a layer chip to switch that layer off. The probability is recalculated with SemiBot’s own weights.</div>
+    </div>
+    <button class="cm-btn" id="cm-reset" type="button">Reset to model</button>
+  </div>
+  <div class="cm-chips" id="cm-chips"></div>
+  <div class="cm-body">
+    <div class="cm-stage" id="cm-stage">
+      <svg id="cm-svg" role="group" aria-label="Causal map of 18 factors feeding the UP probability"></svg>
+      <div class="cm-tip" id="cm-tip" role="tooltip"></div>
+    </div>
+    <aside class="cm-side" id="cm-side"></aside>
+  </div>
+  <div class="cm-foot" id="cm-foot"></div>
+  <div class="cm-sr" id="cm-live" aria-live="polite"></div>
+</div>
+<script>
+(function(){
+var D = {"sample":true,"ticker":"Example","scores":{"cpi":1,"ppi":0,"fed_rate":2,"usd_index":-1,"pe_ratio":-6,"market_cap":2,"earnings_guidance":5,"insider_selling":-4,"sector_rally":6,"technical_signal":4,"analyst_ratings":3,"sell_the_news":-3,"geopolitics":-2,"supply_chain":7,"news_sentiment":3,"capital_rotation":-1,"competitor_contagion":2,"beta":0}};
+var FACT = [
+  ['cpi','CPI','macro',7],['ppi','PPI','macro',3],['fed_rate','Fed Rate','macro',8],['usd_index','USD Index','macro',2],
+  ['pe_ratio','P/E Ratio','fund',5],['market_cap','Market Cap','fund',3],['earnings_guidance','Earnings Guidance','fund',6],['insider_selling','Insider Selling','fund',7],
+  ['sector_rally','Sector Rally','market',6],['technical_signal','Technical Signal','market',6],['analyst_ratings','Analyst Ratings','market',5],['sell_the_news','Sell-the-News','market',7],
+  ['geopolitics','Geopolitics','ext',9],['supply_chain','Supply Chain','ext',9],['news_sentiment','News Sentiment','ext',5],['capital_rotation','Capital Rotation','ext',3],['competitor_contagion','Competitor Contagion','ext',8],['beta','Beta','ext',1]
+];
+var LAYERS = [['macro','Macroeconomic','#5B9BFF'],['fund','Fundamental','#A78BFA'],['market','Market intelligence','#34D399'],['ext','External signals','#FBBF24']];
+var NS = 'http://www.w3.org/2000/svg';
+var UP = '#34D399', DOWN = '#F87171', NEUTRAL = '#4B586A';
+
+var root = document.getElementById('cm');
+var svg = document.getElementById('cm-svg');
+var stage = document.getElementById('cm-stage');
+var tip = document.getElementById('cm-tip');
+var side = document.getElementById('cm-side');
+var chipsEl = document.getElementById('cm-chips');
+var live = document.getElementById('cm-live');
+
+var base = {}, cur = {}, muted = {}, selected = null, hoverLayer = null;
+var sample = !!D.sample;
+FACT.forEach(function(f){ var v = D.scores && D.scores[f[0]]; v = (typeof v === 'number' && isFinite(v)) ? Math.max(-10, Math.min(10, Math.round(v))) : 0; base[f[0]] = v; cur[f[0]] = v; });
+LAYERS.forEach(function(l){ muted[l[0]] = false; });
+document.getElementById('cm-title').textContent = sample ? 'Try it: interactive causal map (illustrative scores)' : ('Interactive causal map · ' + (D.ticker || ''));
+document.getElementById('cm-foot').textContent = sample
+  ? 'Illustrative scores, not a prediction for any stock. Run a real analysis to see live scores for a ticker. Node size = factor weight, colour = score, line thickness = effect on UP%.'
+  : 'What-if view only: the original model scores are unchanged and nothing here is saved. Node size = factor weight, colour = score, line thickness = effect on UP%. Not financial advice.';
+
+function layerOf(k){ for (var i=0;i<FACT.length;i++) if (FACT[i][0]===k) return FACT[i][2]; }
+function eff(k){ return muted[layerOf(k)] ? 0 : cur[k]; }
+function probOf(get){ var ws = 0; FACT.forEach(function(f){ ws += get(f[0]) * f[3]; }); return Math.max(15, Math.min(85, Math.round((ws + 1000) / 20))); }
+function upNow(){ return probOf(eff); }
+function upModel(){ return probOf(function(k){ return base[k]; }); }
+function pts(k, v){ return v * fw(k) / 20; }
+function fw(k){ for (var i=0;i<FACT.length;i++) if (FACT[i][0]===k) return FACT[i][3]; }
+function fl(k){ for (var i=0;i<FACT.length;i++) if (FACT[i][0]===k) return FACT[i][1]; }
+function sgn(n){ return (n>0?'+':(n<0?'−':'')) + Math.abs(n); }
+function sgnf(n){ var r = Math.round(n*10)/10; return (r>0?'+':(r<0?'−':'')) + Math.abs(r).toFixed(1); }
+function colour(v){ return v>0 ? UP : (v<0 ? DOWN : NEUTRAL); }
+function el(name, attrs, parent){ var e = document.createElementNS(NS, name); for (var a in attrs) e.setAttribute(a, attrs[a]); if (parent) parent.appendChild(e); return e; }
+
+var G = null, nodes = {}, links = {}, orb = {};
+var compact = false, stack = false;
+
+function geometry(){
+  compact = root.clientWidth < 640;
+  stack = root.clientWidth < 900;
+  root.classList.toggle('stack', stack);
+  root.classList.toggle('compact', compact);
+  return compact
+    ? {W:720,H:720,cx:360,cy:360,rx:282,ry:282,orbR:82,nr:function(w){return 12+w*1.7;}}
+    : {W:900,H:600,cx:450,cy:300,rx:272,ry:206,orbR:80,nr:function(w){return 8+w*1.3;}};
+}
+
+function build(){
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  nodes = {}; links = {}; orb = {};
+  G = geometry();
+  svg.setAttribute('viewBox', '0 0 ' + G.W + ' ' + G.H);
+  var gl = el('g', {}, svg), gn = el('g', {}, svg), go = el('g', {}, svg);
+  // slot angles: 18 factors + a gap after every layer
+  var slot = 0, total = FACT.length + LAYERS.length, pos = {}, lowN = 0;
+  LAYERS.forEach(function(l){
+    FACT.filter(function(f){return f[2]===l[0];}).forEach(function(f){
+      var th = -Math.PI/2 + (slot + 0.5) * 2*Math.PI/total;
+      pos[f[0]] = {x:G.cx + G.rx*Math.cos(th), y:G.cy + G.ry*Math.sin(th), c:Math.cos(th), s:Math.sin(th)};
+      slot++;
+    });
+    slot++;
+  });
+  // faint orbit
+  el('ellipse', {cx:G.cx, cy:G.cy, rx:G.rx, ry:G.ry, fill:'none', stroke:'#212A36', 'stroke-width':1, 'stroke-dasharray':'2 6'}, gl);
+  FACT.forEach(function(f){
+    var k = f[0], p = pos[k], r = G.nr(f[3]);
+    var dx = G.cx - p.x, dy = G.cy - p.y, d = Math.sqrt(dx*dx+dy*dy);
+    var ex = G.cx - dx/d*(G.orbR+14), ey = G.cy - dy/d*(G.orbR+14);
+    var sx = p.x + dx/d*r, sy = p.y + dy/d*r;
+    links[k] = el('line', {x1:sx, y1:sy, x2:ex, y2:ey, 'class':'link', 'stroke-linecap':'round'}, gl);
+    var g = el('g', {'class':'node', tabindex:0, role:'button', transform:'translate(' + p.x + ',' + p.y + ')'}, gn);
+    el('circle', {'class':'ring', r:r+6}, g);
+    var body = el('circle', {'class':'body', r:r, 'stroke-width':2.5}, g);
+    var num = el('text', {'class':'snum', 'text-anchor':'middle', y:4}, g);
+    var low = p.s > 0.85, anchor = low ? "middle" : (p.c > 0.1 ? "start" : (p.c < -0.1 ? "end" : "middle"));
+    var lx = anchor==="start" ? r+9 : (anchor==="end" ? -(r+9) : 0);
+    var ly = low ? r + 18 + (lowN++ % 2) * 17 : (anchor==="middle" ? (p.s > 0 ? r+18 : -(r+9)) : 4);
+    var lab = el('text', {'class':'lbl', 'text-anchor':anchor, x:lx, y:ly}, g);
+    lab.textContent = f[1];
+    nodes[k] = {g:g, body:body, num:num, r:r};
+    g.addEventListener('click', function(){ select(k); });
+    g.addEventListener('keydown', function(e){
+      if (e.key==='Enter' || e.key===' ') { e.preventDefault(); select(k); }
+      else if (e.key==='ArrowRight' || e.key==='ArrowUp') { e.preventDefault(); setScore(k, cur[k]+1); }
+      else if (e.key==='ArrowLeft' || e.key==='ArrowDown') { e.preventDefault(); setScore(k, cur[k]-1); }
+    });
+    g.addEventListener('mouseenter', function(){ showTip(k); });
+    g.addEventListener('mouseleave', hideTip);
+    g.addEventListener('focus', function(){ showTip(k); });
+    g.addEventListener('blur', hideTip);
+  });
+  // orb
+  var C = 2*Math.PI*(G.orbR+8);
+  orb.C = C;
+  el('circle', {cx:G.cx, cy:G.cy, r:G.orbR, fill:'#0A0D12', stroke:'#2E3A4B', 'stroke-width':1}, go);
+  el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:DOWN, 'stroke-width':8, opacity:.9}, go);
+  orb.gauge = el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:UP, 'stroke-width':8, 'class':'gauge', transform:'rotate(-90 ' + G.cx + ' ' + G.cy + ')', 'stroke-dasharray':'0 ' + C}, go);
+  orb.num = el('text', {'class':'orbnum', x:G.cx, y:G.cy + 8, 'text-anchor':'middle', 'font-size':G.orbR*0.62}, go);
+  orb.lab = el('text', {'class':'orbsub', x:G.cx, y:G.cy - G.orbR*0.46, 'text-anchor':'middle'}, go);
+  orb.lab.textContent = 'UP probability';
+  orb.sub = el('text', {'class':'orbsub', x:G.cx, y:G.cy + G.orbR*0.55, 'text-anchor':'middle'}, go);
+  orb.shown = null;
+  orb.sel = null;
+}
+
+function tweenTo(target){
+  var token = orb.token = (orb.token || 0) + 1;
+  var from = orb.shown == null ? target : orb.shown, t0 = null;
+  function finish(){ if (orb.token === token) { orb.shown = target; orb.num.textContent = target + '%'; } }
+  if (from === target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
+  function step(ts){
+    if (orb.token !== token) return;
+    if (t0 == null) t0 = ts;
+    var p = Math.min(1, (ts - t0) / 380), v = Math.round(from + (target - from) * p);
+    orb.num.textContent = v + '%';
+    orb.shown = v;
+    if (p < 1) requestAnimationFrame(step); else finish();
+  }
+  requestAnimationFrame(step);
+  setTimeout(finish, 520); // fallback when animation frames are throttled (background tab)
+}
+
+function update(){
+  var up = upNow(), model = upModel();
+  FACT.forEach(function(f){
+    var k = f[0], v = eff(k), n = nodes[k], c = colour(v), m = Math.abs(v)/10;
+    n.body.setAttribute('fill', c);
+    n.body.setAttribute('fill-opacity', (0.16 + 0.84*m).toFixed(2));
+    n.body.setAttribute('stroke', c);
+    n.num.textContent = sgn(v);
+    n.g.setAttribute('aria-label', f[1] + ', score ' + sgn(v) + ', weight ' + f[3] + '. Use arrow keys to change the score.');
+    var contrib = Math.abs(pts(k, v));
+    var l = links[k];
+    l.setAttribute('stroke', c);
+    l.setAttribute('stroke-width', (v===0 ? 1 : 1.2 + contrib*1.4).toFixed(2));
+    l.setAttribute('opacity', v===0 ? 0.35 : 0.75);
+    l.setAttribute('stroke-dasharray', v===0 ? '2 6' : '8 6');
+    l.setAttribute('class', 'link' + (v===0 ? '' : ' flow'));
+    var dim = (hoverLayer && layerOf(k) !== hoverLayer) ? true : false;
+    n.g.setAttribute('class', 'node' + (selected===k ? ' sel' : '') + (dim ? ' dim' : ''));
+    l.style.opacity = dim ? 0.12 : '';
+  });
+  tweenTo(up);
+  orb.gauge.setAttribute('stroke-dasharray', (up/100*orb.C).toFixed(1) + ' ' + orb.C.toFixed(1));
+  var d = up - model;
+  orb.sub.textContent = d === 0 ? ('DOWN ' + (100-up) + '%') : ('DOWN ' + (100-up) + '%  ·  model ' + model + '% (' + (d>0?'+':'−') + Math.abs(d) + ')');
+  live.textContent = 'UP probability ' + up + ' percent' + (d !== 0 ? ', ' + (d>0?'up ':'down ') + Math.abs(d) + ' from the model' : '');
+  // layer chips
+  LAYERS.forEach(function(l){
+    var chip = document.getElementById('chip-' + l[0]);
+    if (!chip) return;
+    var s = 0; FACT.forEach(function(f){ if (f[2]===l[0]) s += pts(f[0], eff(f[0])); });
+    chip.querySelector('b').textContent = sgnf(s) + ' pts';
+    chip.setAttribute('aria-pressed', muted[l[0]] ? 'true' : 'false');
+  });
+  updateSide();
+}
+
+function buildChips(){
+  chipsEl.innerHTML = '';
+  LAYERS.forEach(function(l){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'cm-chip'; b.id = 'chip-' + l[0];
+    b.setAttribute('aria-pressed', 'false');
+    b.title = 'Click to switch this layer off and on';
+    b.innerHTML = '<i style="background:' + l[2] + '"></i><span>' + l[1] + '</span><b>0.0 pts</b>';
+    b.addEventListener('click', function(){ muted[l[0]] = !muted[l[0]]; update(); });
+    b.addEventListener('mouseenter', function(){ hoverLayer = l[0]; update(); });
+    b.addEventListener('mouseleave', function(){ hoverLayer = null; update(); });
+    b.addEventListener('focus', function(){ hoverLayer = l[0]; update(); });
+    b.addEventListener('blur', function(){ hoverLayer = null; update(); });
+    chipsEl.appendChild(b);
+  });
+}
+
+function setScore(k, v){
+  v = Math.max(-10, Math.min(10, Math.round(v)));
+  cur[k] = v;
+  if (muted[layerOf(k)]) muted[layerOf(k)] = false;
+  update();
+}
+
+function select(k){ selected = (selected === k) ? null : k; buildSide(); update(); if (stack && selected) { try { side.scrollIntoView({behavior:'smooth', block:'nearest'}); } catch (e) {} } }
+
+function showTip(k){
+  var n = nodes[k], v = eff(k), rect = stage.getBoundingClientRect(), nr = n.g.getBoundingClientRect();
+  tip.innerHTML = '<strong>' + fl(k) + '</strong><small>weight ' + fw(k) + ' · score ' + sgn(v) + ' · ' + sgnf(pts(k, v)) + ' pts of UP%</small>';
+  var x = nr.left - rect.left + nr.width/2 + 14, y = nr.top - rect.top - 10;
+  if (x > rect.width - 240) x = nr.left - rect.left - 244;
+  tip.style.left = Math.max(6, x) + 'px'; tip.style.top = Math.max(6, y) + 'px';
+  tip.classList.add('on');
+}
+function hideTip(){ tip.classList.remove('on'); }
+
+function driversHtml(){
+  var arr = FACT.map(function(f){ return {k:f[0], p:pts(f[0], eff(f[0]))}; });
+  var posList = arr.filter(function(a){return a.p>0;}).sort(function(a,b){return b.p-a.p;}).slice(0,3);
+  var negList = arr.filter(function(a){return a.p<0;}).sort(function(a,b){return a.p-b.p;}).slice(0,3);
+  function rows(list, cls){ return list.length ? list.map(function(a){ return '<button type="button" class="cm-driver" data-k="' + a.k + '"><span>' + fl(a.k) + '</span><b class="' + cls + '">' + sgnf(a.p) + '</b></button>'; }).join('') : '<div class="cm-hint">None</div>'; }
+  return '<div class="k">Biggest push up</div>' + rows(posList, 'pos') + '<div class="k">Biggest push down</div>' + rows(negList, 'neg');
+}
+
+function buildSide(){
+  if (!selected) {
+    side.innerHTML = '<h3>Pick a factor</h3><div class="cm-hint" style="margin-top:0">Click any node on the map (or press Tab then Enter). Then drag the slider, or use the arrow keys on a focused node, to see the UP% move.</div><div id="cm-drivers">' + driversHtml() + '</div>';
+    bindDrivers();
+    return;
+  }
+  var k = selected, l = LAYERS.filter(function(x){return x[0]===layerOf(k);})[0];
+  var note = (D.notes && D.notes[k]) ? String(D.notes[k]) : (sample ? 'In a live analysis, the data and reasoning behind this score appear here.' : 'No detail available for this factor.');
+  side.innerHTML =
+    '<h3>' + fl(k) + '</h3><span class="cm-tag" style="border-color:' + l[2] + '">' + l[1] + '</span>' +
+    '<div class="k">Weight</div><div class="cm-big">' + fw(k) + '<span style="font-size:13px;color:var(--text-3)"> / 100</span></div><div class="cm-meter"><i style="width:' + (fw(k)*10) + '%"></i></div>' +
+    '<div class="k">Your score <span id="sd-model" style="text-transform:none;letter-spacing:0"></span></div>' +
+    '<div class="cm-big" id="sd-val">0</div>' +
+    '<input type="range" id="sd-range" min="-10" max="10" step="1" aria-label="Score for ' + fl(k) + '">' +
+    '<div class="cm-scale"><span>−10 bearish</span><span>0</span><span>+10 bullish</span></div>' +
+    '<div class="k">Effect on UP%</div><div class="cm-big" id="sd-pts">0</div>' +
+    '<div class="k">Behind the score</div><div class="cm-note" id="sd-note"></div>' +
+    '<div class="cm-row"><button type="button" class="cm-btn" id="sd-reset">Reset factor</button><button type="button" class="cm-btn" id="sd-close">Close</button></div>';
+  document.getElementById('sd-note').textContent = note;
+  var rng = document.getElementById('sd-range');
+  rng.addEventListener('input', function(){ setScore(k, parseInt(rng.value, 10)); });
+  document.getElementById('sd-reset').addEventListener('click', function(){ setScore(k, base[k]); });
+  document.getElementById('sd-close').addEventListener('click', function(){ selected = null; buildSide(); update(); });
+}
+
+function updateSide(){
+  if (!selected) { var d = document.getElementById('cm-drivers'); if (d) { d.innerHTML = driversHtml(); bindDrivers(); } return; }
+  var k = selected, v = cur[k], rng = document.getElementById('sd-range');
+  if (!rng) return;
+  if (document.activeElement !== rng) rng.value = v;
+  var vv = document.getElementById('sd-val');
+  vv.textContent = sgn(v); vv.className = 'cm-big ' + (v>0?'pos':(v<0?'neg':''));
+  document.getElementById('sd-model').textContent = '(model: ' + sgn(base[k]) + ')';
+  var p = pts(k, eff(k)), pe = document.getElementById('sd-pts');
+  pe.textContent = sgnf(p) + ' pts'; pe.className = 'cm-big ' + (p>0?'pos':(p<0?'neg':''));
+}
+
+function bindDrivers(){
+  var btns = side.querySelectorAll('.cm-driver');
+  for (var i=0;i<btns.length;i++) (function(b){ b.addEventListener('click', function(){ select(b.getAttribute('data-k')); }); })(btns[i]);
+}
+
+document.getElementById('cm-reset').addEventListener('click', function(){
+  FACT.forEach(function(f){ cur[f[0]] = base[f[0]]; });
+  LAYERS.forEach(function(l){ muted[l[0]] = false; });
+  update();
+});
+
+var lastLayout = null;
+function layoutKey(){ return (root.clientWidth < 640 ? 'c' : 'w') + (root.clientWidth < 900 ? 's' : 'r'); }
+// When embedded in a Streamlit/landing iframe, size the frame to the widget.
+function fitFrame(){
+  try { if (window.frameElement && window.frameElement.tagName === 'IFRAME' && document.body === root.parentNode) window.frameElement.style.height = (root.offsetHeight + 4) + 'px'; } catch (e) {}
+}
+function init(){
+  build(); buildChips(); buildSide(); update(); lastLayout = layoutKey(); fitFrame();
+}
+init();
+window.addEventListener('resize', function(){ if (layoutKey() !== lastLayout) init(); else fitFrame(); });
+if (window.ResizeObserver) new ResizeObserver(fitFrame).observe(root);
+})();
+</script>
+  </div>
+</section>
+
 <section id="features" class="block alt">
   <div class="wrap">
     <span class="section-badge">18-factor framework</span>
@@ -335,33 +699,33 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
     <div class="layers">
       <div class="layer l-macro">
         <div class="layer-head"><div class="layer-name"><i></i>Macroeconomic</div><span class="layer-count">4 factors</span></div>
-        <div class="f"><b>CPI &amp; PPI</b><span>Consumer and producer price indices as inflation signals affecting chip demand and Fed policy reaction.</span></div>
-        <div class="f"><b>Fed Rate / FOMC</b><span>Federal Reserve rate decisions, which drive capital cost and semiconductor capex cycles.</span></div>
-        <div class="f"><b>USD / Currency Index</b><span>DXY dollar strength affects export revenues of TSMC, Samsung and US semi companies with global sales.</span></div>
-        <div class="f"><b>Energy Prices</b><span>Energy costs feed fab operating costs; high prices compress margins at foundries such as TSMC.</span></div>
+        <div class="f"><b>CPI<span class="w">weight 7</span></b><span>Consumer price index as an inflation signal affecting chip demand and the Fed's reaction.</span></div>
+        <div class="f"><b>PPI<span class="w">weight 3</span></b><span>Producer price index, a read on input-cost pressure across the supply chain.</span></div>
+        <div class="f"><b>Fed Rate / FOMC<span class="w">weight 8</span></b><span>Federal Reserve rate decisions, which drive capital cost and semiconductor capex cycles.</span></div>
+        <div class="f"><b>USD / Currency Index<span class="w">weight 2</span></b><span>DXY dollar strength affects export revenues of TSMC, Samsung and US semi companies with global sales.</span></div>
       </div>
       <div class="layer l-fund">
-        <div class="layer-head"><div class="layer-name"><i></i>Fundamental</div><span class="layer-count">5 factors</span></div>
-        <div class="f"><b>P/E Ratio</b><span>Trailing price-to-earnings; a high P/E flags overvaluation risk in momentum-driven semis.</span></div>
-        <div class="f"><b>Earnings Guidance</b><span>Forward EPS and earnings growth forecasts, the strongest near-term price catalyst.</span></div>
-        <div class="f"><b>Insider Selling</b><span>SEC EDGAR insider transactions; executive selling patterns are early signals of weakening confidence.</span></div>
-        <div class="f"><b>Market Cap</b><span>Size signal. Large-cap semis have different volatility profiles from mid-caps.</span></div>
-        <div class="f"><b>Beta</b><span>Market sensitivity; high-beta semis amplify both bull and bear moves.</span></div>
+        <div class="layer-head"><div class="layer-name"><i></i>Fundamental</div><span class="layer-count">4 factors</span></div>
+        <div class="f"><b>P/E Ratio<span class="w">weight 5</span></b><span>Trailing price-to-earnings; a high P/E flags overvaluation risk in momentum-driven semis.</span></div>
+        <div class="f"><b>Market Cap<span class="w">weight 3</span></b><span>Size signal. Large-cap semis have different volatility profiles from mid-caps.</span></div>
+        <div class="f"><b>Earnings Guidance<span class="w">weight 6</span></b><span>Forward EPS and earnings growth forecasts, the strongest near-term price catalyst.</span></div>
+        <div class="f"><b>Insider Selling<span class="w">weight 7</span></b><span>SEC EDGAR insider transactions; executive selling patterns are early signals of weakening confidence.</span></div>
       </div>
       <div class="layer l-mkt">
         <div class="layer-head"><div class="layer-name"><i></i>Market intelligence</div><span class="layer-count">4 factors</span></div>
-        <div class="f"><b>Sector Rally (SOXX)</b><span>SOXX ETF 1-month performance as a sector momentum signal.</span></div>
-        <div class="f"><b>Technical Signal</b><span>50-day vs 200-day moving average: Golden Cross (bullish) or Death Cross (bearish).</span></div>
-        <div class="f"><b>Sell-the-News Risk</b><span>Post-earnings sell-off risk, when good news is already priced in and smart money exits.</span></div>
-        <div class="f"><b>Analyst Ratings</b><span>Consensus recommendation and mean score from yfinance, a read on institutional sentiment.</span></div>
+        <div class="f"><b>Sector Rally (SOXX)<span class="w">weight 6</span></b><span>SOXX ETF 1-month performance as a sector momentum signal.</span></div>
+        <div class="f"><b>Technical Signal<span class="w">weight 6</span></b><span>50-day vs 200-day moving average: Golden Cross (bullish) or Death Cross (bearish).</span></div>
+        <div class="f"><b>Analyst Ratings<span class="w">weight 5</span></b><span>Consensus recommendation and mean score from yfinance, a read on institutional sentiment.</span></div>
+        <div class="f"><b>Sell-the-News Risk<span class="w">weight 7</span></b><span>Post-earnings sell-off risk, when good news is already priced in and smart money exits.</span></div>
       </div>
       <div class="layer l-ext">
-        <div class="layer-head"><div class="layer-name"><i></i>External signals</div><span class="layer-count">5 factors</span></div>
-        <div class="f"><b>Geopolitics / Hormuz</b><span>Taiwan Strait tension, US–China chip-ban escalation and Strait of Hormuz supply-chain tail risks.</span></div>
-        <div class="f"><b>Supply Chain RAG</b><span>ASML → TSMC → NVIDIA → Micron causal chain via a FAISS vector store, with RAG-powered disruption scoring.</span></div>
-        <div class="f"><b>Capital Rotation</b><span>Money flow between semiconductors and competing assets (SpaceX IPO, OpenAI, Anthropic).</span></div>
-        <div class="f"><b>Competitor Contagion</b><span>AMD vs NVIDIA earnings reactions create contagion effects across the sector.</span></div>
-        <div class="f"><b>News Sentiment</b><span>News sentiment via DuckDuckGo: analyst coverage, media tone and breaking news.</span></div>
+        <div class="layer-head"><div class="layer-name"><i></i>External signals</div><span class="layer-count">6 factors</span></div>
+        <div class="f"><b>Geopolitics / Hormuz<span class="w">weight 9</span></b><span>Taiwan Strait tension, US–China chip-ban escalation and Strait of Hormuz supply-chain tail risks.</span></div>
+        <div class="f"><b>Supply Chain RAG<span class="w">weight 9</span></b><span>ASML → TSMC → NVIDIA → Micron causal chain via a FAISS vector store, with RAG-powered disruption scoring.</span></div>
+        <div class="f"><b>News Sentiment<span class="w">weight 5</span></b><span>News sentiment via DuckDuckGo: analyst coverage, media tone and breaking news.</span></div>
+        <div class="f"><b>Capital Rotation<span class="w">weight 3</span></b><span>Money flow between semiconductors and competing assets (SpaceX IPO, OpenAI, Anthropic).</span></div>
+        <div class="f"><b>Competitor Contagion<span class="w">weight 8</span></b><span>AMD vs NVIDIA earnings reactions create contagion effects across the sector.</span></div>
+        <div class="f"><b>Beta<span class="w">weight 1</span></b><span>Market sensitivity; high-beta semis amplify both bull and bear moves.</span></div>
       </div>
     </div>
   </div>
