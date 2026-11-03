@@ -92,7 +92,7 @@ st.markdown("""
 [data-testid="stSidebarNav"] { display: none !important; }
 .block-container { padding: 0 !important; max-width: 100% !important; }
 [data-testid="stAppViewContainer"], [data-testid="stMain"] {
-    background: #04080F !important;
+    background: #0A0D12 !important;
 }
 
 /* Style the Get Started page link to match landing page nav button */
@@ -104,22 +104,22 @@ st.markdown("""
     width: auto !important;
 }
 [data-testid="stPageLink"] a {
-    background: linear-gradient(135deg, #0055FF, #00AAFF) !important;
-    color: #fff !important;
+    background: #5B9BFF !important;
+    color: #06101F !important;
     border: none !important;
     border-radius: 9px !important;
-    padding: 9px 22px !important;
-    font-size: 13px !important;
+    padding: 9px 20px !important;
+    font-size: 14px !important;
     font-weight: 600 !important;
     font-family: 'Inter', sans-serif !important;
-    box-shadow: 0 0 18px rgba(0,140,255,0.4) !important;
     text-decoration: none !important;
     display: inline-block !important;
 }
 [data-testid="stPageLink"] a:hover {
-    box-shadow: 0 0 30px rgba(0,180,255,0.6) !important;
+    background: #8BB8FF !important;
     transform: translateY(-1px) !important;
 }
+[data-testid="stPageLink"] a p { color: #06101F !important; }
 [data-testid="stPageLink"] svg { display: none !important; }
 
 /* Force Streamlit iframe to have no background interference */
@@ -177,13 +177,13 @@ iframe_fixes = """
 
 /* Ensure body background matches original exactly */
 body {
-    background: #04080F !important;
+    background: #0A0D12 !important;
 }
 </style>
 """
 html_content = html_content.replace('<head>', '<head>' + iframe_fixes)
 
 # Render landing page
-st.components.v1.html(html_content, height=3650, scrolling=True)
+st.components.v1.html(html_content, height=5600, scrolling=True)
 
 render_chat_bubble()

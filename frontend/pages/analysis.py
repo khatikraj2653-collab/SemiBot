@@ -52,10 +52,10 @@ def score_badge(key, scores):
         color = "#F87171"
         label = "Bearish"
     else:
-        color = "#888"
+        color = "#8693A5"
         label = "Neutral"
     sign = "+" if score > 0 else ""
-    return f"<div style='margin-top:6px;font-size:0.75rem;font-weight:600'><span style='color:#888'>Score: </span><span style='color:{color}'>{sign}{score}</span><span style='color:{color};margin-left:6px'>{label}</span></div>"
+    return f"<div style='margin-top:6px;font-size:0.75rem;font-weight:600'><span style='color:#8693A5'>Score: </span><span style='color:{color}'>{sign}{score}</span><span style='color:{color};margin-left:6px'>{label}</span></div>"
 
 def smart_truncate(text, limit: int = 1200) -> str:
     """
@@ -250,14 +250,14 @@ def get_ticker_prices():
                 pct = round((change / prev) * 100, 2)
                 arrow = "▲" if change >= 0 else "▼"
                 color = "#34D399" if change >= 0 else "#F87171"
-                results.append(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#E8F4FF'>${price}</span> <span style='color:{color}'>{arrow} {pct}%</span></span>")
+                results.append(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#E8ECF2'>${price}</span> <span style='color:{color}'>{arrow} {pct}%</span></span>")
             except Exception as e:
                 print(f"[TICKER ERROR] {t}: {e}", flush=True)
-                results.append(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#888'>N/A</span></span>")
+                results.append(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#8693A5'>N/A</span></span>")
         return "".join(results)
     except Exception as e:
         print(f"[TICKER TAPE BATCH ERROR]: {e}", flush=True)
-        return "".join(f"<span style='margin-right:32px'><strong style='color:#7ABFFF'>{t}</strong> <span style='color:#888'>N/A</span></span>" for t in TICKER_TAPE)
+        return "".join(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#8693A5'>N/A</span></span>" for t in TICKER_TAPE)
 
 def render_ticker_tape():
     ticker_html = get_ticker_prices()
@@ -265,8 +265,8 @@ def render_ticker_tape():
     <style>
     .ticker-wrap {{
         position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-        background: #1a1a2e;
-        border-top: 1px solid rgba(0,140,255,0.2);
+        background: #10151C;
+        border-top: 1px solid #212A36;
         padding: 8px 0; overflow: hidden;
     }}
     .ticker-move {{
@@ -295,81 +295,121 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
-    background: #1E1E1E !important;
-    font-family: 'Inter', sans-serif !important;
+:root {
+    --bg:#0A0D12; --surface:#10151C; --surface-2:#161C25; --line:#212A36; --line-2:#2E3A4B;
+    --text:#E8ECF2; --text-2:#B4BFCE; --text-3:#8693A5;
+    --accent:#5B9BFF; --accent-hi:#8BB8FF; --accent-ink:#06101F; --accent-soft:rgba(91,155,255,0.12);
+    --up:#34D399; --down:#F87171; --warn:#FBBF24;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-.stSpinner > div { color: #FFFFFF !important; }
-[data-testid="stStatusWidget"] { color: #FFFFFF !important; }
-[data-testid="stAppViewContainer"]::before {
-    content: '';
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background-image:
-        linear-gradient(rgba(0,140,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,140,255,0.03) 1px, transparent 1px);
-    background-size: 44px 44px;
-    pointer-events: none; z-index: 0;
+
+html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"], .stApp {
+    background: var(--bg) !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    color: var(--text);
 }
+.stSpinner > div { color: var(--text) !important; }
+[data-testid="stStatusWidget"] { color: var(--text) !important; }
 #MainMenu, footer, header { visibility: hidden; }
 [data-testid="stToolbar"] { display: none; }
 [data-testid="stDecoration"] { display: none; }
-.block-container { padding: 0 !important; padding-bottom: 60px !important; max-width: 100% !important; }
+.block-container { padding: 0 !important; padding-bottom: 72px !important; max-width: 1180px !important; margin: 0 auto !important; }
+:focus-visible { outline: 2px solid var(--accent-hi) !important; outline-offset: 2px; }
 
+/* ---------- sidebar ---------- */
 [data-testid="stSidebar"] {
-    background: #1E1E1E !important;
-    border-right: 1px solid #569CD6 !important;
-    min-width: 240px !important;
-    max-width: 240px !important;
+    background: var(--surface) !important;
+    border-right: 1px solid var(--line) !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
     display: flex !important;
     transform: none !important;
 }
 [data-testid="collapsedControl"] { display: none !important; }
 [data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] { display: none !important; }
 [data-testid="stSidebarNav"] { display: none !important; }
+[data-testid="stSidebar"] * { color: var(--text) !important; }
+[data-testid="stSidebarContent"] { padding: 22px 16px !important; }
+[data-testid="stSidebar"] .stButton > button,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a {
+    background: transparent !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text-2) !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    border-radius: 8px !important;
+}
+[data-testid="stSidebar"] .stButton > button:hover,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {
+    background: var(--surface-2) !important;
+    border-color: var(--line-2) !important;
+}
 
-[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] { display: none !important; }
-[data-testid="stSidebar"] * { color: #FFFFFF !important; }
-[data-testid="stSidebarContent"] { padding: 20px 16px !important; }
-
+/* ---------- buttons ---------- */
 .stButton > button {
     font-family: 'Inter', sans-serif !important;
     font-weight: 600 !important;
     border-radius: 10px !important;
-    transition: all 0.2s !important;
-    border: none !important;
-    background: linear-gradient(135deg, #0055FF, #00AAFF) !important;
-    color: #fff !important;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s !important;
+    min-height: 44px;
+    background: transparent !important;
+    border: 1px solid var(--line-2) !important;
+    color: var(--text) !important;
 }
-.stButton > button:hover { opacity: 0.9 !important; transform: translateY(-1px) !important; }
+.stButton > button:hover { border-color: var(--accent) !important; background: var(--accent-soft) !important; }
+.stButton > button[kind="primary"],
+.stButton > button[data-testid="stBaseButton-primary"] {
+    background: var(--accent) !important;
+    border: 1px solid var(--accent) !important;
+    color: var(--accent-ink) !important;
+}
+.stButton > button[kind="primary"]:hover,
+.stButton > button[data-testid="stBaseButton-primary"]:hover {
+    background: var(--accent-hi) !important;
+    border-color: var(--accent-hi) !important;
+    transform: translateY(-1px);
+}
+.stButton > button[kind="primary"] p,
+.stButton > button[data-testid="stBaseButton-primary"] p { color: var(--accent-ink) !important; }
 
+/* ---------- inputs ---------- */
 .stTextInput input {
-    background: rgba(15,50,120,0.9) !important;
-    border: 1px solid rgba(0,140,255,0.22) !important;
-    border-radius: 14px !important;
-    padding: 16px 20px !important;
-    color: #E8F4FF !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--line-2) !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    color: var(--text) !important;
     font-family: 'Inter', sans-serif !important;
-    font-size: 1rem !important;
-    caret-color: #00AAFF !important;
+    font-size: 0.95rem !important;
+    caret-color: var(--accent-hi) !important;
 }
-.stTextInput input:focus {
-    border-color: rgba(0,180,255,0.5) !important;
-    box-shadow: 0 0 20px rgba(0,140,255,0.15) !important;
-}
+.stTextInput input::placeholder { color: var(--text-3) !important; }
+.stTextInput input:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 3px var(--accent-soft) !important; }
 .stTextInput label { display: none !important; }
+[data-baseweb="select"] > div {
+    background: var(--surface) !important;
+    border: 1px solid var(--line-2) !important;
+    border-radius: 10px !important;
+    min-height: 46px;
+}
+[data-baseweb="select"] > div:focus-within { border-color: var(--accent) !important; box-shadow: 0 0 0 3px var(--accent-soft) !important; }
+[data-baseweb="select"] * { color: var(--text) !important; }
+[data-testid="stWidgetLabel"] p { color: var(--text-2) !important; font-weight: 500 !important; }
 
+/* ---------- factor cards ---------- */
 .semi-card {
-    background: #2D2D30;
-    border: 1px solid #3E3E42;
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 10px;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s;
 }
-.semi-card:hover { border-color: rgba(0,140,255,0.38); }
-[data-testid="stWidgetLabel"] p { color: #B8D4F0 !important; font-weight: 600 !important; }
+.semi-card:hover { border-color: var(--line-2); }
 .semi-card.hover-expand { position: relative; cursor: help; }
 .semi-card.hover-expand .hover-tooltip {
     display: none;
@@ -377,222 +417,149 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
     z-index: 1000;
     top: 100%;
     left: 0;
-    width: 320px;
+    width: 340px;
     max-width: 90vw;
     margin-top: 6px;
-    background: #1E1E24;
-    border: 1px solid rgba(0,140,255,0.45);
+    background: var(--surface-2);
+    border: 1px solid var(--line-2);
     border-radius: 10px;
     padding: 14px 16px;
-    font-size: 0.78rem;
-    line-height: 1.6;
-    color: #E8F4FF;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.55);
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: var(--text);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.6);
 }
 .semi-card.hover-expand:hover .hover-tooltip { display: block; }
 .card-key {
-    font-size: 0.65rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    color: #569CD6; margin-bottom: 5px;
+    font-family: var(--mono);
+    font-size: 0.68rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--accent-hi); margin-bottom: 6px;
 }
-.card-val { font-size: 0.8rem; color: #D4D4D4; }
+.card-val { font-size: 0.88rem; color: var(--text-2); line-height: 1.65; }
 
 .sec-label {
-    font-size: 0.65rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.12em;
-    color: #4A9AFF; margin: 18px 0 10px;
-    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 0.72rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-3); margin: 26px 0 12px;
+    display: flex; align-items: center; gap: 12px;
 }
-.sec-label::after {
-    content: ''; flex: 1; height: 1px;
-    background: rgba(0,140,255,0.07);
-}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 
+/* ---------- prediction ---------- */
 .metric-card {
-    border: 1px solid rgba(0,80,160,0.2);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: 12px; padding: 18px 20px;
     text-align: center;
 }
-.metric-num-up { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: #34D399; line-height: 1; }
-.metric-num-dn { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: #F87171; line-height: 1; }
-.metric-lbl { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 8px; }
-.bar-track { height: 5px; background: rgba(20,60,140,1); border-radius: 3px; margin-top: 10px; overflow: hidden; }
-.bar-up { height: 100%; border-radius: 3px; background: linear-gradient(90deg,#059669,#34D399); }
-.bar-dn { height: 100%; border-radius: 3px; background: linear-gradient(90deg,#B91C1C,#F87171); }
+.metric-num-up, .metric-num-dn { font-family: var(--mono); font-size: 2.3rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.metric-num-up { color: var(--up); }
+.metric-num-dn { color: var(--down); }
+.metric-lbl { font-family: var(--mono); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); margin-bottom: 10px; }
+.bar-track { height: 6px; background: var(--line); border-radius: 99px; margin-top: 14px; overflow: hidden; }
+.bar-up { height: 100%; border-radius: 99px; background: var(--up); }
+.bar-dn { height: 100%; border-radius: 99px; background: var(--down); }
 
+.reasoning-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    font-size: 0.88rem; color: var(--text-2); line-height: 1.75;
+    margin-top: 12px;
+}
+
+/* ---------- follow-up chat ---------- */
 .user-bubble {
-    background: linear-gradient(135deg,rgba(0,70,180,0.3),rgba(0,130,255,0.2));
-    border: 1px solid rgba(0,140,255,0.25);
+    background: var(--accent-soft);
+    border: 1px solid rgba(91,155,255,0.3);
     border-radius: 14px 14px 4px 14px;
     padding: 10px 14px; margin: 6px 0 6px auto;
-    font-size: 0.82rem; color: #E8F4FF; line-height: 1.6;
+    font-size: 0.88rem; color: var(--text); line-height: 1.6;
     max-width: 78%; display: table; margin-left: auto;
 }
 .bot-bubble {
-    background: rgba(0,20,55,0.75);
-    border: 1px solid rgba(0,80,160,0.2);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: 14px 14px 14px 4px;
     padding: 12px 14px; margin: 6px 0;
-    font-size: 0.82rem; color: #F0F8FF; line-height: 1.65;
-    max-width: 80%;
-}
-
-.reasoning-card {
-    background: rgba(0,14,42,0.55);
-    border-left: 2px solid #0055CC;
-    border-radius: 0 10px 10px 0;
-    padding: 12px 16px;
-    font-size: 0.8rem; color: #5A8AAF; line-height: 1.75;
-    margin-top: 8px;
+    font-size: 0.88rem; color: var(--text); line-height: 1.65;
+    max-width: 82%;
 }
 
 .disclaimer {
-    background: rgba(50,35,0,0.3);
-    border: 1px solid rgba(180,130,0,0.25);
-    border-radius: 10px; padding: 11px 15px;
-    font-size: 0.72rem; color: #C4901A; line-height: 1.6;
-    margin-top: 18px;
+    background: rgba(251,191,36,0.07);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 10px; padding: 12px 16px;
+    font-size: 0.78rem; color: #E8C468; line-height: 1.6;
+    margin-top: 22px;
 }
-
 .val-error {
-    background: rgba(150,15,15,0.18);
-    border: 1px solid rgba(240,100,100,0.28);
+    background: rgba(248,113,113,0.08);
+    border: 1px solid rgba(248,113,113,0.35);
     border-radius: 10px; padding: 10px 14px;
-    font-size: 0.8rem; color: #EE8080; margin: 6px 0;
+    font-size: 0.85rem; color: #FCA5A5; margin: 6px 0;
 }
 
 .hist-item {
     padding: 10px 12px; border-radius: 8px;
     margin-bottom: 4px; font-size: 0.84rem;
-    color: #D1D1D1; border: 1px solid rgba(0,80,160,0.15);
-    background: rgba(0,20,55,0.4);
+    color: var(--text-2); border: 1px solid var(--line);
+    background: var(--surface-2);
     display: flex; justify-content: space-between; align-items: center;
 }
-.hist-ticker { font-weight: 600; color: #E5E5E5; }
-.hist-time { font-size: 0.72rem; color: #888; }
+.hist-ticker { font-weight: 600; color: var(--text); }
+.hist-time { font-size: 0.72rem; color: var(--text-3); }
 
 .ticker-chip {
     display: inline-block;
-    background: rgba(0,80,160,0.2);
-    color: #7ABFFF;
-    padding: 3px 12px; border-radius: 20px;
+    font-family: var(--mono);
+    background: var(--accent-soft);
+    border: 1px solid rgba(91,155,255,0.3);
+    color: var(--accent-hi);
+    padding: 2px 12px; border-radius: 99px;
     font-size: 0.82rem; font-weight: 600;
-    margin-left: 8px; vertical-align: middle;
+    margin-left: 10px; vertical-align: middle;
 }
 
+/* ---------- empty-state hero ---------- */
 .hero-wrap {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    padding: 40px 20px 20px;
+    padding: 72px 20px 28px;
     position: relative; z-index: 5;
-    transform: scale(0.8);
-    transform-origin: top center;
-    margin-bottom: -100px;
+    text-align: center;
 }
 .hero-badge {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: rgba(0,80,200,0.12);
-    border: 1px solid rgba(0,140,255,0.22);
-    border-radius: 20px; padding: 5px 14px;
-    font-size: 10.5px; font-weight: 600; color: #5AADFF;
-    margin-bottom: 20px; letter-spacing: 0.05em;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 11.5px; font-weight: 500; color: var(--accent-hi);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 18px;
 }
-.bdot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #00AAFF;
-    box-shadow: 0 0 8px rgba(0,180,255,0.9);
-    animation: blink 1.8s ease-in-out infinite;
-    display: inline-block;
-}
-@keyframes blink { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
+.bdot { width: 7px; height: 7px; border-radius: 50%; background: var(--up); display: inline-block; }
 .hero-greeting {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 2.2rem; font-weight: 700;
-    color: #FFFFFF; margin-bottom: 8px;
-    letter-spacing: -0.5px; text-align: center;
+    font-size: clamp(1.8rem, 3.6vw, 2.6rem); font-weight: 700;
+    color: var(--text); margin-bottom: 14px;
+    letter-spacing: -0.03em; line-height: 1.15; text-align: center;
 }
-.hero-greeting em {
-    font-style: normal;
-    background: linear-gradient(135deg,#4F9FFF,#00D8FF);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
+.hero-greeting em { font-style: normal; color: var(--accent-hi); }
 .hero-sub {
-    font-size: 0.85rem; color: #7AACCC;
-    margin-bottom: 32px; text-align: center; line-height: 1.7;
+    font-size: 1rem; color: var(--text-2);
+    margin-bottom: 30px; text-align: center; line-height: 1.7; max-width: 560px;
 }
 .quick-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
 .quick-chip {
-    background: rgba(0,60,160,0.12);
-    border: 1px solid rgba(0,120,255,0.16);
-    color: #3A80C0; border-radius: 20px;
-    padding: 5px 14px; font-size: 11px; font-weight: 600;
+    font-family: var(--mono);
+    background: var(--surface); border: 1px solid var(--line);
+    color: var(--text-2); border-radius: 99px;
+    padding: 4px 14px; font-size: 12px;
 }
-.robot-wrap { position: relative; display: inline-block; margin-bottom: -30px; }
-.robot-img {
-    animation: robot-bounce 3s ease-in-out infinite;
-    transform-origin: center bottom;
-}
-@keyframes robot-bounce {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-8px) rotate(-2deg); }
-}
-.robot-cloud {
-    position: absolute;
-    top: -30px;
-    right: -180px;
-    background: rgba(20,30,50,0.95);
-    border: 1px solid rgba(0,180,255,0.4);
-    border-radius: 50px;
-    padding: 10px 20px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #E8F4FF;
-    white-space: nowrap;
-    opacity: 0;
-    animation: cloud-cycle 45s ease-in-out infinite;
-}
-.robot-cloud::before {
-    content: '';
-    position: absolute;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: rgba(20,30,50,0.95);
-    border: 1px solid rgba(0,180,255,0.4);
-    left: 10px;
-    bottom: -18px;
-}
-.robot-cloud::after {
-    content: '';
-    position: absolute;
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: rgba(20,30,50,0.95);
-    border: 1px solid rgba(0,180,255,0.4);
-    left: 0px;
-    bottom: -28px;
-}
-.robot-cloud:nth-child(1) { animation-delay: 0s; }
-.robot-cloud:nth-child(2) { animation-delay: 3s; }
-.robot-cloud:nth-child(3) { animation-delay: 6s; }
-.robot-cloud:nth-child(4) { animation-delay: 9s; }
-.robot-cloud:nth-child(5) { animation-delay: 12s; }
-.robot-cloud:nth-child(6) { animation-delay: 15s; }
-.robot-cloud:nth-child(7) { animation-delay: 18s; }
-.robot-cloud:nth-child(8) { animation-delay: 21s; }
-.robot-cloud:nth-child(9) { animation-delay: 24s; }
-.robot-cloud:nth-child(10) { animation-delay: 27s; }
-.robot-cloud:nth-child(11) { animation-delay: 30s; }
-.robot-cloud:nth-child(12) { animation-delay: 33s; }
-.robot-cloud:nth-child(13) { animation-delay: 36s; }
-.robot-cloud:nth-child(14) { animation-delay: 39s; }
-.robot-cloud:nth-child(15) { animation-delay: 42s; }
-@keyframes cloud-cycle {
-    0% { opacity: 0; transform: translateY(6px); }
-    4% { opacity: 1; transform: translateY(0); }
-    9% { opacity: 1; transform: translateY(0); }
-    13% { opacity: 0; transform: translateY(-6px); }
-    100% { opacity: 0; }
-}
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 """, unsafe_allow_html=True)
 
@@ -812,10 +779,10 @@ if "current_compare_session_id" not in st.session_state:
 with st.sidebar:
     st.markdown("""
     <div style='display:flex;align-items:center;gap:10px;margin-bottom:4px'>
-        <div style='width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0055FF,#00C8FF);display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 16px rgba(0,140,255,0.5)'>::</div>
-        <span style='font-family:Space Grotesk,sans-serif;font-size:16px;font-weight:700;color:#E8F4FF'>SemiBot</span>
+        <div style='width:32px;height:32px;border-radius:8px;background:rgba(91,155,255,0.12);border:1px solid rgba(91,155,255,0.35);display:flex;align-items:center;justify-content:center'><svg viewBox='0 0 24 24' width='18' height='18' fill='none' stroke='#8BB8FF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='6' y='6' width='12' height='12' rx='2'/><path d='M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3'/></svg></div>
+        <span style='font-family:Inter,sans-serif;font-size:16px;font-weight:700;color:#E8ECF2'>SemiBot</span>
     </div>
-    <div style='font-size:0.72rem;color:#AAAAAA;margin-bottom:18px'>18-Factor Agentic RAG</div>
+    <div style='font-size:0.72rem;color:#8693A5;margin-bottom:18px'>18-Factor Agentic RAG</div>
     """, unsafe_allow_html=True)
 
     # PATH FIX 5: Use st.page_link for same-tab navigation to Home page
@@ -827,8 +794,8 @@ with st.sidebar:
         st.session_state.current_history_id = None
         st.rerun()
 
-    st.markdown("<hr style='border-color:rgba(0,140,255,0.1);margin:14px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size:0.65rem;color:#AAAAAA;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>HISTORY</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#212A36;margin:14px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.65rem;color:#8693A5;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>HISTORY</div>", unsafe_allow_html=True)
 
     if st.session_state.history:
         for item in st.session_state.history[:10]:
@@ -847,8 +814,8 @@ with st.sidebar:
                     st.session_state.active_tab = "single"
                     st.rerun()
 
-    st.markdown("<hr style='border-color:rgba(0,140,255,0.1);margin:14px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size:0.65rem;color:#AAAAAA;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>COMPARISONS</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#212A36;margin:14px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.65rem;color:#8693A5;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>COMPARISONS</div>", unsafe_allow_html=True)
 
     if st.session_state.compare_sessions_list:
         for csession in st.session_state.compare_sessions_list[:10]:
@@ -879,7 +846,7 @@ if st.session_state.result is None:
 
     if st.session_state.active_tab == "compare":
         st.markdown("<div style='padding:16px 0'>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size:0.75rem;color:#5A8AAF;margin-bottom:10px'>How many tickers do you want to compare?</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:0.75rem;color:#9AA7B8;margin-bottom:10px'>How many tickers do you want to compare?</div>", unsafe_allow_html=True)
 
         count_cols = st.columns(5)
         for i, c in enumerate(count_cols):
@@ -987,7 +954,7 @@ if st.session_state.result is None:
                             st.session_state.current_compare_session_id = st.session_state.compare_sessions_list[0]["id"]
 
         if st.session_state.compare_results:
-            st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:20px 0'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#212A36;margin:20px 0'>", unsafe_allow_html=True)
             tickers_list = list(st.session_state.compare_results.keys())
 
             ranked = sorted(tickers_list, key=lambda t: parse_result(st.session_state.compare_results[t])["up_prob"], reverse=True)
@@ -1006,10 +973,10 @@ if st.session_state.result is None:
             for i, t in enumerate(ranked):
                 p = parse_result(st.session_state.compare_results[t])
                 rank_color = "#34D399" if p["up_prob"] >= p["down_prob"] else "#F87171"
-                rank_html += f"<div class='semi-card' style='display:flex;justify-content:space-between;align-items:center;padding:8px 14px'><span style='font-size:0.8rem;color:#D0E8FF'>{i+1}. {display_name(t)}</span><span style='font-family:Space Grotesk,sans-serif;font-weight:700;color:{rank_color}'>{p['up_prob']}% / {p['down_prob']}%</span></div>"
+                rank_html += f"<div class='semi-card' style='display:flex;justify-content:space-between;align-items:center;padding:8px 14px'><span style='font-size:0.8rem;color:#E8ECF2'>{i+1}. {display_name(t)}</span><span style='font-family:Inter,sans-serif;font-weight:700;color:{rank_color}'>{p['up_prob']}% / {p['down_prob']}%</span></div>"
             st.markdown(rank_html, unsafe_allow_html=True)
 
-            st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:20px 0'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#212A36;margin:20px 0'>", unsafe_allow_html=True)
 
             cols = st.columns(len(tickers_list))
             factor_groups = [
@@ -1023,13 +990,13 @@ if st.session_state.result is None:
                     r = st.session_state.compare_results[t]
                     parsed = parse_result(r)
                     scores = r.get("scores", {})
-                    st.markdown(f"<div style='font-family:Space Grotesk,sans-serif;font-size:0.9rem;font-weight:700;color:#D0E8FF;margin-bottom:8px' title='{display_name(t)}'>{display_name(t)}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='font-family:Inter,sans-serif;font-size:0.9rem;font-weight:700;color:#E8ECF2;margin-bottom:8px' title='{display_name(t)}'>{display_name(t)}</div>", unsafe_allow_html=True)
                     up_color = "#34D399" if parsed["up_prob"] >= parsed["down_prob"] else "#F87171"
                     st.markdown(f"""
                     <div class='metric-card' style='margin-bottom:10px'>
                         <div class='metric-lbl'>Upside / Downside</div>
-                        <div style='font-family:Space Grotesk,sans-serif;font-size:1.4rem;font-weight:700;color:{up_color}'>{parsed['up_prob']}% / {parsed['down_prob']}%</div>
-                        <div style='font-size:0.68rem;color:#888;margin-top:4px'>Confidence: {parsed['confidence']}</div>
+                        <div style='font-family:Inter,sans-serif;font-size:1.4rem;font-weight:700;color:{up_color}'>{parsed['up_prob']}% / {parsed['down_prob']}%</div>
+                        <div style='font-size:0.68rem;color:#8693A5;margin-top:4px'>Confidence: {parsed['confidence']}</div>
                     </div>
                     """, unsafe_allow_html=True)
                     for group_label, pairs in factor_groups:
@@ -1044,9 +1011,9 @@ if st.session_state.result is None:
                             full_val = f"{label}: {tooltip_body}"
                             st.markdown(f"<div class='semi-card hover-expand' style='padding:8px 10px'><div class='card-key' style='font-size:0.58rem'>{label}</div><div class='card-val' style='font-size:0.7rem'>{sentiment_label}</div>{score_badge(key, scores)}<div class='hover-tooltip'>{full_val}</div></div>", unsafe_allow_html=True)
 
-            st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:24px 0'>", unsafe_allow_html=True)
-            st.markdown("<div style='font-family:Space Grotesk,sans-serif;font-size:0.95rem;font-weight:600;color:#D0E8FF;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
-            st.markdown("<div style='font-size:0.75rem;color:#5A8AAF;margin-bottom:12px'>Ask about any or all of the compared tickers - e.g. \"which has the strongest fundamentals?\" or \"compare their supply chain risk\"</div>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
+            st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#E8ECF2;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size:0.75rem;color:#9AA7B8;margin-bottom:12px'>Ask about any or all of the compared tickers - e.g. \"which has the strongest fundamentals?\" or \"compare their supply chain risk\"</div>", unsafe_allow_html=True)
 
             if "compare_followup_history" not in st.session_state:
                 st.session_state.compare_followup_history = []
@@ -1055,7 +1022,7 @@ if st.session_state.result is None:
                 if msg["role"] == "user":
                     st.markdown(f"<div class='user-bubble'>{msg['content']}</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#4A9AFF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{msg['content']}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#8BB8FF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{msg['content']}</div>", unsafe_allow_html=True)
 
             if "compare_input_counter" not in st.session_state:
                 st.session_state.compare_input_counter = 0
@@ -1064,7 +1031,7 @@ if st.session_state.result is None:
             with cfq1:
                 compare_followup_q = st.text_input("", placeholder="e.g. Which ticker has the best risk/reward right now?", label_visibility="collapsed", key=f"compare_followup_input_{st.session_state.compare_input_counter}")
             with cfq2:
-                compare_ask_button = st.button("Ask ->", use_container_width=True, key="compare_ask_btn")
+                compare_ask_button = st.button("Ask ->", use_container_width=True, key="compare_ask_btn", type="primary")
 
             if compare_ask_button and compare_followup_q:
                 combined_summary = ""
@@ -1125,14 +1092,14 @@ Refusal message (use ONLY for clearly unrelated requests like recipes or medical
                 st.session_state.compare_followup_history = []
                 st.rerun()
 
-        st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:24px 0'>", unsafe_allow_html=True)
-        st.markdown("<div style='font-family:Space Grotesk,sans-serif;font-size:0.95rem;font-weight:600;color:#D0E8FF;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
+        st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#E8ECF2;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
 
         cem1, cem2 = st.columns([4, 1])
         with cem1:
             compare_user_email = st.text_input("", placeholder="Enter your email to receive comparison summary...", label_visibility="collapsed", key="compare_email_input")
         with cem2:
-            compare_send_button = st.button("Send", use_container_width=True, key="compare_send_email_btn")
+            compare_send_button = st.button("Send", use_container_width=True, key="compare_send_email_btn", type="primary")
 
         if compare_send_button and compare_user_email:
             try:
@@ -1195,29 +1162,14 @@ SemiBot v1.0 | University of Warwick | MSc Applied AI | ACM FinNLP
 if not st.session_state.result:
     st.markdown(f"""
     <div class='hero-wrap'>
-        <div class='hero-badge'><span class='bdot'></span> LIVE - 18-Factor AI Analysis</div>
-        <div class='robot-wrap'>
-            <img class='robot-img' src='data:image/png;base64,{ROBOT_IMG}' width='230' style='margin-top:20px;margin-bottom:20px;border-radius:24px;filter:drop-shadow(0 0 24px rgba(0,140,255,0.4))'/>
-            <div class='robot-cloud'>NVDA: Bullish 📈</div>
-            <div class='robot-cloud'>18 live factors ⚡</div>
-            <div class='robot-cloud'>MU: Bearish 📉</div>
-            <div class='robot-cloud'>Ask me anything 👋</div>
-            <div class='robot-cloud'>TSM: Bullish 📈</div>
-            <div class='robot-cloud'>No hallucination 🎯</div>
-            <div class='robot-cloud'>AMD: Bullish 📈</div>
-            <div class='robot-cloud'>Chips, decoded 🔍</div>
-            <div class='robot-cloud'>SemiBot for semiconductor 📡</div>
-            <div class='robot-cloud'>ASML: Bullish 📈</div>
-            <div class='robot-cloud'>Real-time data 🔄</div>
-            <div class='robot-cloud'>Powered by GPT-4o-mini 🤖</div>
-            <div class='robot-cloud'>Warwick research 🎓</div>
-            <div class='robot-cloud'>Deterministic scoring ✅</div>
-            <div class='robot-cloud'>60 tickers supported 🌐</div>
-        </div>
-        <div class='hero-greeting'>Hi! I am <em>SemiBot</em></div>
+        <div class='hero-badge'><span class='bdot'></span> 18-factor causal analysis</div>
+        <div class='hero-greeting'>Analyse a <em>semiconductor stock</em></div>
         <div class='hero-sub'>
-            AI-powered semiconductor equity analyser - 18 real-time factors<br>
-            Geopolitics - Supply Chain - Macro - Fundamentals - Market Intelligence
+            An LLM scores 18 causal factors across macro, fundamentals, market signals and supply-chain risk.
+            The UP% / DOWN% split is then calculated in Python, not generated by the model.
+        </div>
+        <div class='quick-chips'>
+            <span class='quick-chip'>Macro</span><span class='quick-chip'>Fundamentals</span><span class='quick-chip'>Market intelligence</span><span class='quick-chip'>Supply chain</span><span class='quick-chip'>Geopolitics</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1232,17 +1184,17 @@ if not st.session_state.result:
             key="single_ticker_select"
         )
         ticker_input = extract_ticker_from_option(selected_option) if selected_option != "Enter ticker or company name..." else ""
-        analyse = st.button("Analyse ->", use_container_width=True)
+        analyse = st.button("Analyse ->", use_container_width=True, type="primary")
 
 else:
     col_h1, col_h2 = st.columns([5, 1])
     with col_h1:
         st.markdown(f"""
         <div style='padding:24px 32px 0'>
-            <div style='font-family:Space Grotesk,sans-serif;font-size:1.3rem;font-weight:700;color:#D0E8FF;margin-bottom:4px'>
+            <div style='font-family:Inter,sans-serif;font-size:1.3rem;font-weight:700;color:#E8ECF2;margin-bottom:4px'>
                 Factor Analysis <span class='ticker-chip'>{st.session_state.ticker}</span>
             </div>
-            <div style='font-size:0.75rem;color:#5A8AAF'>18-Factor Agentic RAG - Real-time APIs - University of Warwick</div>
+            <div style='font-size:0.75rem;color:#9AA7B8'>18-Factor Agentic RAG - Real-time APIs - University of Warwick</div>
         </div>
         """, unsafe_allow_html=True)
     with col_h2:
@@ -1419,8 +1371,8 @@ if st.session_state.result:
             val = smart_truncate(result.get(key, "N/A"))
         st.markdown(f"<div class='semi-card'><div class='card-key'>{label}</div><div class='card-val'>{val}</div>{score_badge(key, scores)}</div>", unsafe_allow_html=True)
 
-    st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:24px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-family:Space Grotesk,sans-serif;font-size:1rem;font-weight:600;color:#D0E8FF;margin-bottom:14px'>Prediction</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-family:Inter,sans-serif;font-size:1rem;font-weight:600;color:#E8ECF2;margin-bottom:14px'>Prediction</div>", unsafe_allow_html=True)
 
     p1, p2, p3 = st.columns([1.2, 1.2, 2.6])
     with p1:
@@ -1443,24 +1395,24 @@ if st.session_state.result:
         st.markdown(f"""
         <div class='metric-card' style='text-align:left'>
             <div style='display:grid;grid-template-columns:1fr 1fr;gap:16px'>
-                <div><div style='font-size:0.62rem;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px'>Bullish</div>{bullish_html}</div>
-                <div><div style='font-size:0.62rem;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px'>Bearish</div>{bearish_html}</div>
+                <div><div style='font-size:0.62rem;color:#8693A5;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px'>Bullish</div>{bullish_html}</div>
+                <div><div style='font-size:0.62rem;color:#8693A5;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px'>Bearish</div>{bearish_html}</div>
             </div>
-            <div style='margin-top:12px;font-size:0.7rem;color:#888'>Confidence: <strong style='color:#5AADFF'>{confidence}</strong></div>
+            <div style='margin-top:12px;font-size:0.7rem;color:#8693A5'>Confidence: <strong style='color:#8BB8FF'>{confidence}</strong></div>
         </div>""", unsafe_allow_html=True)
 
     if reasoning:
         st.markdown(f"<div class='reasoning-card'>{reasoning}</div>", unsafe_allow_html=True)
 
-    st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:24px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-family:Space Grotesk,sans-serif;font-size:0.95rem;font-weight:600;color:#D0E8FF;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size:0.75rem;color:#5A8AAF;margin-bottom:12px'>Ask about factors, what-if scenarios, or deeper insights</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#E8ECF2;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.75rem;color:#9AA7B8;margin-bottom:12px'>Ask about factors, what-if scenarios, or deeper insights</div>", unsafe_allow_html=True)
 
     for msg in st.session_state.followup_history:
         if msg["role"] == "user":
             st.markdown(f"<div class='user-bubble'>{msg['content']}</div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#4A9AFF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{msg['content']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#8BB8FF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{msg['content']}</div>", unsafe_allow_html=True)
 
     fq1, fq2 = st.columns([5, 1])
     with fq1:
@@ -1471,7 +1423,7 @@ if st.session_state.result:
             label_visibility="collapsed", key=f"followup_input_{st.session_state.followup_input_counter}"
         )
     with fq2:
-        ask_button = st.button("Ask ->", use_container_width=True, key="ask_btn")
+        ask_button = st.button("Ask ->", use_container_width=True, key="ask_btn", type="primary")
 
     if ask_button and followup_q:
         historical_context = get_historical_context(ticker)
@@ -1533,14 +1485,14 @@ Refusal message (use only for clearly unrelated requests): "I'm focused on semic
     elif ask_button and not followup_q:
         st.markdown("<div class='val-error'>Warning: Please type a question first.</div>", unsafe_allow_html=True)
 
-    st.markdown("<hr style='border-color:rgba(0,140,255,0.08);margin:24px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-family:Space Grotesk,sans-serif;font-size:0.95rem;font-weight:600;color:#D0E8FF;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#E8ECF2;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
 
     em1, em2 = st.columns([4, 1])
     with em1:
         user_email = st.text_input("", placeholder="Enter your email to receive analysis summary...", label_visibility="collapsed", key="email_input")
     with em2:
-        send_button = st.button("Send", use_container_width=True)
+        send_button = st.button("Send", use_container_width=True, type="primary")
 
     if send_button and user_email:
         try:

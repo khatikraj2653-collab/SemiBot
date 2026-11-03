@@ -87,52 +87,54 @@ BUBBLE_CSS = """
     bottom: 84px !important;
     right: 24px !important;
     z-index: 999999 !important;
-    width: 58px !important;
+    width: 56px !important;
 }
 .st-key-semibot_bubble_toggle button {
-    width: 58px !important;
-    height: 58px !important;
+    width: 56px !important;
+    height: 56px !important;
     border-radius: 50% !important;
-    background: linear-gradient(135deg, #0055FF, #00AAFF) !important;
-    color: #fff !important;
-    font-size: 26px !important;
+    background: #5B9BFF !important;
+    color: #06101F !important;
+    font-size: 24px !important;
     line-height: 1 !important;
-    box-shadow: 0 4px 22px rgba(0,140,255,0.55) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
     border: none !important;
     padding: 0 !important;
 }
+.st-key-semibot_bubble_toggle button * { color: #06101F !important; }
 .st-key-semibot_bubble_toggle button:hover {
-    box-shadow: 0 6px 30px rgba(0,180,255,0.7) !important;
+    background: #8BB8FF !important;
     transform: translateY(-2px);
 }
 .st-key-semibot_bubble_panel {
     position: fixed !important;
-    bottom: 154px !important;
+    bottom: 152px !important;
     right: 24px !important;
     width: 380px !important;
     max-width: calc(100vw - 32px) !important;
     max-height: calc(100vh - 140px) !important;
-    background: #060B14 !important;
-    border: 1px solid rgba(0,140,255,0.25) !important;
+    background: #10151C !important;
+    border: 1px solid #2E3A4B !important;
     border-radius: 16px !important;
     padding: 0 !important;
     z-index: 999998 !important;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.55) !important;
+    box-shadow: 0 20px 56px rgba(0,0,0,0.6) !important;
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
 }
 .st-key-semibot_bubble_header {
-    padding: 14px 18px 10px !important;
-    border-bottom: 1px solid rgba(0,140,255,0.15) !important;
+    padding: 14px 18px 12px !important;
+    border-bottom: 1px solid #212A36 !important;
+    background: #161C25 !important;
     flex-shrink: 0 !important;
 }
 .semibot-bubble-title {
-    font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700;
-    color: #D0E8FF; margin-bottom: 2px;
+    font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
+    color: #E8ECF2; margin-bottom: 2px;
 }
 .semibot-bubble-sub {
-    font-size: 0.68rem; color: #5A8AAF;
+    font-size: 0.74rem; color: #8693A5;
 }
 .st-key-semibot_bubble_messages {
     flex: 1 1 auto !important;
@@ -147,44 +149,44 @@ BUBBLE_CSS = """
     gap: 8px;
 }
 .semibot-bubble-user {
-    background: linear-gradient(135deg,rgba(0,70,180,0.3),rgba(0,130,255,0.2));
-    border: 1px solid rgba(0,140,255,0.25);
+    background: rgba(91,155,255,0.12);
+    border: 1px solid rgba(91,155,255,0.3);
     border-radius: 14px 14px 4px 14px;
     padding: 9px 12px;
-    font-size: 0.8rem; color: #E8F4FF; line-height: 1.55;
+    font-size: 0.84rem; color: #E8ECF2; line-height: 1.55;
     max-width: 84%; align-self: flex-end;
 }
 .semibot-bubble-bot {
-    background: rgba(0,20,55,0.75);
-    border: 1px solid rgba(0,80,160,0.2);
+    background: #161C25;
+    border: 1px solid #212A36;
     border-radius: 14px 14px 14px 4px;
     padding: 10px 12px;
-    font-size: 0.8rem; color: #F0F8FF; line-height: 1.55;
+    font-size: 0.84rem; color: #E8ECF2; line-height: 1.55;
     max-width: 88%; align-self: flex-start;
 }
 .semibot-bubble-typing {
-    font-size: 0.75rem; color: #5A8AAF; align-self: flex-start;
+    font-size: 0.78rem; color: #8693A5; align-self: flex-start;
     padding: 2px 4px;
 }
 .st-key-semibot_bubble_inputrow {
     padding: 10px 14px 14px !important;
-    border-top: 1px solid rgba(0,140,255,0.15) !important;
+    border-top: 1px solid #212A36 !important;
     flex-shrink: 0 !important;
 }
 .st-key-semibot_bubble_panel [data-baseweb="base-input"],
 .st-key-semibot_bubble_panel [data-baseweb="input"] {
-    background: #0C1526 !important;
-    border: 1px solid rgba(0,140,255,0.3) !important;
+    background: #0A0D12 !important;
+    border: 1px solid #2E3A4B !important;
     border-radius: 8px !important;
 }
 .st-key-semibot_bubble_panel .stTextInput input {
-    background: #0C1526 !important;
-    color: #E8F4FF !important;
-    font-size: 0.82rem !important;
-    -webkit-text-fill-color: #E8F4FF !important;
+    background: #0A0D12 !important;
+    color: #E8ECF2 !important;
+    font-size: 0.86rem !important;
+    -webkit-text-fill-color: #E8ECF2 !important;
 }
 .st-key-semibot_bubble_panel .stTextInput input::placeholder {
-    color: #5A8AAF !important;
+    color: #8693A5 !important;
     opacity: 1 !important;
 }
 </style>
@@ -210,7 +212,7 @@ def render_chat_bubble(get_system_prompt=None):
     st.markdown(BUBBLE_CSS, unsafe_allow_html=True)
 
     with st.container(key="semibot_bubble_toggle"):
-        icon = "×" if st.session_state.bubble_open else "💬"
+        icon = ":material/close:" if st.session_state.bubble_open else ":material/chat:"
         st.button(icon, key="semibot_bubble_toggle_btn",
                                     on_click=lambda: st.session_state.update({"bubble_open": not st.session_state.bubble_open}))
 

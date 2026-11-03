@@ -7,443 +7,439 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>SemiBot — AI Semiconductor Equity Analyser</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+:root{
+  --bg:#0A0D12;--surface:#10151C;--surface-2:#161C25;--line:#212A36;--line-2:#2E3A4B;
+  --text:#E8ECF2;--text-2:#B4BFCE;--text-3:#8693A5;
+  --accent:#5B9BFF;--accent-hi:#8BB8FF;--accent-ink:#06101F;--accent-soft:rgba(91,155,255,0.12);
+  --up:#34D399;--down:#F87171;--warn:#FBBF24;--violet:#A78BFA;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{background:#04080F;font-family:'Inter',sans-serif;overflow-x:hidden;color:#E8F4FF;}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,140,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,140,255,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 48px;border-bottom:1px solid rgba(0,140,255,0.1);background:rgba(4,8,20,0.85);backdrop-filter:blur(16px);}
-.nav-logo{display:flex;align-items:center;gap:10px;}
-.nav-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0055FF,#00C8FF);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 18px rgba(0,140,255,0.5);}
-.nav-name{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#E8F4FF;letter-spacing:-0.3px;}
-.nav-links{display:flex;gap:32px;}
-.nav-links a{font-size:13px;color:#3A5A70;text-decoration:none;font-weight:500;transition:color 0.2s;}
-.nav-links a:hover{color:#7ABFFF;}
-.nav-cta{background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;border-radius:9px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 0 18px rgba(0,140,255,0.4);transition:all 0.2s;}
-.nav-cta:hover{box-shadow:0 0 30px rgba(0,180,255,0.6);transform:translateY(-1px);}
-.ticker{position:relative;z-index:20;background:rgba(0,8,24,0.98);border-bottom:1px solid rgba(0,140,255,0.1);padding:8px 0;overflow:hidden;margin-top:62px;}
-.tape{display:flex;animation:scroll 24s linear infinite;width:max-content;}
-.ti{display:flex;align-items:center;gap:8px;padding:0 26px;border-right:1px solid rgba(0,140,255,0.07);}
-.tsym{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#C0DCFF;}
-.tprice{font-size:12px;font-weight:600;color:#A0BCDC;}
-.tchg{font-size:11px;font-weight:600;padding:1px 7px;border-radius:4px;}
-.up{color:#34D399;background:rgba(52,211,153,0.1);}
-.dn{color:#F87171;background:rgba(248,113,113,0.1);}
-.dot{width:5px;height:5px;border-radius:50%;}
-.udt{background:#34D399;box-shadow:0 0 5px rgba(52,211,153,0.7);}
-.ddt{background:#F87171;box-shadow:0 0 5px rgba(248,113,113,0.7);}
-@keyframes scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-#hero{min-height:100vh;background:radial-gradient(ellipse at 65% 40%,#091830 0%,#04080F 65%);position:relative;display:flex;flex-direction:column;overflow:hidden;}
-.orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(100px);z-index:0;}
-.o1{width:600px;height:600px;background:rgba(0,60,200,0.1);top:-200px;left:-200px;}
-.o2{width:400px;height:400px;background:rgba(0,150,255,0.06);bottom:-100px;right:-100px;}
-.o3{width:250px;height:250px;background:rgba(60,0,180,0.07);top:30%;left:38%;}
-.hero-inner{flex:1;display:grid;grid-template-columns:460px 1fr;align-items:center;padding:40px 48px;position:relative;z-index:5;}
-.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,80,200,0.12);border:1px solid rgba(0,140,255,0.22);border-radius:20px;padding:5px 14px;font-size:10.5px;font-weight:600;color:#5AADFF;margin-bottom:16px;letter-spacing:0.05em;}
-.bdot{width:7px;height:7px;border-radius:50%;background:#00AAFF;box-shadow:0 0 8px rgba(0,180,255,0.9);animation:blink 1.8s ease-in-out infinite;}
-@keyframes blink{0%,100%{opacity:0.3;}50%{opacity:1;}}
-.hero-title{font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:800;color:#E8F4FF;line-height:1.15;letter-spacing:-0.7px;margin-bottom:14px;}
-.hero-title em{font-style:normal;background:linear-gradient(135deg,#4F9FFF,#00D8FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-desc{font-size:0.85rem;color:#2A5070;line-height:1.9;margin-bottom:20px;max-width:400px;}
-.hero-desc strong{color:#4A8AAA;}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;}
-.chip{background:rgba(0,60,160,0.12);border:1px solid rgba(0,120,255,0.16);color:#3A80C0;border-radius:6px;padding:4px 12px;font-size:10.5px;font-weight:600;}
-.ctas{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
-.btn-primary{background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;border-radius:10px;padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 0 22px rgba(0,140,255,0.45);transition:all 0.22s;}
-.btn-primary:hover{box-shadow:0 0 36px rgba(0,180,255,0.65);transform:translateY(-2px);}
-.btn-secondary{background:transparent;border:1px solid rgba(0,120,255,0.2);color:#2A5070;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
-.btn-secondary:hover{border-color:rgba(0,140,255,0.45);color:#6AAFFF;}
-.stats{display:flex;gap:28px;padding-top:18px;border-top:1px solid rgba(0,140,255,0.08);}
-.stat-num{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;color:#3A8AFF;}
-.stat-lbl{font-size:9.5px;color:#1A3A55;margin-top:2px;font-weight:500;letter-spacing:0.04em;}
-.right{position:relative;height:100%;min-height:400px;display:flex;align-items:flex-end;justify-content:center;}
-.bub{position:absolute;background:rgba(0,20,60,0.92);border:1px solid rgba(0,150,255,0.3);border-radius:10px;padding:6px 13px;font-size:11px;color:#6AAAEE;font-weight:500;white-space:nowrap;z-index:30;transition:opacity 0.4s;}
-.bl1{top:12%;left:0%;animation:bf 3.2s ease-in-out infinite;}
-.bl2{top:34%;left:1%;animation:bf 4.1s ease-in-out infinite 0.6s;}
-.bl3{top:56%;left:0%;animation:bf 3.7s ease-in-out infinite 1.2s;}
-.br1{top:12%;right:0%;animation:bf 3.8s ease-in-out infinite 0.3s;}
-.br2{top:34%;right:1%;animation:bf 3.4s ease-in-out infinite 0.9s;}
-.br3{top:52%;right:2%;animation:bf 4.3s ease-in-out infinite 1.5s;}
-.bl4{top:75%;left:0%;animation:bf 3.9s ease-in-out infinite 1.8s;}
-.br4{top:75%;right:0%;animation:bf 4.6s ease-in-out infinite 2.1s;}
-@keyframes bf{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
-.robots-row{display:flex;align-items:flex-end;justify-content:center;gap:60px;width:100%;padding-bottom:10px;}
-.rw{display:flex;flex-direction:column;align-items:center;}
-.rw1{animation:f1 3.8s ease-in-out infinite;}
-.rw2{animation:f2 3.2s ease-in-out infinite;}
-@keyframes f1{0%,100%{transform:translateY(-160px);}50%{transform:translateY(-182px);}}
-@keyframes f2{0%,100%{transform:translateY(-174px);}50%{transform:translateY(-152px);}}
-.bot1{display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 0 20px rgba(180,60,255,0.35));}
-.b1-antenna-ball{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF88EE,#CC44BB);box-shadow:0 0 14px rgba(200,60,220,0.9);}
-.b1-antenna-stick{width:4px;height:16px;background:linear-gradient(to bottom,#D0C0D8,#A090B0);border-radius:3px;}
-.b1-head{width:110px;height:95px;background:radial-gradient(circle at 38% 28%,#FFFFFF,#EAF2FF 55%,#C8DAEA);border-radius:38px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset -3px -3px 12px rgba(0,80,180,0.07),0 4px 20px rgba(0,0,0,0.3);}
-.b1-head::before{content:'';position:absolute;top:10px;left:16px;width:32px;height:9px;background:rgba(255,255,255,0.55);border-radius:6px;transform:rotate(-10deg);}
-.b1-visor{width:84px;height:32px;background:linear-gradient(135deg,#DD55CC 0%,#9922DD 50%,#5500BB 100%);border-radius:11px;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 0 18px rgba(160,30,220,0.65);}
-.b1-eye{width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#AAFFFF,#00CCEE);box-shadow:0 0 10px rgba(0,220,255,0.95);}
-.b1-neck{width:28px;height:12px;background:linear-gradient(to bottom,#D8EAF5,#B8CAD8);border-radius:5px;margin:1px 0;}
-.b1-body{width:100px;height:85px;background:radial-gradient(circle at 36% 28%,#FFFFFF,#DFF0FF 55%,#BACED8);border-radius:26px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset -2px -2px 10px rgba(0,80,180,0.06),0 4px 18px rgba(0,0,0,0.25);}
-.b1-screen{width:52px;height:34px;background:linear-gradient(135deg,#001840,#002D70);border-radius:8px;border:1.5px solid rgba(0,160,255,0.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
-.b1-bar1{width:32px;height:3px;background:linear-gradient(90deg,#0088FF,#00EEFF);border-radius:2px;}
-.b1-bar2{width:24px;height:3px;background:linear-gradient(90deg,#0055CC,#00AAFF);border-radius:2px;opacity:0.7;}
-.b1-armL{position:absolute;left:-26px;top:14px;width:22px;height:50px;background:radial-gradient(circle at 40% 30%,#FFFFFF,#D0E8F8 60%,#B0C8D8);border-radius:11px;}
-.b1-armR{position:absolute;right:-26px;top:14px;width:22px;height:50px;background:radial-gradient(circle at 40% 30%,#FFFFFF,#D0E8F8 60%,#B0C8D8);border-radius:11px;}
-.b1-legs{display:flex;gap:12px;margin-top:3px;}
-.b1-leg{width:24px;height:32px;background:radial-gradient(circle at 40% 30%,#EAF4FF,#C0D8EA);border-radius:10px;}
-.b1-feet{display:flex;gap:8px;margin-top:2px;}
-.b1-foot{width:32px;height:14px;background:linear-gradient(to right,#3A506A,#253448);border-radius:7px;box-shadow:0 3px 8px rgba(0,0,0,0.4);}
-.bot2{display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 0 20px rgba(0,200,255,0.3));}
-.b2-head{width:95px;height:88px;background:radial-gradient(circle at 38% 28%,#FFFFFF,#EBF5FF 55%,#CADAEA);border-radius:30px 30px 22px 22px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset -2px -2px 10px rgba(0,80,180,0.06),0 4px 18px rgba(0,0,0,0.3);}
-.b2-head::before{content:'';position:absolute;top:9px;left:14px;width:28px;height:8px;background:rgba(255,255,255,0.5);border-radius:5px;transform:rotate(-9deg);}
-.b2-visor{width:74px;height:28px;background:linear-gradient(135deg,#0088FF 0%,#00CCFF 50%,#00EEFF 100%);border-radius:9px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 0 16px rgba(0,200,255,0.7);}
-.b2-eye{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFFFFF,#CCFFFF);box-shadow:0 0 10px rgba(0,255,255,0.9);}
-.b2-neck{width:26px;height:14px;background:linear-gradient(to bottom,#D8EAF5,#B8CAD8);border-radius:5px;margin:1px 0;}
-.b2-body{width:108px;height:100px;background:radial-gradient(circle at 36% 28%,#FFFFFF,#DFF0FF 55%,#BACED8);border-radius:22px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset -2px -2px 10px rgba(0,80,180,0.06),0 4px 18px rgba(0,0,0,0.25);}
-.b2-chest{width:60px;height:42px;background:linear-gradient(135deg,#001840,#003070);border-radius:10px;border:1.5px solid rgba(0,160,255,0.35);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;}
-.b2-tbar{width:38px;height:3px;background:linear-gradient(90deg,#0055FF,#00AAFF);border-radius:2px;}
-.b2-vbar{width:3px;height:14px;background:linear-gradient(to bottom,#0088FF,#00EEFF);border-radius:2px;}
-.b2-armL{position:absolute;left:-28px;top:12px;width:24px;height:56px;background:radial-gradient(circle at 40% 30%,#FFFFFF,#D0E8F8 60%,#B0C8D8);border-radius:12px;}
-.b2-armR{position:absolute;right:-28px;top:12px;width:24px;height:56px;background:radial-gradient(circle at 40% 30%,#FFFFFF,#D0E8F8 60%,#B0C8D8);border-radius:12px;}
-.b2-legs{display:flex;gap:14px;margin-top:3px;}
-.b2-leg{width:26px;height:36px;background:radial-gradient(circle at 40% 30%,#EAF4FF,#C0D8EA);border-radius:11px;}
-.b2-feet{display:flex;gap:10px;margin-top:2px;}
-.b2-foot{width:36px;height:16px;background:linear-gradient(to right,#3A506A,#253448);border-radius:8px;box-shadow:0 3px 8px rgba(0,0,0,0.4);}
-.rshadow{background:radial-gradient(ellipse,rgba(0,160,255,0.22) 0%,transparent 70%);border-radius:50%;}
-#features{position:relative;z-index:5;padding:100px 48px 80px;background:linear-gradient(to bottom,#04080F,#050C18);}
-.section-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,80,200,0.1);border:1px solid rgba(0,140,255,0.18);border-radius:20px;padding:4px 14px;font-size:10.5px;font-weight:600;color:#4A9AFF;margin-bottom:14px;letter-spacing:0.05em;}
-.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.9rem;font-weight:700;color:#D8EEFF;margin-bottom:10px;letter-spacing:-0.4px;}
-.section-sub{font-size:0.85rem;color:#1E4060;line-height:1.8;margin-bottom:48px;max-width:520px;}
-.factors-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
-.factor-card{background:rgba(0,18,50,0.7);border:1px solid rgba(0,80,160,0.2);border-radius:14px;padding:20px;transition:all 0.25s;position:relative;overflow:hidden;}
-.factor-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,140,255,0.4),transparent);opacity:0;transition:opacity 0.25s;}
-.factor-card:hover{border-color:rgba(0,140,255,0.35);transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,80,200,0.12);}
-.factor-card:hover::before{opacity:1;}
-.fc-icon{font-size:1.5rem;margin-bottom:10px;}
-.fc-title{font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:600;color:#C0DCFF;margin-bottom:6px;}
-.fc-desc{font-size:0.75rem;color:#1E4060;line-height:1.7;}
-.fc-tag{display:inline-block;background:rgba(0,80,160,0.15);border:1px solid rgba(0,120,200,0.2);color:#3A7AAA;border-radius:5px;padding:2px 8px;font-size:9.5px;font-weight:600;margin-top:8px;}
-#howitworks{position:relative;z-index:5;padding:80px 48px;background:rgba(0,6,18,0.8);}
-.hiw-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;margin-top:40px;}
-.hiw-steps{display:flex;flex-direction:column;gap:28px;}
-.step{display:flex;gap:18px;align-items:flex-start;}
-.step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0044CC,#0088FF);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 0 16px rgba(0,100,255,0.4);}
-.step-title{font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;color:#C0DCFF;margin-bottom:5px;}
-.step-desc{font-size:0.78rem;color:#1E4060;line-height:1.75;}
-.step-desc strong{color:#3A7090;}
-.hiw-problems{background:rgba(0,14,40,0.7);border:1px solid rgba(0,80,160,0.2);border-radius:16px;padding:28px;}
-.prob-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;color:#D0E8FF;margin-bottom:6px;}
-.prob-sub{font-size:0.75rem;color:#1A3A55;margin-bottom:20px;line-height:1.6;}
-.prob-item{display:flex;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(0,80,160,0.1);}
-.prob-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
-.prob-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
-.prob-head{font-size:0.8rem;font-weight:600;color:#8ABADD;margin-bottom:3px;}
-.prob-body{font-size:0.73rem;color:#1A3A55;line-height:1.65;}
-#research{position:relative;z-index:5;padding:80px 48px;background:linear-gradient(to bottom,#050C18,#04080F);}
-.research-card{background:rgba(0,18,50,0.75);border:1px solid rgba(0,80,160,0.22);border-radius:18px;padding:36px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;}
-.rc-label{font-size:9.5px;font-weight:700;letter-spacing:0.12em;color:#1A4060;text-transform:uppercase;margin-bottom:10px;}
-.rc-title{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;color:#D0E8FF;margin-bottom:8px;line-height:1.3;}
-.rc-desc{font-size:0.78rem;color:#1E4060;line-height:1.8;margin-bottom:18px;max-width:500px;}
-.rc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
-.rc-tag{background:rgba(0,60,140,0.15);border:1px solid rgba(0,100,200,0.18);color:#3A6A90;border-radius:6px;padding:3px 10px;font-size:10px;font-weight:600;}
-.rc-btn{background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;border-radius:9px;padding:11px 24px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 0 18px rgba(0,140,255,0.35);transition:all 0.2s;white-space:nowrap;}
-.rc-btn:hover{box-shadow:0 0 28px rgba(0,180,255,0.55);transform:translateY(-1px);}
-.rc-meta{display:flex;gap:20px;flex-wrap:wrap;}
-.rc-meta-item{font-size:10px;color:#1A3A55;}
-.rc-meta-item strong{color:#2A5A70;display:block;font-size:12px;margin-bottom:2px;}
-#cta{position:relative;z-index:5;padding:80px 48px;text-align:center;background:radial-gradient(ellipse at 50% 50%,#091830 0%,#04080F 70%);}
-.cta-title{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#D8EEFF;margin-bottom:12px;letter-spacing:-0.4px;}
-.cta-title em{font-style:normal;background:linear-gradient(135deg,#4F9FFF,#00D8FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.cta-sub{font-size:0.85rem;color:#1E4060;margin-bottom:32px;line-height:1.8;}
-.cta-btn{background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;border-radius:12px;padding:16px 40px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 0 28px rgba(0,140,255,0.45);transition:all 0.22s;}
-.cta-btn:hover{box-shadow:0 0 42px rgba(0,180,255,0.65);transform:translateY(-2px);}
-#contact{position:relative;z-index:5;padding:64px 48px;text-align:center;background:#04080F;border-top:1px solid rgba(0,140,255,0.08);}
-.contact-title{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#D0E8FF;margin-bottom:8px;}
-.contact-sub{font-size:0.8rem;color:#1E4060;margin-bottom:28px;}
-.contact-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:1px;
-  background:rgba(0,140,255,0.15);border:1px solid rgba(0,140,255,0.15);
-  max-width:680px;margin:0 auto;text-align:left;
-}
-.contact-grid a{
-  background:#04080F;padding:22px 24px;display:flex;flex-direction:column;gap:6px;
-  text-decoration:none;transition:background .15s ease;
-}
-.contact-grid a:hover{background:rgba(0,60,140,0.18);}
-.contact-label{
-  font-family:'Space Grotesk',sans-serif;font-size:10.5px;text-transform:uppercase;
-  letter-spacing:0.08em;color:#3A6A90;
-}
-.contact-value{font-size:15px;font-weight:600;color:#D0E8FF;word-break:break-word;}
-@media (max-width:600px){
-  .nav{padding:12px 16px;}
-  .nav-links{display:none;}
-  .hero-inner{grid-template-columns:1fr;padding:20px 16px;}
-  .right{display:none;}
-  #features{padding:60px 16px 40px;}
-  .factors-grid{grid-template-columns:1fr;}
-  #howitworks{padding:40px 16px;}
-  .hiw-grid{grid-template-columns:1fr;}
-  #research{padding:40px 16px;}
-  .rp-content{padding:40px 16px;}
-  .rp-nav{padding:12px 16px;}
-  #cta{padding:40px 16px;}
-  #contact{padding:40px 16px;}
-  .contact-grid{grid-template-columns:1fr;}
-  footer{padding:20px 16px;flex-direction:column;gap:6px;}
-  .ctas{flex-direction:column;align-items:flex-start;}
-}
-footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0,140,255,0.08);display:flex;align-items:center;justify-content:space-between;}
-.footer-text{font-size:11px;color:#1A3A55;}
-.footer-right{font-size:11px;color:#1A3A55;text-align:right;}
-#researchpage{display:none;position:fixed;inset:0;background:#04080F;z-index:200;overflow-y:auto;}
-.rp-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;border-bottom:1px solid rgba(0,140,255,0.1);background:rgba(4,8,20,0.9);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
-.rp-back{background:rgba(0,140,255,0.1);border:1px solid rgba(0,140,255,0.2);color:#5AADFF;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
-.rp-back:hover{background:rgba(0,140,255,0.18);}
-.rp-content{max-width:760px;margin:0 auto;padding:60px 48px;}
-.rp-category{font-size:10px;font-weight:700;letter-spacing:0.12em;color:#1A4060;text-transform:uppercase;margin-bottom:10px;}
-.rp-title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#D0E8FF;margin-bottom:14px;line-height:1.3;}
-.rp-authors{font-size:12px;color:#2A5A70;margin-bottom:8px;}
-.rp-venue{font-size:11px;color:#1A4060;margin-bottom:24px;}
-.rp-divider{height:1px;background:rgba(0,140,255,0.1);margin:24px 0;}
-.rp-section-title{font-size:10.5px;font-weight:600;color:#8ABFDD;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;}
-.rp-body{font-size:0.82rem;color:#2A5070;line-height:1.9;margin-bottom:20px;}
-.rp-highlight{background:rgba(0,40,100,0.4);border:1px solid rgba(0,100,200,0.2);border-radius:10px;padding:16px 20px;margin:16px 0;}
-.rp-highlight p{font-size:0.8rem;color:#4A8AAA;line-height:1.8;}
-.rp-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px;}
-.rp-tag{background:rgba(0,60,140,0.15);border:1px solid rgba(0,100,200,0.18);color:#3A6A90;border-radius:6px;padding:4px 12px;font-size:10.5px;font-weight:600;}
-.rp-links{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 26px;}
-.rp-ssrn-btn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border-radius:9px;padding:11px 22px;font-size:12.5px;font-weight:600;text-decoration:none;box-shadow:0 0 18px rgba(0,140,255,0.35);transition:all 0.2s;}
-.rp-ssrn-btn:hover{box-shadow:0 0 28px rgba(0,180,255,0.55);transform:translateY(-1px);}
-.rp-ssrn-btn-outline{display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(0,140,255,0.3);color:#5AADFF;border-radius:9px;padding:10px 21px;font-size:12.5px;font-weight:600;text-decoration:none;transition:all 0.2s;}
-.rp-ssrn-btn-outline:hover{border-color:rgba(0,140,255,0.6);background:rgba(0,80,200,0.1);}
-.rp-h2{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:#D0E8FF;margin:36px 0 14px;letter-spacing:-0.2px;}
-.rp-h3{font-size:0.9rem;font-weight:700;color:#8ABFDD;margin:22px 0 10px;}
-.rp-table-wrap{overflow-x:auto;margin:14px 0 22px;border-radius:10px;border:1px solid rgba(0,100,200,0.2);}
-.rp-table{width:100%;border-collapse:collapse;font-size:0.72rem;}
-.rp-table caption{text-align:left;font-size:0.72rem;font-weight:600;color:#5A8AAF;padding:8px 12px;background:rgba(0,30,80,0.5);}
-.rp-table th{background:rgba(0,40,100,0.5);color:#8ABFDD;text-align:left;padding:7px 11px;font-weight:600;white-space:nowrap;border-bottom:1px solid rgba(0,100,200,0.25);}
-.rp-table td{padding:6px 11px;color:#2A5070;border-bottom:1px solid rgba(0,80,160,0.1);white-space:nowrap;}
-.rp-table tr:last-child td{border-bottom:none;}
-.rp-table tr.rp-total td{color:#5AADFF;font-weight:700;}
-.rp-refs{font-size:0.72rem;color:#1E4060;line-height:2;}
-.rp-refs p{margin-bottom:8px;}
-.rp-caption{font-size:0.72rem;color:#5A8AAF;font-weight:600;margin:18px 0 8px;}
+body{background:var(--bg);font-family:var(--sans);overflow-x:hidden;color:var(--text);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+a{color:var(--accent-hi);}
+button{font-family:var(--sans);cursor:pointer;}
+:focus-visible{outline:2px solid var(--accent-hi);outline-offset:3px;border-radius:6px;}
 
-.chat-hint{position:absolute;top:390px;right:14px;background:#EBF4FF;color:#04080F;border:1px solid rgba(0,140,255,0.25);border-radius:14px;padding:11px 30px 11px 14px;max-width:224px;font-size:12.5px;line-height:1.55;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:999;opacity:0;transform:translateY(6px);transition:opacity 0.35s,transform 0.35s;pointer-events:none;}
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(10,13,18,0.82);backdrop-filter:blur(14px);}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nav-icon{width:32px;height:32px;border-radius:8px;background:var(--accent-soft);border:1px solid rgba(91,155,255,0.35);display:flex;align-items:center;justify-content:center;color:var(--accent-hi);}
+.nav-icon svg{width:18px;height:18px;}
+.nav-name{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-0.02em;}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{font-size:14px;color:var(--text-2);text-decoration:none;font-weight:500;transition:color .15s;}
+.nav-links a:hover{color:var(--text);}
+.nav-cta,.btn-primary,.rc-btn,.cta-btn{background:var(--accent);color:var(--accent-ink);border:none;border-radius:9px;font-weight:600;transition:background .15s,transform .15s;}
+.nav-cta{padding:9px 20px;font-size:14px;}
+.nav-cta:hover,.btn-primary:hover,.rc-btn:hover,.cta-btn:hover{background:var(--accent-hi);transform:translateY(-1px);}
+
+/* ---------- coverage strip ---------- */
+.strip{position:relative;z-index:5;margin-top:63px;border-bottom:1px solid var(--line);background:var(--surface);padding:9px 48px;display:flex;align-items:center;gap:18px;overflow:hidden;}
+.strip-label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);white-space:nowrap;}
+.strip-tickers{font-family:var(--mono);font-size:12.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.strip-tickers span{margin-right:18px;}
+
+/* ---------- hero ---------- */
+#hero{position:relative;background:radial-gradient(900px 420px at 78% 0%,rgba(91,155,255,0.10),transparent 70%),var(--bg);}
+.hero-inner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:72px 48px 80px;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-hi);margin-bottom:18px;}
+.eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--up);}
+.hero-title{font-size:clamp(2.1rem,4.2vw,3.2rem);font-weight:700;line-height:1.1;letter-spacing:-0.03em;color:var(--text);margin-bottom:18px;}
+.hero-title em{font-style:normal;color:var(--accent-hi);}
+.hero-desc{font-size:1.06rem;color:var(--text-2);line-height:1.7;margin-bottom:24px;max-width:540px;}
+.hero-desc strong{color:var(--text);font-weight:600;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:28px;}
+.chip{font-family:var(--mono);background:var(--surface);border:1px solid var(--line);color:var(--text-2);border-radius:6px;padding:4px 10px;font-size:12px;}
+.ctas{display:flex;align-items:center;gap:12px;margin-bottom:34px;flex-wrap:wrap;}
+.btn-primary{padding:13px 26px;font-size:15px;}
+.btn-secondary{background:transparent;border:1px solid var(--line-2);color:var(--text);border-radius:9px;padding:12px 22px;font-size:15px;font-weight:500;transition:border-color .15s,background .15s;}
+.btn-secondary:hover{border-color:var(--accent);background:var(--accent-soft);}
+.stats{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:34px;padding-top:22px;border-top:1px solid var(--line);}
+.stat-num{font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.2;}
+.stat-lbl{font-size:12.5px;color:var(--text-3);margin-top:2px;}
+.fineprint{font-size:12.5px;color:var(--text-3);margin-top:14px;line-height:1.55;max-width:540px;}
+
+/* sample output card */
+.sample{background:var(--surface);border:1px solid var(--line-2);border-radius:16px;overflow:hidden;box-shadow:0 24px 60px -30px rgba(0,0,0,.7);}
+.sample-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--surface-2);}
+.sample-title{font-size:14px;font-weight:600;}
+.sample-badge{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);border:1px solid rgba(251,191,36,.4);border-radius:99px;padding:2px 10px;}
+.sample-body{padding:22px 20px 20px;}
+.prob-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+.prob-up,.prob-down{font-family:var(--mono);font-size:2rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;}
+.prob-up{color:var(--up);}
+.prob-down{color:var(--down);}
+.prob-up small,.prob-down small{font-size:12px;font-weight:500;letter-spacing:.06em;margin-left:6px;color:var(--text-3);}
+.split{display:flex;height:10px;border-radius:99px;overflow:hidden;gap:3px;margin-bottom:22px;}
+.split i{display:block;height:100%;}
+.split .su{background:var(--up);width:58%;}
+.split .sd{background:var(--down);width:42%;}
+.drivers{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.dr-h{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
+.dr{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px;color:var(--text-2);}
+.dr b{font-family:var(--mono);font-weight:600;font-size:13px;}
+.dr .p{color:var(--up);} .dr .n{color:var(--down);}
+.sample-foot{padding:12px 20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--text-3);line-height:1.5;}
+.sample-foot strong{color:var(--text-2);font-weight:600;}
+
+/* ---------- sections ---------- */
+section.block{position:relative;z-index:5;padding:88px 48px;}
+section.block.alt{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.wrap{max-width:1120px;margin:0 auto;}
+section[id]{scroll-margin-top:68px;}
+.section-badge{font-family:var(--mono);font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent-hi);margin-bottom:12px;display:block;}
+.section-title{font-size:clamp(1.55rem,2.6vw,2.1rem);font-weight:700;letter-spacing:-0.025em;line-height:1.2;color:var(--text);margin-bottom:12px;max-width:720px;}
+.section-sub{font-size:1.02rem;color:var(--text-2);line-height:1.7;margin-bottom:44px;max-width:680px;}
+
+/* 18-factor layers */
+.layers{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.layer{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 24px 10px;}
+.layer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.layer-name{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15.5px;}
+.layer-name i{width:10px;height:10px;border-radius:3px;display:block;}
+.layer-count{font-family:var(--mono);font-size:12px;color:var(--text-3);}
+.f{padding:13px 0;border-top:1px solid var(--line);}
+.f b{display:block;font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.f span{display:block;font-size:13.5px;color:var(--text-3);line-height:1.6;}
+.l-macro i{background:var(--accent);} .l-fund i{background:var(--violet);} .l-mkt i{background:var(--up);} .l-ext i{background:var(--warn);}
+
+/* feature cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:22px;transition:border-color .15s;}
+.card:hover{border-color:var(--line-2);}
+.card-k{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent-hi);margin-bottom:10px;display:block;}
+.card h3{font-size:16px;font-weight:600;margin-bottom:6px;color:var(--text);}
+.card p{font-size:14px;color:var(--text-3);line-height:1.65;}
+
+/* how it works */
+.hiw-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:start;}
+.hiw-steps{display:flex;flex-direction:column;gap:26px;}
+.step{display:flex;gap:16px;align-items:flex-start;}
+.step-num{width:34px;height:34px;border-radius:9px;border:1px solid var(--line-2);background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent-hi);flex-shrink:0;}
+.step-title{font-size:16px;font-weight:600;margin-bottom:4px;color:var(--text);}
+.step-desc{font-size:14px;color:var(--text-3);line-height:1.7;}
+.step-desc strong{color:var(--text-2);font-weight:600;}
+.hiw-problems{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;}
+.prob-title{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+.prob-sub{font-size:14px;color:var(--text-3);margin-bottom:20px;line-height:1.6;}
+.prob-item{padding:0 0 0 14px;margin-bottom:18px;border-left:2px solid var(--warn);}
+.prob-item:last-child{margin-bottom:0;}
+.prob-head{font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.prob-body{font-size:13.5px;color:var(--text-3);line-height:1.65;}
+
+/* research */
+.research-card{background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:36px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center;}
+.rc-label{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--accent-hi);text-transform:uppercase;margin-bottom:10px;}
+.rc-title{font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.3;letter-spacing:-0.015em;}
+.rc-desc{font-size:14.5px;color:var(--text-2);line-height:1.75;margin-bottom:18px;max-width:560px;}
+.rc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
+.rc-tag{font-family:var(--mono);background:var(--bg);border:1px solid var(--line);color:var(--text-2);border-radius:6px;padding:3px 10px;font-size:11.5px;}
+.rc-btn{padding:11px 24px;font-size:14px;white-space:nowrap;text-align:center;display:block;}
+.rc-meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:18px;}
+.rc-meta-item{font-size:12.5px;color:var(--text-3);}
+.rc-meta-item strong{color:var(--text);display:block;font-size:13.5px;font-weight:600;margin-bottom:1px;}
+
+/* cta */
+#cta{position:relative;z-index:5;padding:88px 48px;text-align:center;background:radial-gradient(700px 300px at 50% 0%,rgba(91,155,255,0.10),transparent 70%),var(--bg);}
+.cta-title{font-size:clamp(1.7rem,3vw,2.3rem);font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.025em;}
+.cta-title em{font-style:normal;color:var(--accent-hi);}
+.cta-sub{font-size:1.02rem;color:var(--text-2);margin-bottom:30px;line-height:1.7;}
+.cta-btn{padding:15px 36px;font-size:16px;border-radius:10px;}
+.cta-note{margin-top:16px;font-size:13px;color:var(--text-3);}
+
+/* contact + footer */
+#contact{position:relative;z-index:5;padding:64px 48px;text-align:center;background:var(--surface);border-top:1px solid var(--line);}
+.contact-title{font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-0.02em;}
+.contact-sub{font-size:14.5px;color:var(--text-2);margin-bottom:28px;}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;max-width:700px;margin:0 auto;text-align:left;}
+.contact-grid a{background:var(--bg);padding:20px 22px;display:flex;flex-direction:column;gap:4px;text-decoration:none;transition:background .15s;}
+.contact-grid a:hover{background:var(--surface-2);}
+.contact-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);}
+.contact-value{font-size:15px;font-weight:500;color:var(--text);word-break:break-word;}
+footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--bg);}
+.footer-brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14.5px;color:var(--text-2);}
+.footer-text{font-size:13px;color:var(--text-3);}
+.footer-text strong{color:var(--text-2);font-weight:600;}
+.footer-right{font-size:12.5px;color:var(--text-3);text-align:right;}
+
+/* ---------- research paper page ---------- */
+#researchpage{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;}
+.rp-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(10,13,18,0.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
+.rp-back{background:var(--surface);border:1px solid var(--line-2);color:var(--text);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;transition:border-color .15s;}
+.rp-back:hover{border-color:var(--accent);}
+.rp-brand{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;color:var(--text);}
+.rp-affil{font-size:12px;color:var(--text-3);}
+.rp-content{max-width:780px;margin:0 auto;padding:56px 32px 72px;}
+.rp-category{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--accent-hi);text-transform:uppercase;margin-bottom:12px;}
+.rp-title{font-size:1.9rem;font-weight:700;color:var(--text);margin-bottom:14px;line-height:1.25;letter-spacing:-0.025em;}
+.rp-authors{font-size:14px;color:var(--text-2);margin-bottom:6px;}
+.rp-venue{font-size:13px;color:var(--text-3);margin-bottom:22px;}
+.rp-divider{height:1px;background:var(--line);margin:26px 0;}
+.rp-section-title{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent-hi);margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em;}
+.rp-body{font-size:15px;color:var(--text-2);line-height:1.85;margin-bottom:18px;}
+.rp-body strong{color:var(--text);font-weight:600;}
+.rp-body code{font-family:var(--mono);font-size:.88em;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--text);}
+.rp-highlight{background:var(--accent-soft);border:1px solid rgba(91,155,255,.3);border-radius:10px;padding:16px 20px;margin:16px 0;}
+.rp-highlight p{font-size:14.5px;color:var(--text);line-height:1.8;}
+.rp-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px;}
+.rp-tag{font-family:var(--mono);background:var(--surface);border:1px solid var(--line);color:var(--text-2);border-radius:6px;padding:4px 11px;font-size:11.5px;}
+.rp-links{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 24px;}
+.rp-ssrn-btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:var(--accent-ink);border-radius:9px;padding:11px 22px;font-size:14px;font-weight:600;text-decoration:none;transition:background .15s;}
+.rp-ssrn-btn:hover{background:var(--accent-hi);}
+.rp-ssrn-btn-outline{display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--line-2);color:var(--text);border-radius:9px;padding:10px 21px;font-size:14px;font-weight:600;text-decoration:none;transition:border-color .15s;}
+.rp-ssrn-btn-outline:hover{border-color:var(--accent);}
+.rp-h2{font-size:1.3rem;font-weight:700;color:var(--text);margin:44px 0 14px;letter-spacing:-0.02em;padding-top:8px;border-top:1px solid var(--line);}
+.rp-h3{font-size:1rem;font-weight:600;color:var(--text);margin:26px 0 10px;}
+.rp-table-wrap{overflow-x:auto;margin:14px 0 22px;border-radius:10px;border:1px solid var(--line);}
+.rp-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;}
+.rp-table caption{text-align:left;font-size:13px;font-weight:600;color:var(--text-2);padding:8px 12px;background:var(--surface);}
+.rp-table th{background:var(--surface-2);color:var(--text);text-align:left;padding:9px 12px;font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line-2);}
+.rp-table td{padding:8px 12px;color:var(--text-2);border-bottom:1px solid var(--line);white-space:nowrap;}
+.rp-table tr:last-child td{border-bottom:none;}
+.rp-table tr.rp-total td{color:var(--accent-hi);font-weight:700;}
+.rp-refs{font-size:13px;color:var(--text-3);line-height:1.85;}
+.rp-refs p{margin-bottom:8px;}
+.rp-caption{font-size:13px;color:var(--text-2);font-weight:600;margin:20px 0 8px;}
+
+/* chat hint (parent page chat bubble pointer) */
+.chat-hint{position:absolute;top:390px;right:14px;background:var(--text);color:var(--bg);border-radius:12px;padding:11px 30px 11px 14px;max-width:230px;font-size:13px;line-height:1.55;box-shadow:0 8px 28px rgba(0,0,0,.4);z-index:999;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s;pointer-events:none;}
 .chat-hint.is-visible{opacity:1;transform:translateY(0);pointer-events:auto;}
-.chat-hint-close{position:absolute;top:5px;right:8px;background:none;border:none;font-size:15px;cursor:pointer;color:#2A5070;line-height:1;padding:0;}
-.chat-hint::after{content:'';position:absolute;bottom:-8px;right:18px;border:8px solid transparent;border-top-color:#EBF4FF;border-bottom:none;}
+.chat-hint-close{position:absolute;top:5px;right:8px;background:none;border:none;font-size:16px;color:#334;line-height:1;padding:0;}
+.chat-hint::after{content:'';position:absolute;bottom:-8px;right:18px;border:8px solid transparent;border-top-color:var(--text);border-bottom:none;}
+
+/* ---------- responsive ---------- */
+@media (max-width:960px){
+  .hero-inner{grid-template-columns:1fr;gap:40px;padding:48px 28px 56px;}
+  .layers,.hiw-grid{grid-template-columns:1fr;}
+  .cards{grid-template-columns:1fr 1fr;}
+  .research-card{grid-template-columns:1fr;}
+}
+@media (max-width:600px){
+  .nav{padding:12px 16px;} .nav-links{display:none;}
+  .strip{padding:9px 16px;margin-top:57px;} .strip-label{display:none;}
+  .hero-inner{padding:32px 16px 44px;}
+  .stats{grid-template-columns:1fr 1fr;gap:18px 24px;}
+  section.block{padding:56px 16px;}
+  .cards{grid-template-columns:1fr;}
+  .drivers{grid-template-columns:1fr;gap:6px;}
+  .research-card{padding:22px;}
+  .rp-nav{padding:12px 16px;} .rp-affil{display:none;}
+  .rp-content{padding:36px 16px 56px;}
+  #cta,#contact{padding:48px 16px;}
+  .contact-grid{grid-template-columns:1fr;}
+  footer{padding:20px 16px;flex-direction:column;align-items:flex-start;}
+  .footer-right{text-align:left;}
+  .ctas{flex-direction:column;align-items:stretch;}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important;}
+}
 </style>
 </head>
 <body>
-<div id="welcomeModal" style="display:none;position:fixed;inset:0;background:rgba(0,4,12,0.85);z-index:500;align-items:center;justify-content:center;">
-  <div style="background:#0A1428;border:1px solid rgba(0,140,255,0.3);border-radius:18px;padding:36px;max-width:440px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-    <div style="font-size:2rem;margin-bottom:12px;">📡</div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:#E8F4FF;margin-bottom:10px;">Welcome to SemiBot</div>
-    <div style="font-size:0.85rem;color:#5A8AAF;line-height:1.7;margin-bottom:22px;">An AI-powered semiconductor equity analyser using 18 real-time causal factors. Analyse a single stock, or compare up to 5 tickers side-by-side. Built as MSc Applied AI research at the University of Warwick.</div>
-    <button onclick="closeWelcomeModal()" style="background:linear-gradient(135deg,#0055FF,#00AAFF);color:#fff;border:none;border-radius:10px;padding:12px 32px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 0 20px rgba(0,140,255,0.4);">Get Started</button>
+<div id="welcomeModal" style="display:none;position:fixed;inset:0;background:rgba(5,8,12,0.85);z-index:500;align-items:center;justify-content:center;padding:16px;" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+  <div style="background:var(--surface);border:1px solid var(--line-2);border-radius:16px;padding:32px;max-width:440px;text-align:left;box-shadow:0 24px 60px rgba(0,0,0,.6);">
+    <div id="welcomeTitle" style="font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.02em;">Welcome to SemiBot</div>
+    <div style="font-size:14.5px;color:var(--text-2);line-height:1.7;margin-bottom:22px;">An AI semiconductor equity analyser built on 18 causal factors. Analyse a single stock, or compare up to 5 tickers side by side. Built as MSc Applied AI research at the University of Warwick.</div>
+    <button class="btn-primary" onclick="closeWelcomeModal()">Get started</button>
   </div>
 </div>
 <div id="mainsite">
 <nav class="nav">
   <div class="nav-logo">
-    <div class="nav-icon">📡</div>
+    <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
     <span class="nav-name">SemiBot</span>
   </div>
   <div class="nav-links">
-    <a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'});return false;">Features</a>
+    <a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'});return false;">Factors</a>
     <a href="#howitworks" onclick="document.getElementById('howitworks').scrollIntoView({behavior:'smooth'});return false;">How it works</a>
     <a href="#compare" onclick="document.getElementById('compare').scrollIntoView({behavior:'smooth'});return false;">Compare</a>
     <a href="#" onclick="showResearch();return false;">Research</a>
   </div>
   <button class="nav-cta" onclick="goApp()">Get Started →</button>
 </nav>
-<div class="ticker"><div class="tape" id="tape"></div></div>
+
+<div class="strip" aria-label="Tickers covered">
+  <span class="strip-label">Covers 48 tickers</span>
+  <div class="strip-tickers"><span>NVDA</span><span>TSM</span><span>ASML</span><span>MU</span><span>AMD</span><span>AVGO</span><span>INTC</span><span>QCOM</span><span>ARM</span><span>AMAT</span><span>LRCX</span><span>KLAC</span><span>005930.KS</span><span>000660.KS</span><span>8035.T</span><span>IFX.DE</span><span>+ more</span></div>
+</div>
+
 <section id="hero">
-  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
   <div class="hero-inner">
     <div class="left">
-      <div class="badge"><div class="bdot"></div> LIVE · 18-Factor AI Analysis</div>
-      <h1 class="hero-title">Semiconductor<br><em>Equity Intelligence</em><br>Powered by AI</h1>
-      <p class="hero-desc">Real-time analysis of semiconductor stocks using <strong>18 causal factors</strong> — geopolitics, supply chain, macro signals, and market intelligence — generating a deterministic weighted UP%/DOWN% prediction. Analyse a single stock, or <strong>compare up to 5 tickers side-by-side</strong> with a ranked view and cross-ticker Q&A.</p>
-      <div class="chips">
+      <div class="eyebrow">18-factor causal analysis</div>
+      <h1 class="hero-title">Semiconductor equity analysis, <em>grounded in causal chains</em></h1>
+      <p class="hero-desc">SemiBot scores <strong>18 causal factors</strong> across macro, fundamentals, market signals and supply-chain risk, then computes the UP% / DOWN% split <strong>deterministically in Python</strong>. The language model never writes the probability. Analyse one stock, or <strong>compare up to 5 tickers</strong> with a ranked view and cross-ticker Q&amp;A.</p>
+      <div class="chips" aria-label="Built with">
         <span class="chip">LangGraph</span><span class="chip">RAG · FAISS</span><span class="chip">GPT-4o-mini</span>
-        <span class="chip">FRED API</span><span class="chip">SEC EDGAR</span><span class="chip">yfinance</span><span class="chip">DuckDuckGo</span>
+        <span class="chip">FRED</span><span class="chip">SEC EDGAR</span><span class="chip">yfinance</span><span class="chip">DuckDuckGo</span>
       </div>
       <div class="ctas">
-        <button class="btn-primary" onclick="goApp()">Analyse a Stock →</button>
+        <button class="btn-primary" onclick="goApp()">Analyse a stock →</button>
         <button class="btn-secondary" onclick="document.getElementById('howitworks').scrollIntoView({behavior:'smooth'})">How it works</button>
       </div>
       <div class="stats">
-        <div><div class="stat-num">18</div><div class="stat-lbl">CAUSAL FACTORS</div></div>
-        <div><div class="stat-num">RAG</div><div class="stat-lbl">SUPPLY CHAIN</div></div>
-        <div><div class="stat-num">MSc</div><div class="stat-lbl">WARWICK AI</div></div>
-        <div><div class="stat-num">SSRN</div><div class="stat-lbl">LIVE PREPRINT</div></div>
+        <div><div class="stat-num">18</div><div class="stat-lbl">causal factors</div></div>
+        <div><div class="stat-num">48</div><div class="stat-lbl">tickers covered</div></div>
+        <div><div class="stat-num">426</div><div class="stat-lbl">backtest observations</div></div>
+        <div><div class="stat-num">SSRN</div><div class="stat-lbl">live preprint</div></div>
       </div>
+      <p class="fineprint">Backtest 2 directional accuracy is 61.3% overall and 77.2% for mega-caps (&gt;$200B). It is not above a naive always-UP baseline overall; the paper reports this in full. Not financial advice.</p>
     </div>
+
     <div class="right">
-      <div class="bub bl1" id="bl1">📈 MU UP 48% signal detected</div>
-      <div class="bub bl2" id="bl2">⚠️ AMD inventory: elevated</div>
-      <div class="bub bl3" id="bl3">📈 ASML EUV demand: strong</div>
-      <div class="bub br1" id="br1">⚡ TSMC supply chain: bullish</div>
-      <div class="bub br2" id="br2">📉 INTC Death Cross: bearish</div>
-      <div class="bub br3" id="br3">🌏 Fed rate cut: semi positive</div>
-      <div class="bub bl4" id="bl4">📈 Micron DRAM cycle: turning</div>
-      <div class="bub br4" id="br4">⚡ LRCX wafer fab: recovering</div>
-      <div class="robots-row">
-        <div class="rw rw1">
-          <div class="bot1">
-            <div class="b1-antenna-ball"></div>
-            <div class="b1-antenna-stick"></div>
-            <div class="b1-head"><div class="b1-visor"><div class="b1-eye"></div><div class="b1-eye"></div></div></div>
-            <div class="b1-neck"></div>
-            <div class="b1-body">
-              <div class="b1-armL"></div><div class="b1-armR"></div>
-              <div class="b1-screen"><div class="b1-bar1"></div><div class="b1-bar2"></div></div>
-            </div>
-            <div class="b1-legs"><div class="b1-leg"></div><div class="b1-leg"></div></div>
-            <div class="b1-feet"><div class="b1-foot"></div><div class="b1-foot"></div></div>
-          </div>
-          <svg width="160" height="40" viewBox="0 0 160 40" style="margin-top:3px;">
-            <defs><radialGradient id="h1g" cx="50%" cy="60%" r="50%"><stop offset="0%" stop-color="#00BBFF" stop-opacity="0.55"/><stop offset="100%" stop-color="#0033FF" stop-opacity="0"/></radialGradient></defs>
-            <ellipse cx="80" cy="24" rx="78" ry="14" fill="url(#h1g)"/>
-            <ellipse cx="80" cy="24" rx="78" ry="14" fill="none" stroke="#00BBFF" stroke-width="1.3" opacity="0.75"/>
-            <ellipse cx="80" cy="24" rx="60" ry="10" fill="none" stroke="#0088FF" stroke-width="0.9" opacity="0.5"/>
-            <ellipse cx="80" cy="24" rx="40" ry="7" fill="none" stroke="#00AAFF" stroke-width="0.9" opacity="0.55"/>
-            <ellipse cx="80" cy="24" rx="22" ry="4" fill="none" stroke="#00DDFF" stroke-width="1" opacity="0.9"/>
-            <circle cx="80" cy="24" r="3" fill="#00EEFF" opacity="0.95"/>
-          </svg>
-          <div class="rshadow" style="width:100px;height:12px;margin-top:-6px;"></div>
+      <div class="sample" role="img" aria-label="Illustrative example of a SemiBot analysis result: 58 percent up, 42 percent down, with top bullish and bearish drivers">
+        <div class="sample-head">
+          <span class="sample-title">Example analysis</span>
+          <span class="sample-badge">Illustrative</span>
         </div>
-        <div class="rw rw2">
-          <div class="bot2">
-            <div class="b2-head"><div class="b2-visor"><div class="b2-eye"></div><div class="b2-eye"></div></div></div>
-            <div class="b2-neck"></div>
-            <div class="b2-body">
-              <div class="b2-armL"></div><div class="b2-armR"></div>
-              <div class="b2-chest"><div class="b2-tbar"></div><div class="b2-vbar"></div></div>
-            </div>
-            <div class="b2-legs"><div class="b2-leg"></div><div class="b2-leg"></div></div>
-            <div class="b2-feet"><div class="b2-foot"></div><div class="b2-foot"></div></div>
+        <div class="sample-body">
+          <div class="prob-row">
+            <div class="prob-up">58%<small>UP</small></div>
+            <div class="prob-down">42%<small>DOWN</small></div>
           </div>
-          <svg width="180" height="44" viewBox="0 0 180 44" style="margin-top:3px;">
-            <defs><radialGradient id="h2g" cx="50%" cy="60%" r="50%"><stop offset="0%" stop-color="#00CCFF" stop-opacity="0.5"/><stop offset="100%" stop-color="#0022FF" stop-opacity="0"/></radialGradient></defs>
-            <ellipse cx="90" cy="26" rx="88" ry="16" fill="url(#h2g)"/>
-            <ellipse cx="90" cy="26" rx="88" ry="16" fill="none" stroke="#00CCFF" stroke-width="1.3" opacity="0.75"/>
-            <ellipse cx="90" cy="26" rx="68" ry="12" fill="none" stroke="#0099FF" stroke-width="0.9" opacity="0.5"/>
-            <ellipse cx="90" cy="26" rx="46" ry="8" fill="none" stroke="#00BBFF" stroke-width="0.9" opacity="0.55"/>
-            <ellipse cx="90" cy="26" rx="25" ry="4.5" fill="none" stroke="#00EEFF" stroke-width="1" opacity="0.9"/>
-            <circle cx="90" cy="26" r="3.5" fill="#00EEFF" opacity="0.95"/>
-          </svg>
-          <div class="rshadow" style="width:116px;height:13px;margin-top:-7px;"></div>
+          <div class="split"><i class="su"></i><i class="sd"></i></div>
+          <div class="drivers">
+            <div>
+              <div class="dr-h">Top bullish drivers</div>
+              <div class="dr"><span>Supply Chain RAG</span><b class="p">+7</b></div>
+              <div class="dr"><span>Sector Rally (SOXX)</span><b class="p">+6</b></div>
+              <div class="dr"><span>Earnings Guidance</span><b class="p">+5</b></div>
+            </div>
+            <div>
+              <div class="dr-h">Top bearish drivers</div>
+              <div class="dr"><span>P/E Ratio</span><b class="n">−6</b></div>
+              <div class="dr"><span>Insider Selling</span><b class="n">−4</b></div>
+              <div class="dr"><span>Sell-the-News Risk</span><b class="n">−3</b></div>
+            </div>
+          </div>
         </div>
+        <div class="sample-foot"><strong>Layout only, not a prediction.</strong> The LLM scores each factor from −10 to +10; expert weights and the final probabilities are calculated in Python.</div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="features">
-  <div style="max-width:1100px;margin:0 auto;">
-    <div class="section-badge">⚡ 18-Factor Framework</div>
+<section id="features" class="block alt">
+  <div class="wrap">
+    <span class="section-badge">18-factor framework</span>
     <h2 class="section-title">Every signal that moves semiconductor stocks</h2>
-    <p class="section-sub">SemiBot analyses stocks across 4 categories of causal factors — each scored by the LLM, weighted by domain-expert rules, and combined deterministically to eliminate hallucination.</p>
-    <div class="factors-grid">
-      <div class="factor-card"><div class="fc-icon">📈</div><div class="fc-title">CPI &amp; PPI</div><div class="fc-desc">Consumer and producer price indices as inflation signals affecting chip demand and Fed policy reaction.</div><span class="fc-tag">MACROECONOMIC</span></div>
-      <div class="factor-card"><div class="fc-icon">🏦</div><div class="fc-title">Fed Rate / FOMC</div><div class="fc-desc">Federal Reserve interest rate decisions — directly affects capital cost and semiconductor capex cycles.</div><span class="fc-tag">MACROECONOMIC</span></div>
-      <div class="factor-card"><div class="fc-icon">💵</div><div class="fc-title">USD / Currency Index</div><div class="fc-desc">DXY dollar strength affects export revenues of TSMC, Samsung, and US semi companies with global sales.</div><span class="fc-tag">MACROECONOMIC</span></div>
-      <div class="factor-card"><div class="fc-icon">📊</div><div class="fc-title">P/E Ratio</div><div class="fc-desc">Trailing price-to-earnings ratio — high P/E flags overvaluation risk in momentum-driven semis.</div><span class="fc-tag">FUNDAMENTAL</span></div>
-      <div class="factor-card"><div class="fc-icon">💰</div><div class="fc-title">Earnings Guidance</div><div class="fc-desc">Forward EPS and earnings growth forecasts — the single strongest near-term price catalyst.</div><span class="fc-tag">FUNDAMENTAL</span></div>
-      <div class="factor-card"><div class="fc-icon">🔍</div><div class="fc-title">Insider Selling</div><div class="fc-desc">SEC EDGAR insider transaction data — executive selling patterns are early signals of weakening confidence.</div><span class="fc-tag">FUNDAMENTAL</span></div>
-      <div class="factor-card"><div class="fc-icon">📡</div><div class="fc-title">Sector Rally (SOXX)</div><div class="fc-desc">SOXX ETF 1-month performance as semiconductor sector momentum signal.</div><span class="fc-tag">MARKET INTELLIGENCE</span></div>
-      <div class="factor-card"><div class="fc-icon">📉</div><div class="fc-title">Technical Signal</div><div class="fc-desc">50-day vs 200-day moving average — Golden Cross (bullish) or Death Cross (bearish) detection.</div><span class="fc-tag">MARKET INTELLIGENCE</span></div>
-      <div class="factor-card"><div class="fc-icon">🎯</div><div class="fc-title">Sell-the-News Risk</div><div class="fc-desc">Post-earnings sell-off risk detection — when good news is already priced in and smart money exits.</div><span class="fc-tag">MARKET INTELLIGENCE</span></div>
-      <div class="factor-card"><div class="fc-icon">🌏</div><div class="fc-title">Geopolitics / Hormuz</div><div class="fc-desc">Taiwan Strait tension, US-China chip ban escalation, Strait of Hormuz — supply chain tail risks.</div><span class="fc-tag">EXTERNAL SIGNALS</span></div>
-      <div class="factor-card"><div class="fc-icon">🔗</div><div class="fc-title">Supply Chain RAG</div><div class="fc-desc">ASML→TSMC→NVIDIA→Micron causal chain via FAISS vector store — RAG-powered disruption scoring.</div><span class="fc-tag">EXTERNAL SIGNALS</span></div>
-      <div class="factor-card"><div class="fc-icon">🔄</div><div class="fc-title">Capital Rotation</div><div class="fc-desc">Money flow between semiconductors and competing assets (SpaceX IPO, OpenAI, Anthropic).</div><span class="fc-tag">EXTERNAL SIGNALS</span></div>
-      <div class="factor-card"><div class="fc-icon">⚡</div><div class="fc-title">Competitor Contagion</div><div class="fc-desc">AMD vs NVIDIA earnings reactions create contagion effects across the semiconductor sector.</div><span class="fc-tag">EXTERNAL SIGNALS</span></div>
-      <div class="factor-card"><div class="fc-icon">📰</div><div class="fc-title">News Sentiment</div><div class="fc-desc">Real-time news sentiment via DuckDuckGo — analyst coverage, media tone, and breaking news signals.</div><span class="fc-tag">EXTERNAL SIGNALS</span></div>
-      <div class="factor-card"><div class="fc-icon">⭐</div><div class="fc-title">Analyst Ratings</div><div class="fc-desc">Consensus analyst recommendation and mean score from yfinance — institutional sentiment signal.</div><span class="fc-tag">MARKET INTELLIGENCE</span></div>
-      <div class="factor-card"><div class="fc-icon">📦</div><div class="fc-title">Market Cap</div><div class="fc-desc">Market capitalisation as size signal — large cap semis have different volatility profiles vs mid-cap.</div><span class="fc-tag">FUNDAMENTAL</span></div>
-      <div class="factor-card"><div class="fc-icon">〽️</div><div class="fc-title">Beta</div><div class="fc-desc">Beta coefficient measuring market sensitivity — high beta semis amplify bull and bear moves.</div><span class="fc-tag">FUNDAMENTAL</span></div>
-      <div class="factor-card"><div class="fc-icon">⚙️</div><div class="fc-title">Energy Prices</div><div class="fc-desc">Energy cost signals affecting fab operating costs — high energy prices compress margins at TSMC.</div><span class="fc-tag">MACROECONOMIC</span></div>
+    <p class="section-sub">Eighteen causal factors in four layers. Each is scored by the LLM, weighted by domain-expert rules, and combined deterministically, which removes the model from the final number.</p>
+    <div class="layers">
+      <div class="layer l-macro">
+        <div class="layer-head"><div class="layer-name"><i></i>Macroeconomic</div><span class="layer-count">4 factors</span></div>
+        <div class="f"><b>CPI &amp; PPI</b><span>Consumer and producer price indices as inflation signals affecting chip demand and Fed policy reaction.</span></div>
+        <div class="f"><b>Fed Rate / FOMC</b><span>Federal Reserve rate decisions, which drive capital cost and semiconductor capex cycles.</span></div>
+        <div class="f"><b>USD / Currency Index</b><span>DXY dollar strength affects export revenues of TSMC, Samsung and US semi companies with global sales.</span></div>
+        <div class="f"><b>Energy Prices</b><span>Energy costs feed fab operating costs; high prices compress margins at foundries such as TSMC.</span></div>
+      </div>
+      <div class="layer l-fund">
+        <div class="layer-head"><div class="layer-name"><i></i>Fundamental</div><span class="layer-count">5 factors</span></div>
+        <div class="f"><b>P/E Ratio</b><span>Trailing price-to-earnings; a high P/E flags overvaluation risk in momentum-driven semis.</span></div>
+        <div class="f"><b>Earnings Guidance</b><span>Forward EPS and earnings growth forecasts, the strongest near-term price catalyst.</span></div>
+        <div class="f"><b>Insider Selling</b><span>SEC EDGAR insider transactions; executive selling patterns are early signals of weakening confidence.</span></div>
+        <div class="f"><b>Market Cap</b><span>Size signal. Large-cap semis have different volatility profiles from mid-caps.</span></div>
+        <div class="f"><b>Beta</b><span>Market sensitivity; high-beta semis amplify both bull and bear moves.</span></div>
+      </div>
+      <div class="layer l-mkt">
+        <div class="layer-head"><div class="layer-name"><i></i>Market intelligence</div><span class="layer-count">4 factors</span></div>
+        <div class="f"><b>Sector Rally (SOXX)</b><span>SOXX ETF 1-month performance as a sector momentum signal.</span></div>
+        <div class="f"><b>Technical Signal</b><span>50-day vs 200-day moving average: Golden Cross (bullish) or Death Cross (bearish).</span></div>
+        <div class="f"><b>Sell-the-News Risk</b><span>Post-earnings sell-off risk, when good news is already priced in and smart money exits.</span></div>
+        <div class="f"><b>Analyst Ratings</b><span>Consensus recommendation and mean score from yfinance, a read on institutional sentiment.</span></div>
+      </div>
+      <div class="layer l-ext">
+        <div class="layer-head"><div class="layer-name"><i></i>External signals</div><span class="layer-count">5 factors</span></div>
+        <div class="f"><b>Geopolitics / Hormuz</b><span>Taiwan Strait tension, US–China chip-ban escalation and Strait of Hormuz supply-chain tail risks.</span></div>
+        <div class="f"><b>Supply Chain RAG</b><span>ASML → TSMC → NVIDIA → Micron causal chain via a FAISS vector store, with RAG-powered disruption scoring.</span></div>
+        <div class="f"><b>Capital Rotation</b><span>Money flow between semiconductors and competing assets (SpaceX IPO, OpenAI, Anthropic).</span></div>
+        <div class="f"><b>Competitor Contagion</b><span>AMD vs NVIDIA earnings reactions create contagion effects across the sector.</span></div>
+        <div class="f"><b>News Sentiment</b><span>News sentiment via DuckDuckGo: analyst coverage, media tone and breaking news.</span></div>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="compare">
-  <div style="max-width:1100px;margin:0 auto;">
-    <div class="section-badge">📊 Multi-Ticker Comparison</div>
+<section id="compare" class="block">
+  <div class="wrap">
+    <span class="section-badge">Multi-ticker comparison</span>
     <h2 class="section-title">Compare up to 5 semiconductor stocks at once</h2>
-    <p class="section-sub">Run the full 18-factor analysis across multiple tickers in parallel, ranked by predicted upside, with a combined follow-up Q&A that reasons across all compared stocks together.</p>
-    <div class="factors-grid" style="grid-template-columns:repeat(3,1fr);">
-      <div class="factor-card"><div class="fc-icon">⚡</div><div class="fc-title">Parallel Analysis</div><div class="fc-desc">All selected tickers run concurrently, each with its own isolated LangGraph instance and checkpointer — full results in seconds, not minutes.</div><span class="fc-tag">CONCURRENCY</span></div>
-      <div class="factor-card"><div class="fc-icon">🏆</div><div class="fc-title">Priority Ranking</div><div class="fc-desc">Compared tickers are automatically ranked by predicted upside, so the strongest opportunity is immediately visible at a glance.</div><span class="fc-tag">RANKING</span></div>
-      <div class="factor-card"><div class="fc-icon">💬</div><div class="fc-title">Cross-Ticker Q&A</div><div class="fc-desc">Ask one question — "which has the strongest fundamentals?" — and get an answer that reasons across every compared ticker's full factor set together.</div><span class="fc-tag">COMPARATIVE REASONING</span></div>
-      <div class="factor-card"><div class="fc-icon">🧠</div><div class="fc-title">Long-Term Memory</div><div class="fc-desc">Every comparison session is saved. Ask "how has NVDA's prediction changed?" and SemiBot cites real past sessions with timestamps.</div><span class="fc-tag">PERSISTENCE</span></div>
-      <div class="factor-card"><div class="fc-icon">🔍</div><div class="fc-title">Hover for Detail</div><div class="fc-desc">Compact Bullish/Bearish labels by default — hover any factor to expand the full underlying data and reasoning behind each score.</div><span class="fc-tag">UI DESIGN</span></div>
-      <div class="factor-card"><div class="fc-icon">🔄</div><div class="fc-title">Cached Reproducibility</div><div class="fc-desc">Factor data is cached per ticker (24h for macro/fundamental data, 15min for live news signals), so repeat comparisons stay consistent and fast.</div><span class="fc-tag">RELIABILITY</span></div>
+    <p class="section-sub">Run the full 18-factor analysis across several tickers in parallel, ranked by predicted upside, with one follow-up Q&amp;A that reasons across every compared stock.</p>
+    <div class="cards">
+      <div class="card"><span class="card-k">Concurrency</span><h3>Parallel analysis</h3><p>All selected tickers run concurrently, each with its own isolated LangGraph instance and checkpointer. Full results in seconds, not minutes.</p></div>
+      <div class="card"><span class="card-k">Ranking</span><h3>Priority ranking</h3><p>Compared tickers are ranked by predicted upside, so the strongest opportunity is visible at a glance.</p></div>
+      <div class="card"><span class="card-k">Comparative reasoning</span><h3>Cross-ticker Q&amp;A</h3><p>Ask "which has the strongest fundamentals?" and get an answer that reasons across every compared ticker's full factor set.</p></div>
+      <div class="card"><span class="card-k">Persistence</span><h3>Long-term memory</h3><p>Every comparison session is saved. Ask "how has NVDA's prediction changed?" and SemiBot cites real past sessions with timestamps.</p></div>
+      <div class="card"><span class="card-k">Interface</span><h3>Hover for detail</h3><p>Compact Bullish/Bearish labels by default. Hover any factor to expand the data and reasoning behind its score.</p></div>
+      <div class="card"><span class="card-k">Reliability</span><h3>Cached reproducibility</h3><p>Factor data is cached per ticker (24h for macro and fundamental data, 15 min for live news signals), so repeat comparisons stay consistent and fast.</p></div>
     </div>
   </div>
 </section>
 
-<section id="howitworks">
-  <div style="max-width:1100px;margin:0 auto;">
-    <div class="section-badge">🔬 Architecture</div>
+<section id="howitworks" class="block alt">
+  <div class="wrap">
+    <span class="section-badge">Architecture</span>
     <h2 class="section-title">How SemiBot was built</h2>
-    <p class="section-sub">We identified critical failure modes in existing AI chatbots (ChatGPT, Claude) for financial analysis and designed SemiBot to solve them from the ground up.</p>
+    <p class="section-sub">We identified failure modes in general-purpose AI chatbots (ChatGPT, Claude) for financial analysis and designed SemiBot to address each one.</p>
     <div class="hiw-grid">
       <div class="hiw-steps">
-        <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">LangGraph Agentic Pipeline</div><div class="step-desc">Built on <strong>LangGraph</strong> with MemorySaver — a stateful multi-node graph where each factor runs as a parallel tool call via RunnableParallel, then aggregates into a single scoring state.</div></div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Deterministic Scoring (No Hallucination)</div><div class="step-desc">The LLM scores factors qualitatively (-10 to +10). Python applies <strong>domain-expert weights</strong> (summing to 100) to calculate UP%/DOWN% mathematically — the LLM never outputs probabilities directly.</div></div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">RAG Supply Chain Intelligence</div><div class="step-desc"><strong>FAISS vector store</strong> + HuggingFace sentence-transformers indexes the full ASML→TSMC→NVIDIA→Micron causal chain with MMR retrieval for supply disruption signals.</div></div></div>
-        <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Real-time API Integration</div><div class="step-desc">Live data from <strong>FRED API</strong> (CPI, PPI, Fed rate), <strong>yfinance</strong> (fundamentals, technicals), <strong>SEC EDGAR</strong> (insider transactions), and <strong>DuckDuckGo</strong> (news sentiment).</div></div></div>
-        <div class="step"><div class="step-num">5</div><div class="step-content"><div class="step-title">Streamlit UI + Email Summary</div><div class="step-desc">Dark-theme Streamlit interface with follow-up Q&amp;A, session history, and automated email report generation via Gmail SMTP.</div></div></div>
+        <div class="step"><div class="step-num">01</div><div class="step-content"><div class="step-title">LangGraph agentic pipeline</div><div class="step-desc">Built on <strong>LangGraph</strong> with MemorySaver: a stateful multi-node graph where each factor runs as a parallel tool call via RunnableParallel, then aggregates into a single scoring state.</div></div></div>
+        <div class="step"><div class="step-num">02</div><div class="step-content"><div class="step-title">Deterministic scoring</div><div class="step-desc">The LLM scores factors qualitatively (−10 to +10). Python applies <strong>domain-expert weights</strong> (summing to 100) to calculate UP%/DOWN%. The LLM never outputs probabilities directly.</div></div></div>
+        <div class="step"><div class="step-num">03</div><div class="step-content"><div class="step-title">RAG supply-chain intelligence</div><div class="step-desc"><strong>FAISS vector store</strong> with HuggingFace sentence-transformers indexes the ASML → TSMC → NVIDIA → Micron causal chain, retrieved with MMR for supply-disruption signals.</div></div></div>
+        <div class="step"><div class="step-num">04</div><div class="step-content"><div class="step-title">Real-time API integration</div><div class="step-desc">Live data from <strong>FRED</strong> (CPI, PPI, Fed rate), <strong>yfinance</strong> (fundamentals, technicals), <strong>SEC EDGAR</strong> (insider transactions) and <strong>DuckDuckGo</strong> (news sentiment).</div></div></div>
+        <div class="step"><div class="step-num">05</div><div class="step-content"><div class="step-title">Streamlit UI and email summary</div><div class="step-desc">A dark-theme Streamlit interface with follow-up Q&amp;A, session history, and automated email report generation via Gmail SMTP.</div></div></div>
       </div>
       <div class="hiw-problems">
-        <div class="prob-title">Problems with ChatGPT &amp; Claude for Finance</div>
-        <div class="prob-sub">Why existing AI chatbots fail at real-time equity analysis — and how SemiBot solves each one.</div>
-        <div class="prob-item"><div class="prob-icon">⚠️</div><div class="prob-text"><div class="prob-head">Hallucinated Probabilities</div><div class="prob-body">ChatGPT and Claude fabricate percentage predictions with no mathematical basis. SemiBot's deterministic weighting eliminates this — probabilities come from Python, not the LLM.</div></div></div>
-        <div class="prob-item"><div class="prob-icon">⚠️</div><div class="prob-text"><div class="prob-head">Stale Knowledge Cutoff</div><div class="prob-body">General LLMs don't know last week's FOMC decision or yesterday's NVIDIA earnings. SemiBot pulls live data from FRED, yfinance, and news APIs on every query.</div></div></div>
-        <div class="prob-item"><div class="prob-icon">⚠️</div><div class="prob-text"><div class="prob-head">No Domain-Specific Causal Chain</div><div class="prob-body">Generic AI doesn't understand ASML→TSMC→NVIDIA→Micron supply dependency. SemiBot's RAG system encodes this entire causal chain as a searchable vector store.</div></div></div>
-        <div class="prob-item"><div class="prob-icon">⚠️</div><div class="prob-text"><div class="prob-head">Inconsistent Factor Weighting</div><div class="prob-body">ChatGPT weights factors differently every session. SemiBot locks domain-expert weights (Geopolitics: 9, Fed Rate: 8, Insider Selling: 7) for reproducible analysis.</div></div></div>
+        <div class="prob-title">Where general chatbots fall short on finance</div>
+        <div class="prob-sub">Why existing AI chatbots struggle with real-time equity analysis, and how SemiBot handles each case.</div>
+        <div class="prob-item"><div class="prob-head">Hallucinated probabilities</div><div class="prob-body">General chatbots can state percentage predictions with no mathematical basis. In SemiBot the probabilities come from Python's deterministic weighting, not from the LLM.</div></div>
+        <div class="prob-item"><div class="prob-head">Stale knowledge cutoff</div><div class="prob-body">General LLMs don't know last week's FOMC decision or yesterday's earnings. SemiBot pulls live data from FRED, yfinance and news APIs on every query.</div></div>
+        <div class="prob-item"><div class="prob-head">No domain-specific causal chain</div><div class="prob-body">Generic AI doesn't encode the ASML → TSMC → NVIDIA → Micron dependency. SemiBot's RAG system stores the whole chain as a searchable vector store.</div></div>
+        <div class="prob-item"><div class="prob-head">Inconsistent factor weighting</div><div class="prob-body">A chatbot may weight factors differently every session. SemiBot locks domain-expert weights (Geopolitics: 9, Fed Rate: 8, Insider Selling: 7) for reproducible analysis.</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="research">
-  <div style="max-width:1100px;margin:0 auto;">
-    <div class="section-badge">📄 Academic Research</div>
-    <h2 class="section-title">Published Research</h2>
-    <p class="section-sub">SemiBot is the foundation for an academic paper, live as a preprint on SSRN and currently under review at a peer-reviewed journal.</p>
+<section id="research" class="block">
+  <div class="wrap">
+    <span class="section-badge">Academic research</span>
+    <h2 class="section-title">Published research</h2>
+    <p class="section-sub">SemiBot is the foundation for an academic paper, live as a preprint on SSRN and under review at a peer-reviewed journal.</p>
     <div class="research-card">
       <div>
-        <div class="rc-label">Paper 4 · Live SSRN Preprint</div>
+        <div class="rc-label">Paper 4 · Live SSRN preprint</div>
         <div class="rc-title">SemiBot: A Domain-Specific Causal Chain RAG System for Semiconductor Equity Analysis</div>
-        <div class="rc-desc">This paper presents SemiBot — an 18-factor agentic RAG system for semiconductor equity analysis. The key contribution is a novel architecture where LLM qualitative scoring is decoupled from quantitative probability calculation, eliminating hallucination in financial prediction tasks.</div>
+        <div class="rc-desc">This paper presents SemiBot, an 18-factor agentic RAG system for semiconductor equity analysis. The key contribution is an architecture where LLM qualitative scoring is decoupled from quantitative probability calculation, removing the model from the final number in financial prediction tasks.</div>
         <div class="rc-tags"><span class="rc-tag">LangGraph</span><span class="rc-tag">RAG · FAISS</span><span class="rc-tag">Financial NLP</span><span class="rc-tag">Semiconductor Markets</span><span class="rc-tag">Agentic AI</span><span class="rc-tag">GPT-4o-mini</span></div>
-        <div class="rc-meta" style="margin-top:16px;">
+        <div class="rc-meta">
           <div class="rc-meta-item"><strong>Raj Tejpal Khatik</strong>Author</div>
           <div class="rc-meta-item"><strong>University of Warwick</strong>Institution</div>
           <div class="rc-meta-item"><strong>MSc Applied AI</strong>Programme</div>
-          <div class="rc-meta-item"><strong>SSRN Preprint</strong>Status</div>
+          <div class="rc-meta-item"><strong>SSRN preprint</strong>Status</div>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-end;">
-        <button class="rc-btn" onclick="showResearch()">Read Paper →</button>
-        <a class="rc-btn" style="text-decoration:none;" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">View on SSRN ↗</a>
-        <div style="font-size:10px;color:#1A3A55;text-align:center;">Full paper details</div>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:stretch;min-width:170px;">
+        <button class="rc-btn" onclick="showResearch()">Read paper →</button>
+        <a class="rc-btn" style="text-decoration:none;background:transparent;border:1px solid var(--line-2);color:var(--text);" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">View on SSRN ↗</a>
       </div>
     </div>
   </div>
 </section>
 
 <section id="cta">
-  <div class="section-badge" style="margin:0 auto 16px;">🚀 Try SemiBot</div>
+  <span class="section-badge">Try SemiBot</span>
   <h2 class="cta-title">Ready to analyse a <em>semiconductor stock</em>?</h2>
-  <p class="cta-sub">Enter any ticker — MU, NVDA, AMD, INTC, TSM, ASML — and get an 18-factor<br>AI-powered UP%/DOWN% prediction in seconds.</p>
+  <p class="cta-sub">Enter any ticker (MU, NVDA, AMD, INTC, TSM, ASML) and get an 18-factor<br>UP% / DOWN% analysis in seconds.</p>
   <button class="cta-btn" onclick="goApp()">Launch SemiBot →</button>
-  <div style="margin-top:16px;font-size:11px;color:#1A3A55;">Free to use · No signup required · MSc Applied AI · University of Warwick</div>
+  <div class="cta-note">Free to use · No signup required · MSc Applied AI · University of Warwick</div>
 </section>
 
 <section id="contact">
@@ -478,23 +474,23 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
 </section>
 
 <footer>
-  <div style="display:flex;align-items:center;gap:9px;">
-    <div class="nav-icon" style="width:28px;height:28px;font-size:13px;">📡</div>
-    <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#3A6A90;">SemiBot</span>
+  <div class="footer-brand">
+    <div class="nav-icon" style="width:26px;height:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px;"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
+    SemiBot
   </div>
-  <div class="footer-text" style="color:#5AADFF;font-weight:600;font-size:13px;">Built by <span style="color:#90D0FF;font-weight:700;">Raj Tejpal Khatik</span> · MSc Applied AI · University of Warwick · 2026</div>
-  <div class="footer-right">Paper 4 · SSRN Preprint<br>Not financial advice</div>
+  <div class="footer-text">Built by <strong>Raj Tejpal Khatik</strong> · MSc Applied AI · University of Warwick · 2026</div>
+  <div class="footer-right">Paper 4 · SSRN preprint<br>Not financial advice</div>
 </footer>
 </div>
 
 <div id="researchpage">
   <div class="rp-nav">
     <button class="rp-back" onclick="hideResearch()">← Back to SemiBot</button>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div class="nav-icon" style="width:28px;height:28px;font-size:13px;">📡</div>
-      <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#D0E8FF;">SemiBot Research</span>
+    <div class="rp-brand">
+      <div class="nav-icon" style="width:26px;height:26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px;"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
+      SemiBot Research
     </div>
-    <div style="font-size:10px;color:#1A4060;">MSc Applied AI · University of Warwick</div>
+    <div class="rp-affil">MSc Applied AI · University of Warwick</div>
   </div>
   <div class="rp-content">
     <div class="rp-category">Paper 4 · SSRN Preprint · 2026</div>
@@ -502,7 +498,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="rp-authors">Raj Tejpal Khatik · MSc Applied AI, University of Warwick</div>
     <div class="rp-venue">Live preprint on SSRN · Currently under review at a peer-reviewed journal</div>
     <div class="rp-links">
-      <a class="rp-ssrn-btn" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">📄 Read Live on SSRN ↗</a>
+      <a class="rp-ssrn-btn" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">Read Live on SSRN ↗</a>
       <a class="rp-ssrn-btn-outline" href="https://semibot-raj.streamlit.app" target="_blank" rel="noopener">Live Demo ↗</a>
     </div>
     <div class="rp-divider"></div>
@@ -512,11 +508,11 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="rp-body">We evaluate SemiBot through three complementary backtests. Backtest 1, using 140 valid predictions accumulated from development-period usage, shows 61.4% directional accuracy under an MA50 price-proxy and 69.3% under an MA200 proxy (a disclosed sensitivity check, not a precise point estimate). Backtest 2, a deliberately designed experiment on SemiBot's finalized 48-ticker production universe at 10 stratified historical dates with a genuine fixed 20-trading-day forward-return outcome (426 valid observations), shows 61.3% overall directional accuracy. Critically, accuracy is strongly and monotonically related to market capitalization: mega-cap tickers (&gt;$200B) achieve 77.2% accuracy versus 41.7% for mid-cap tickers ($2B–$10B), with a clean six-tier breakdown ranging from 84.0% (&gt;$1 trillion) down to 41.7% (&lt;$10B). This relationship is statistically confirmed via logistic regression (b=0.327, p&lt;0.001) and a chi-square test comparing the mega- and mid-cap tiers directly (chi-square=26.32, p&lt;0.001), with 95% confidence intervals reported for every tier, and is shown to be robust to controlling for sub-sector composition (b=0.291, p&lt;0.001) and to persist, albeit at reduced magnitude, even on the sample's weakest-performing dates.</div>
     <div class="rp-body">Backtest 3 tests SemiBot against two naive baselines — an Always-UP strategy and a SOXX prior-trend-following strategy — stratified across the same six market-capitalization tiers as Backtest 2, using the identical 426-observation production dataset. Against Always-UP, SemiBot underperforms in every tier (overall 61.3% vs. 76.8%, a 15.5-point gap, narrowing from 29.1 points at the smallest tier to 2.0 points at the largest). Against the more sophisticated SOXX-trend baseline, the picture is more nuanced: SemiBot underperforms overall (61.3% vs. 66.9%) but outperforms in its two largest tiers — by 8.0 points at &gt;$1 Trillion and 5.7 points at $500B–$1T — while underperforming at every tier below $500B. This is, to our knowledge, the first market-capitalization-stratified naive-baseline comparison reported for a causal-chain equity-analysis system, and it demonstrates that whether causal-chain reasoning adds value over naive momentum depends jointly on company size and on which naive strategy is used as the comparison point — a nuance a single aggregate accuracy figure, or a single unstratified baseline comparison, would entirely conceal.</div>
     <div class="rp-body">We situate these results against directly comparable literature benchmarks (Ploutos-7B: 61.2%/59.9%; Vidal 2024's 250-stock LLM study: 59.4% average; TRACE: 55.1%; a "Crystal Ball" human-trader experiment: 51.5%), finding SemiBot's mega-cap and &gt;$1 Trillion subsets exceed every comparable published figure. We argue that explicit causal-chain scaffolding produces interpretable, well-attributed equity signals with genuine, quantifiable value at the largest end of the market-capitalization spectrum, and that market-capitalization-stratified naive-baseline comparison — not literature benchmarking alone — should be standard practice for evaluating this class of system.</div>
-    <div class="rp-body" style="font-size:0.75rem;">*Live demo: <a href="https://semibot-raj.streamlit.app" target="_blank" rel="noopener" style="color:#5AADFF;">https://semibot-raj.streamlit.app</a><br><strong style="color:#3A7090;">Keywords:</strong> retrieval-augmented generation, agentic AI, LangGraph, equity analysis, causal inference, market capitalization, semiconductor industry, baseline comparison</div>
+    <div class="rp-body" style="font-size:0.75rem;">*Live demo: <a href="https://semibot-raj.streamlit.app" target="_blank" rel="noopener" style="color:var(--accent-hi);">https://semibot-raj.streamlit.app</a><br><strong style="color:var(--text);">Keywords:</strong> retrieval-augmented generation, agentic AI, LangGraph, equity analysis, causal inference, market capitalization, semiconductor industry, baseline comparison</div>
 
     <div class="rp-h2">1. Problem</div>
     <div class="rp-body">Equity research for the semiconductor sector is unusually dependent on multi-layered causal reasoning. A single macro event — a Federal Reserve rate decision, a shift in the CHIPS Act, a geopolitical flashpoint involving Taiwan — propagates through export controls, foundry capacity, wafer fabrication equipment (WFE) spending, and ultimately firm-level revenue and margin, often with a multi-quarter lag. Conventional LLM-based financial assistants tend to treat these signals as a flat bag of features: they retrieve recent news, summarize sentiment, and produce a directional call without making the intermediate causal steps explicit or auditable.</div>
-    <div class="rp-body">This creates three practical problems for a user trying to evaluate a semiconductor equity such as ASML or Micron: (1) <strong style="color:#3A7090;">Opacity</strong> — a single "bullish/bearish" verdict gives no insight into which causal layer is driving the call, making it impossible to stress-test the reasoning against a different macro scenario; (2) <strong style="color:#3A7090;">Staleness or hallucination</strong> — models trained on a fixed corpus either answer from outdated internal knowledge or hallucinate specifics (price targets, analyst ratings) that must instead come from live sources; (3) <strong style="color:#3A7090;">Non-generalizability</strong> — a system tuned to reason well about one ticker often cannot be trivially extended to another without re-engineering the entire prompt and retrieval pipeline, because the causal relationships are treated implicitly rather than as a reusable schema.</div>
+    <div class="rp-body">This creates three practical problems for a user trying to evaluate a semiconductor equity such as ASML or Micron: (1) <strong style="color:var(--text);">Opacity</strong> — a single "bullish/bearish" verdict gives no insight into which causal layer is driving the call, making it impossible to stress-test the reasoning against a different macro scenario; (2) <strong style="color:var(--text);">Staleness or hallucination</strong> — models trained on a fixed corpus either answer from outdated internal knowledge or hallucinate specifics (price targets, analyst ratings) that must instead come from live sources; (3) <strong style="color:var(--text);">Non-generalizability</strong> — a system tuned to reason well about one ticker often cannot be trivially extended to another without re-engineering the entire prompt and retrieval pipeline, because the causal relationships are treated implicitly rather than as a reusable schema.</div>
     <div class="rp-body">A fourth problem, which this paper's backtesting results surface empirically rather than motivate a priori, is that the reliability of macro/fundamental causal reasoning is not uniform across the equity universe — it plausibly depends on how efficiently a company's information environment (analyst coverage, institutional ownership, trading liquidity) translates macro and fundamental signals into price. Small, thinly-covered companies may be dominated by idiosyncratic, low-liquidity price action that a macro-causal framework is not designed to capture. SemiBot's design does not originally anticipate this, but its evaluation is structured to test for it directly (Section 4.2.1).</div>
     <div class="rp-body">A fifth, related problem, which Backtest 3 (Section 4.5) surfaces directly, is that causal-chain reasoning's added value is not guaranteed relative to the simplest possible alternative: doing nothing more than following the prevailing market trend, or simply predicting that markets rise. A system can simultaneously beat random chance, be competitive with published literature, and still lose to a zero-effort momentum strategy — and whether it does so can itself depend on company size and on which naive strategy is chosen as the comparison. These are separate, non-redundant evaluative questions, and a complete evaluation should answer all of them rather than only the one or two that present the system most favorably.</div>
     <div class="rp-body">SemiBot addresses the first three problems by design: an explicit 18-node causal chain gives auditable per-factor attribution, a live MCP/Tavily retrieval layer keeps external signals current, and every retrieval query is parameterized by ticker, making the same causal schema directly reusable across the semiconductor equity universe. The fourth and fifth problems — market-capitalization-dependent reliability, and performance relative to naive baselines, itself further stratified by company size — are the central empirical findings of this paper.</div>
@@ -540,13 +536,13 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="rp-h2">3. Practical Implementation</div>
     <div class="rp-h3">3.1 System Architecture</div>
     <div class="rp-body">SemiBot is deployed as a Streamlit application (<code>frontend/app.py</code>) backed by a compiled LangGraph workflow (<code>graph/workflow.py</code>). Data acquisition tools are organized by category (<code>tools/macro_tools.py</code>, <code>tools/market_tools.py</code>, <code>tools/external_tools.py</code>, <code>tools/fundamental_tools.py</code>), with external/qualitative signals retrieved via a Tavily search MCP server rather than static web scraping, ensuring news-sentiment and geopolitical factors reflect current conditions at analysis time.</div>
-    <div class="rp-body">Key implementation choices: (1) <strong style="color:#3A7090;">Multi-ticker Compare mode</strong>, implemented via <code>ThreadPoolExecutor</code>, allowing concurrent analysis of multiple tickers for direct side-by-side comparison; (2) <strong style="color:#3A7090;">Streaming UX</strong>, where analysis results are streamed to the frontend as each subgraph node completes, rather than blocking on the full pipeline, improving perceived latency for a multi-second, multi-API-call pipeline; (3) <strong style="color:#3A7090;">Long-term memory</strong>, where prior analysis sessions are queried from SQLite and summarized into a trend line (e.g., "upside probability rose from 52% to 57% over the last three sessions"), which is injected into both the reasoning prompt and the follow-up question-answering context; (4) <strong style="color:#3A7090;">Observability</strong>, where all LLM calls are traced via LangSmith, enabling factor-level latency and cost auditing during development.</div>
+    <div class="rp-body">Key implementation choices: (1) <strong style="color:var(--text);">Multi-ticker Compare mode</strong>, implemented via <code>ThreadPoolExecutor</code>, allowing concurrent analysis of multiple tickers for direct side-by-side comparison; (2) <strong style="color:var(--text);">Streaming UX</strong>, where analysis results are streamed to the frontend as each subgraph node completes, rather than blocking on the full pipeline, improving perceived latency for a multi-second, multi-API-call pipeline; (3) <strong style="color:var(--text);">Long-term memory</strong>, where prior analysis sessions are queried from SQLite and summarized into a trend line (e.g., "upside probability rose from 52% to 57% over the last three sessions"), which is injected into both the reasoning prompt and the follow-up question-answering context; (4) <strong style="color:var(--text);">Observability</strong>, where all LLM calls are traced via LangSmith, enabling factor-level latency and cost auditing during development.</div>
     <div class="rp-h3">3.2 Engineering Failure Modes</div>
     <div class="rp-body">Three concrete bugs were discovered and resolved during development, each illustrative of a general class of failure in multi-agent LangGraph systems:</div>
     <div class="rp-body">
-      <strong style="color:#3A7090;">1. Shared SQLite connection race condition.</strong> Under Compare mode's concurrent ticker analysis, multiple threads shared a single SQLite connection object, producing intermittent "database is locked" errors. Resolved by ensuring each thread obtains its own connection via <code>check_same_thread=False</code> combined with a connection-per-thread pattern.<br><br>
-      <strong style="color:#3A7090;">2. LangGraph subgraph state overwrite.</strong> Parallel subgraphs writing to overlapping keys in the shared <code>SemiBotState</code> occasionally caused one subgraph's result to silently overwrite another's due to LangGraph's default "last write wins" reducer behavior on non-annotated fields. Resolved by ensuring every state field has an explicit reducer (<code>Annotated[str, lambda old, new: new]</code>) and that no two subgraphs write to the same key.<br><br>
-      <strong style="color:#3A7090;">3. Caching inconsistency.</strong> An early caching layer applied a uniform TTL across factors with fundamentally different update frequencies (e.g., CPI, which updates monthly, cached identically to a live stock price). This was corrected via a tiered TTL scheme aligned to each factor's actual real-world update cadence — a pattern subsequently reapplied to two companion projects, GoldBot and SilverBot, built on the same architectural template.
+      <strong style="color:var(--text);">1. Shared SQLite connection race condition.</strong> Under Compare mode's concurrent ticker analysis, multiple threads shared a single SQLite connection object, producing intermittent "database is locked" errors. Resolved by ensuring each thread obtains its own connection via <code>check_same_thread=False</code> combined with a connection-per-thread pattern.<br><br>
+      <strong style="color:var(--text);">2. LangGraph subgraph state overwrite.</strong> Parallel subgraphs writing to overlapping keys in the shared <code>SemiBotState</code> occasionally caused one subgraph's result to silently overwrite another's due to LangGraph's default "last write wins" reducer behavior on non-annotated fields. Resolved by ensuring every state field has an explicit reducer (<code>Annotated[str, lambda old, new: new]</code>) and that no two subgraphs write to the same key.<br><br>
+      <strong style="color:var(--text);">3. Caching inconsistency.</strong> An early caching layer applied a uniform TTL across factors with fundamentally different update frequencies (e.g., CPI, which updates monthly, cached identically to a live stock price). This was corrected via a tiered TTL scheme aligned to each factor's actual real-world update cadence — a pattern subsequently reapplied to two companion projects, GoldBot and SilverBot, built on the same architectural template.
     </div>
     <div class="rp-body">These failures generalize beyond SemiBot: any LangGraph system with concurrent subgraphs and a shared persistence layer is exposed to the same class of race conditions and reducer misconfigurations.</div>
 
@@ -561,7 +557,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="rp-h3">4.2 Backtest 2: Designed Fixed-Horizon Point-in-Time Experiment</div>
     <div class="rp-body">To address Backtest 1's limitations — no fixed holding period, and dependence on a moving-average proxy for price-at-prediction-time — we conducted a second, deliberately designed backtest on SemiBot's finalized 48-ticker production universe (Table 3), evaluated at 10 stratified historical dates (2025-08-15 through 2026-05-01, selected via a reproducible seeded random procedure across the available historical window), with a genuine fixed 20-trading-day forward-return outcome rather than comparison against "today's" price. Two tickers originally considered for the production universe (ASMI.AS, BE.NA) were excluded after repeated data-fetch failures via the underlying market-data API; two additional tickers representing duplicate cross-listings of companies already present (2330.TW/TSM and 2303.TW/UMC, both confirmed identical entities via corporate investor-relations documentation) were also excluded, alongside nine tickers below a $4B market-capitalization threshold, on the pre-registered principle that duplicate-entity and micro-capitalization names add noise rather than genuine coverage.</div>
     <div class="rp-body">This yielded 426 valid observations from 480 attempted (48 tickers x 10 dates), with 54 exclusions for genuine NEUTRAL ties, insufficient MA200 history for early dates on certain tickers, or insufficient forward-return data for the most recent date.</div>
-    <div class="rp-body"><strong style="color:#3A7090;">Tiered factor methodology:</strong> given that 6 of 18 factors depend on Tavily web search (which has no historical archive), factors were tiered by genuine historical feasibility: 9 factors were computed from true point-in-time data (CPI, PPI, Fed Rate, USD Index, Sector Rally, Technical Signal via historical FRED/yfinance series; Market Cap via historical price x current shares; Insider Selling via date-filtered transaction records; P/E Ratio via historical price / implied trailing EPS), 3 factors used a disclosed current-value proxy (Earnings Guidance, Analyst Ratings, Beta), and 6 factors were set to Neutral (Geopolitics, Supply Chain, News Sentiment, Capital Rotation, Competitor Contagion, Sell-the-News).</div>
+    <div class="rp-body"><strong style="color:var(--text);">Tiered factor methodology:</strong> given that 6 of 18 factors depend on Tavily web search (which has no historical archive), factors were tiered by genuine historical feasibility: 9 factors were computed from true point-in-time data (CPI, PPI, Fed Rate, USD Index, Sector Rally, Technical Signal via historical FRED/yfinance series; Market Cap via historical price x current shares; Insider Selling via date-filtered transaction records; P/E Ratio via historical price / implied trailing EPS), 3 factors used a disclosed current-value proxy (Earnings Guidance, Analyst Ratings, Beta), and 6 factors were set to Neutral (Geopolitics, Supply Chain, News Sentiment, Capital Rotation, Competitor Contagion, Sell-the-News).</div>
     <div class="rp-highlight"><p><strong>Overall result: 261/426 = 61.3% directional accuracy.</strong></p></div>
 
     <div class="rp-h3">4.2.1 Stratification by Market Capitalization</div>
@@ -678,7 +674,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="rp-body">Backtest 1 (61.4% MA50 / 69.3% MA200, incidental data, 140 observations) and Backtest 2 (61.3%, designed fixed-horizon experiment, 426 observations) converge closely around 61% despite using different tickers, different time windows, and structurally different methodologies. This convergence is evidence that SemiBot's blended, full-universe directional accuracy sits stably around this figure — while Backtest 2's market-cap stratification (Section 4.2.1) reveals that this blended average masks a wide and systematic underlying range (42%–84%) that is far more informative than the aggregate alone.</div>
 
     <div class="rp-h3">4.5 Backtest 3: Naive-Baseline Comparison, Stratified by Market Capitalization</div>
-    <div class="rp-body">Backtests 1 and 2 establish that SemiBot performs above random chance and is broadly competitive with published literature benchmarks (Section 5). Neither, however, answers whether SemiBot's 18-factor causal-chain reasoning outperforms the simplest possible alternative during the same period, nor whether any such comparison holds uniformly across the market-capitalization gradient documented in Section 4.2.1. We address both questions directly, using the identical 426-observation, 48-ticker, market-cap-tagged dataset as Backtest 2 and the same six-tier valuation scheme as Table 1, against two naive baselines of increasing sophistication: an <strong style="color:#3A7090;">Always-UP</strong> strategy, which predicts UP on every observation regardless of any input; and a <strong style="color:#3A7090;">SOXX prior-trend-following</strong> strategy, which predicts a ticker's direction based purely on whether the semiconductor sector ETF (SOXX) rose or fell over the 20 trading days immediately preceding each analysis date — the same window length as Backtest 2's forward-return horizon, and using no ticker-specific reasoning at all.</div>
+    <div class="rp-body">Backtests 1 and 2 establish that SemiBot performs above random chance and is broadly competitive with published literature benchmarks (Section 5). Neither, however, answers whether SemiBot's 18-factor causal-chain reasoning outperforms the simplest possible alternative during the same period, nor whether any such comparison holds uniformly across the market-capitalization gradient documented in Section 4.2.1. We address both questions directly, using the identical 426-observation, 48-ticker, market-cap-tagged dataset as Backtest 2 and the same six-tier valuation scheme as Table 1, against two naive baselines of increasing sophistication: an <strong style="color:var(--text);">Always-UP</strong> strategy, which predicts UP on every observation regardless of any input; and a <strong style="color:var(--text);">SOXX prior-trend-following</strong> strategy, which predicts a ticker's direction based purely on whether the semiconductor sector ETF (SOXX) rose or fell over the 20 trading days immediately preceding each analysis date — the same window length as Backtest 2's forward-return horizon, and using no ticker-specific reasoning at all.</div>
     <div class="rp-caption">Table 5 — SemiBot vs. Always-UP Baseline, Stratified by Market Capitalization (n=426)</div>
     <div class="rp-table-wrap"><table class="rp-table">
       <tr><th>Tier</th><th>N</th><th>SemiBot</th><th>Always-UP</th><th>Gap</th></tr>
@@ -701,7 +697,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
       <tr><td>&lt;$10B</td><td>72</td><td>41.7%</td><td>61.1%</td><td>-19.4 pts</td></tr>
       <tr class="rp-total"><td>Overall</td><td>426</td><td>61.3%</td><td>66.9%</td><td>-5.6 pts</td></tr>
     </table></div>
-    <div class="rp-body"><strong style="color:#3A7090;">Result:</strong> against Always-UP, SemiBot underperforms in every tier without exception; against SOXX-trend, SemiBot outperforms in its two largest tiers and underperforms in every tier below $500B. This joint result is more informative than either comparison in isolation. Against the weaker Always-UP baseline — which contains no market information whatsoever beyond the assumption that markets tend to rise — SemiBot's causal-chain reasoning does not add value at any capitalization level during this bullish window, though the magnitude of underperformance shrinks sharply and monotonically with company size, from 29.1 points at the smallest tier to 2.0 points at the largest. Against the more sophisticated SOXX-trend baseline — which does incorporate genuine, if unsophisticated, market information — SemiBot's causal-chain reasoning demonstrably adds value at the top of the market-capitalization spectrum: an 8.0-point advantage at &gt;$1 Trillion and a 5.7-point advantage at $500B–$1T, both concentrated in exactly the tiers where Backtest 2 (Section 4.2.1) already shows SemiBot's highest absolute accuracy.</div>
+    <div class="rp-body"><strong style="color:var(--text);">Result:</strong> against Always-UP, SemiBot underperforms in every tier without exception; against SOXX-trend, SemiBot outperforms in its two largest tiers and underperforms in every tier below $500B. This joint result is more informative than either comparison in isolation. Against the weaker Always-UP baseline — which contains no market information whatsoever beyond the assumption that markets tend to rise — SemiBot's causal-chain reasoning does not add value at any capitalization level during this bullish window, though the magnitude of underperformance shrinks sharply and monotonically with company size, from 29.1 points at the smallest tier to 2.0 points at the largest. Against the more sophisticated SOXX-trend baseline — which does incorporate genuine, if unsophisticated, market information — SemiBot's causal-chain reasoning demonstrably adds value at the top of the market-capitalization spectrum: an 8.0-point advantage at &gt;$1 Trillion and a 5.7-point advantage at $500B–$1T, both concentrated in exactly the tiers where Backtest 2 (Section 4.2.1) already shows SemiBot's highest absolute accuracy.</div>
     <div class="rp-body">Three points contextualize this result. First, it is consistent with, and provides an independent line of evidence for, the mechanism identified in Section 4.3: SemiBot's causal-chain reasoning weighs genuine headwinds (valuation, insider selling, sell-the-news patterns) that produce bearish or neutral calls when a persistently rising market continues upward regardless — a cost that is smallest, and in the SOXX-trend comparison reverses into an advantage, precisely where SemiBot's own predictive accuracy is highest. Second, the qualitative difference between the two baseline comparisons is itself a methodological finding: a system's value-add over "naive" reasoning is not a single fact about the system, but a joint function of company size and of which naive strategy is chosen as the comparison point, and reporting only one baseline — as is standard practice in the comparable literature we are aware of (Section 5) — can produce a materially incomplete picture. Third, both results should be interpreted as properties of this specific, broadly bullish 10-month evaluation window rather than general properties of the system: an Always-UP baseline is, by construction, guaranteed to perform well during any sustained bull market and to fail during any sustained decline, since it contains no actual predictive mechanism, and a SOXX-trend baseline shares this vulnerability to a lesser degree. SemiBot's bearish and neutral calls — a source of relative cost in this bull-market sample — would plausibly become a source of relative advantage in a genuine downturn, which this evaluation window (August 2025–May 2026) does not contain. A dedicated bear-market or mixed-regime replication of this same stratified comparison is the single most valuable extension of this work and is left to future research (Section 7), since no such period exists within the data available for this study.</div>
     <div class="rp-body">We are not aware of comparable work in the literature that reports a market-capitalization-stratified naive-baseline comparison against multiple baselines of differing sophistication, and we argue this joint approach — rather than a single unstratified baseline check — should become standard practice for evaluating causal-chain and macro-driven equity systems.</div>
 
@@ -737,11 +733,11 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="rp-body">However, Section 4.2.1's central finding qualifies this generalization claim in an important way: generalization of pipeline completeness does not imply generalization of predictive accuracy. Section 4.5 adds a further, third-order qualification: generalization of predictive accuracy does not imply generalization of added value over naive baselines, and even this third property is not a single fact but depends on which baseline is used for comparison. We consider this three-way distinction — between architectural generalization, empirical predictive generalization, and baseline-relative value-added generalization — to be a useful conceptual separation for evaluating any causal-chain or macro-driven equity system, and one that is easy to conflate if only an aggregate accuracy figure, or a single unstratified baseline comparison, is reported.</div>
 
     <div class="rp-h2">7. Limitations and Future Work</div>
-    <div class="rp-body"><strong style="color:#3A7090;">Price-proxy sensitivity (Backtest 1).</strong> Backtest 1's accuracy is measurably sensitive to the choice between MA50 (61.4%) and MA200 (69.3%) as a substitute for the missing spot price. Neither should be read as precise; Backtest 1's role is establishing directional soundness broadly, not providing an exact figure.</div>
-    <div class="rp-body"><strong style="color:#3A7090;">Tiered-factor methodology (Backtest 2).</strong> 9 of 18 factors use genuinely historical data, 3 use a disclosed current-value proxy, and 6 are set to Neutral, since no historical archive exists for Tavily-dependent qualitative signals. Extending genuine historical treatment to these factors — via a properly time-stamped news archive — is an important direction for future work.</div>
+    <div class="rp-body"><strong style="color:var(--text);">Price-proxy sensitivity (Backtest 1).</strong> Backtest 1's accuracy is measurably sensitive to the choice between MA50 (61.4%) and MA200 (69.3%) as a substitute for the missing spot price. Neither should be read as precise; Backtest 1's role is establishing directional soundness broadly, not providing an exact figure.</div>
+    <div class="rp-body"><strong style="color:var(--text);">Tiered-factor methodology (Backtest 2).</strong> 9 of 18 factors use genuinely historical data, 3 use a disclosed current-value proxy, and 6 are set to Neutral, since no historical archive exists for Tavily-dependent qualitative signals. Extending genuine historical treatment to these factors — via a properly time-stamped news archive — is an important direction for future work.</div>
     <div class="rp-body">The market-cap-accuracy relationship (Sections 4.2.1–4.2.3) is the paper's most significant finding, now statistically confirmed (b=0.327, p&lt;0.001 uncontrolled; b=0.291, p&lt;0.001 controlling for sub-sector category) and shown to persist, at reduced magnitude, even on the sample's weakest-performing dates (+22.0 points, vs. +45.9 on strong dates) — partially, though not conclusively, addressing the bull-market confound. The residual open question is mechanistic: whether the effect reflects genuinely lower information efficiency in smaller companies, SemiBot's factor set being better calibrated to mega-cap fundamentals, or some combination. A concrete falsification design for future work: regressing prediction accuracy against analyst-coverage count and average daily trading volume, independently of log market capitalization, would further isolate an information-efficiency explanation from a pure size effect.</div>
-    <div class="rp-body"><strong style="color:#3A7090;">No bear-market or mixed-regime replication of Backtest 3 exists.</strong> This is the paper's most significant remaining limitation. Both naive baselines used in Section 4.5 are structurally advantaged by a sustained bull market; a genuine downturn or mixed-regime period would provide a substantially stronger test of whether SemiBot's causal-chain reasoning — and specifically its bearish and neutral calls, currently a source of cost relative to naive momentum in the smaller tiers — becomes a source of relative advantage when the market's prevailing direction reverses. We regard a stratified Backtest 3 replication across a genuine bear-market window as the single highest-priority extension of this work.</div>
-    <div class="rp-body"><strong style="color:#3A7090;">Evaluation window.</strong> Backtest 2 spans roughly 10 months (August 2025–May 2026), a period of broad market appreciation across nearly all tested tickers; it does not include a genuine downturn, following the two-year evaluation window used by comparable work [1].</div>
+    <div class="rp-body"><strong style="color:var(--text);">No bear-market or mixed-regime replication of Backtest 3 exists.</strong> This is the paper's most significant remaining limitation. Both naive baselines used in Section 4.5 are structurally advantaged by a sustained bull market; a genuine downturn or mixed-regime period would provide a substantially stronger test of whether SemiBot's causal-chain reasoning — and specifically its bearish and neutral calls, currently a source of cost relative to naive momentum in the smaller tiers — becomes a source of relative advantage when the market's prevailing direction reverses. We regard a stratified Backtest 3 replication across a genuine bear-market window as the single highest-priority extension of this work.</div>
+    <div class="rp-body"><strong style="color:var(--text);">Evaluation window.</strong> Backtest 2 spans roughly 10 months (August 2025–May 2026), a period of broad market appreciation across nearly all tested tickers; it does not include a genuine downturn, following the two-year evaluation window used by comparable work [1].</div>
     <div class="rp-body">The 18-factor weighting is LLM-scored per analysis rather than learned from realized returns; a natural extension is regressing realized returns against factor scores (e.g., via a Fama-French-style multi-factor attribution [4, 5]) once a larger, fixed-horizon sample exists, potentially separately by market-cap tier.</div>
     <div class="rp-body">SemiBot's production universe was reduced from an initial 61 tickers to 48 following discovery of two duplicate cross-listings and nine sub-$4B tickers during this study; two additional tickers (ASMI.AS, BE.NA) were excluded due to persistent data-fetch failures rather than principled market-cap filtering, and their inclusion (with a corrected data source) is left to future work.</div>
     <div class="rp-body">As with any system depending on a third-party search API (Tavily) for qualitative signals, availability and rate-limit constraints can degrade individual factor completeness; SemiBot degrades gracefully to a neutral score under such conditions rather than fabricating a signal from absent data — a design pattern validated in practice during companion development of GoldBot and SilverBot, where an identical fallback mechanism was engineered after discovering an LLM tendency to hallucinate non-neutral scores from background context when live data was genuinely unavailable.</div>
@@ -752,7 +748,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
     <div class="rp-body">We are not aware of prior work reporting a market-capitalization-stratified comparison against naive baselines of differing sophistication, and we argue this joint approach — rather than literature benchmarking or a single unstratified baseline check alone — should become standard reporting practice for causal-chain and macro-driven equity analysis systems, since any one evaluation lens in isolation can substantially overstate or understate a system's genuine, size-dependent practical value.</div>
 
     <div class="rp-h2">Availability</div>
-    <div class="rp-body">SemiBot is publicly deployed at <a href="https://semibot-raj.streamlit.app" target="_blank" rel="noopener" style="color:#5AADFF;">https://semibot-raj.streamlit.app</a>, where readers may run live analyses on any supported semiconductor ticker. Source code is maintained in a private repository; access requests may be directed to the corresponding author at khatikraj2653@gmail.com.</div>
+    <div class="rp-body">SemiBot is publicly deployed at <a href="https://semibot-raj.streamlit.app" target="_blank" rel="noopener" style="color:var(--accent-hi);">https://semibot-raj.streamlit.app</a>, where readers may run live analyses on any supported semiconductor ticker. Source code is maintained in a private repository; access requests may be directed to the corresponding author at khatikraj2653@gmail.com.</div>
 
     <div class="rp-h2">References</div>
     <div class="rp-refs">
@@ -776,7 +772,7 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
 
     <div class="rp-divider"></div>
     <div class="rp-links">
-      <a class="rp-ssrn-btn" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">📄 Read Live on SSRN ↗</a>
+      <a class="rp-ssrn-btn" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7199998" target="_blank" rel="noopener">Read Live on SSRN ↗</a>
     </div>
     <div class="rp-tags">
       <span class="rp-tag">LangGraph</span><span class="rp-tag">RAG · FAISS</span><span class="rp-tag">Financial NLP</span>
@@ -788,60 +784,42 @@ footer{position:relative;z-index:5;padding:28px 48px;border-top:1px solid rgba(0
 
 <script>
 function goApp(){window.location.href='https://semibot-raj.streamlit.app';}
-function showResearch(){document.getElementById('mainsite').style.display='none';document.getElementById('researchpage').style.display='block';window.scrollTo(0,0);}
-function hideResearch(){document.getElementById('researchpage').style.display='none';document.getElementById('mainsite').style.display='block';}
-
-var prices={NVDA:{price:195.55,prev:194.40},MU:{price:984.75,prev:977.00},TSM:{price:451.79,prev:437.30},AMD:{price:552.05,prev:518.40},ASML:{price:1825.07,prev:1776.20},INTC:{price:122.20,prev:121.00},QCOM:{price:186.48,prev:176.60},AVGO:{price:1343.28,prev:1342.50},MRVL:{price:82.37,prev:82.00},LRCX:{price:890.30,prev:902.10}};
-function fmt(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function buildTape(){var h='';for(var i=0;i<2;i++){Object.entries(prices).forEach(function(e){var s=e[0],d=e[1],c=d.price-d.prev,p=c/d.prev*100,u=c>=0;h+=`<div class="ti"><div class="dot ${u?'udt':'ddt'}"></div><span class="tsym">${s}</span><span class="tprice">$${fmt(d.price)}</span><span class="tchg ${u?'up':'dn'}">${u?'▲':'▼'} ${Math.abs(p).toFixed(2)}%</span></div>`;});}document.getElementById('tape').innerHTML=h;}
-function jiggle(){Object.keys(prices).forEach(function(k){var d=prices[k],x=(Math.random()-0.48)*d.price*0.002;d.prev=d.price;d.price=Math.max(d.price+x,1);});buildTape();}
-
-var lsigs=[
-  ["📈 MU UP 48% signal detected","⚠️ AMD inventory: elevated","📈 ASML EUV demand: strong","📈 Micron DRAM cycle: turning"],
-  ["📉 MU sell-the-news risk","📈 NVDA earnings beat likely","⚠️ QCOM cycle risk high","📉 Samsung memory glut risk"],
-  ["📈 ARM AI chip wins: up","📉 Intel losing market share","📈 AMAT equipment cycle: up","⚡ SK Hynix HBM3: bullish"],
-  ["📈 Broadcom AI revenue: up","⚠️ WOLF power semi: weak","📈 Qualcomm 5G cycle: up","📉 GlobalFoundries margin: down"],
-];
-var rsigs=[
-  ["⚡ TSMC supply chain: bullish","📉 INTC Death Cross: bearish","🌏 Fed rate cut: semi positive","⚡ LRCX wafer fab: recovering"],
-  ["🌏 Taiwan Strait: risk elevated","⚡ SK Hynix HBM: surging","📉 WOLF power semi: weak","🌏 Geopolitics: neutral signal"],
-  ["🌏 US-China chip ban escalating","⚡ Capital rotation: into semis","📈 NVIDIA H100 demand: up","⚡ AMAT orders: accelerating"],
-  ["🌏 FOMC hold: semi neutral","⚡ TSM Arizona fab: on track","📈 Marvell AI infra: bullish","🌏 Export controls: tightening"],
-];
-
-var li=0,ri=0;
-var lb=[document.getElementById('bl1'),document.getElementById('bl2'),document.getElementById('bl3'),document.getElementById('bl4')];
-var rb=[document.getElementById('br1'),document.getElementById('br2'),document.getElementById('br3'),document.getElementById('br4')];
-setInterval(function(){
-  li=(li+1)%lsigs.length;
-  lb.forEach(function(b){b.style.opacity='0';});
-  setTimeout(function(){lb.forEach(function(b,i){b.textContent=lsigs[li][i];b.style.opacity='1';});},450);
-},5000);
-setInterval(function(){
-  ri=(ri+1)%rsigs.length;
-  rb.forEach(function(b){b.style.opacity='0';});
-  setTimeout(function(){rb.forEach(function(b,i){b.textContent=rsigs[ri][i];b.style.opacity='1';});},450);
-},4200);
-
-buildTape();
-setInterval(jiggle,3000);
+function showResearch(){document.getElementById('mainsite').style.display='none';document.getElementById('researchpage').style.display='block';window.scrollTo(0,0);fitFrame();}
+function hideResearch(){document.getElementById('researchpage').style.display='none';document.getElementById('mainsite').style.display='block';fitFrame();}
 
 function closeWelcomeModal(){
   document.getElementById('welcomeModal').style.display='none';
-  localStorage.setItem('semibot_welcomed','true');
+  try{localStorage.setItem('semibot_welcomed','true');}catch(e){}
 }
-if(!localStorage.getItem('semibot_welcomed')){
-  document.getElementById('welcomeModal').style.display='flex';
+try{
+  if(!localStorage.getItem('semibot_welcomed')){
+    document.getElementById('welcomeModal').style.display='flex';
+  }
+}catch(e){}
+
+// When embedded in Streamlit's components iframe, size the frame to the content
+// (no-op when the page is opened on its own).
+function fitFrame(){
+  try{
+    if(!window.frameElement) return;
+    var r=document.getElementById('researchpage'), m=document.getElementById('mainsite');
+    var h = (r && r.style.display==='block')
+      ? r.querySelector('.rp-nav').offsetHeight + r.querySelector('.rp-content').offsetHeight
+      : m.offsetHeight;
+    window.frameElement.style.height = Math.ceil(h) + 'px';
+  }catch(e){}
 }
+window.addEventListener('load',fitFrame);
+window.addEventListener('resize',fitFrame);
+setTimeout(fitFrame,600);setTimeout(fitFrame,2000);
+if(window.ResizeObserver){new ResizeObserver(fitFrame).observe(document.getElementById('mainsite'));}
 
 const chatHint=document.getElementById('chatHint'),chatHintClose=document.getElementById('chatHintClose');
 let hintT=[];
 function dismissHint(){hintT.forEach(clearTimeout);hintT=[];if(chatHint)chatHint.classList.remove('is-visible');}
 if(chatHint){hintT.push(setTimeout(()=>chatHint.classList.add('is-visible'),1500),setTimeout(dismissHint,9500));if(chatHintClose)chatHintClose.addEventListener('click',dismissHint);}
-
-
 </script>
 
-<div id="chatHint" class="chat-hint"><button id="chatHintClose" class="chat-hint-close">&#215;</button>&#128075; AI semiconductor market analysis<br>Hit <strong>Get Started &#8594;</strong> to begin</div>
+<div id="chatHint" class="chat-hint"><button id="chatHintClose" class="chat-hint-close" aria-label="Dismiss">&#215;</button>Ask me about semiconductor markets.<br>Hit <strong>Get Started &#8594;</strong> to begin</div>
 </body>
-  </html>
+</html>
