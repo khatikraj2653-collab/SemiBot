@@ -53,10 +53,10 @@ def score_badge(key, scores):
         color = "#F87171"
         label = "Bearish"
     else:
-        color = "#8693A5"
+        color = "#8DA0C0"
         label = "Neutral"
     sign = "+" if score > 0 else ""
-    return f"<div style='margin-top:6px;font-size:0.75rem;font-weight:600'><span style='color:#8693A5'>Score: </span><span style='color:{color}'>{sign}{score}</span><span style='color:{color};margin-left:6px'>{label}</span></div>"
+    return f"<div style='margin-top:6px;font-size:0.75rem;font-weight:600'><span style='color:#8DA0C0'>Score: </span><span style='color:{color}'>{sign}{score}</span><span style='color:{color};margin-left:6px'>{label}</span></div>"
 
 def smart_truncate(text, limit: int = 1200) -> str:
     """
@@ -251,14 +251,14 @@ def get_ticker_prices():
                 pct = round((change / prev) * 100, 2)
                 arrow = "▲" if change >= 0 else "▼"
                 color = "#34D399" if change >= 0 else "#F87171"
-                results.append(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#E8ECF2'>${price}</span> <span style='color:{color}'>{arrow} {pct}%</span></span>")
+                results.append(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#EAF0FA'>${price}</span> <span style='color:{color}'>{arrow} {pct}%</span></span>")
             except Exception as e:
                 print(f"[TICKER ERROR] {t}: {e}", flush=True)
-                results.append(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#8693A5'>N/A</span></span>")
+                results.append(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#8DA0C0'>N/A</span></span>")
         return "".join(results)
     except Exception as e:
         print(f"[TICKER TAPE BATCH ERROR]: {e}", flush=True)
-        return "".join(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#8693A5'>N/A</span></span>" for t in TICKER_TAPE)
+        return "".join(f"<span style='margin-right:32px'><strong style='color:#8BB8FF'>{t}</strong> <span style='color:#8DA0C0'>N/A</span></span>" for t in TICKER_TAPE)
 
 def render_ticker_tape():
     ticker_html = get_ticker_prices()
@@ -266,8 +266,8 @@ def render_ticker_tape():
     <style>
     .ticker-wrap {{
         position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-        background: #10151C;
-        border-top: 1px solid #212A36;
+        background: #16243F;
+        border-top: 1px solid #2A3B5E;
         padding: 8px 0; overflow: hidden;
     }}
     .ticker-move {{
@@ -299,8 +299,8 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-    --bg:#0A0D12; --surface:#10151C; --surface-2:#161C25; --line:#212A36; --line-2:#2E3A4B;
-    --text:#E8ECF2; --text-2:#B4BFCE; --text-3:#8693A5;
+    --bg:#0F1B33; --surface:#16243F; --surface-2:#1C2D4D; --line:#2A3B5E; --line-2:#3A4E78;
+    --text:#EAF0FA; --text-2:#BAC8E0; --text-3:#8DA0C0;
     --accent:#5B9BFF; --accent-hi:#8BB8FF; --accent-ink:#06101F; --accent-soft:rgba(91,155,255,0.12);
     --up:#34D399; --down:#F87171; --warn:#FBBF24;
     --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -781,9 +781,9 @@ with st.sidebar:
     st.markdown("""
     <div style='display:flex;align-items:center;gap:10px;margin-bottom:4px'>
         <div style='width:32px;height:32px;border-radius:8px;background:rgba(91,155,255,0.12);border:1px solid rgba(91,155,255,0.35);display:flex;align-items:center;justify-content:center'><svg viewBox='0 0 24 24' width='18' height='18' fill='none' stroke='#8BB8FF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='6' y='6' width='12' height='12' rx='2'/><path d='M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3'/></svg></div>
-        <span style='font-family:Inter,sans-serif;font-size:16px;font-weight:700;color:#E8ECF2'>SemiBot</span>
+        <span style='font-family:Inter,sans-serif;font-size:16px;font-weight:700;color:#EAF0FA'>SemiBot</span>
     </div>
-    <div style='font-size:0.72rem;color:#8693A5;margin-bottom:18px'>18-Factor Agentic RAG</div>
+    <div style='font-size:0.72rem;color:#8DA0C0;margin-bottom:18px'>18-Factor Agentic RAG</div>
     """, unsafe_allow_html=True)
 
     # PATH FIX 5: Use st.page_link for same-tab navigation to Home page
@@ -795,8 +795,8 @@ with st.sidebar:
         st.session_state.current_history_id = None
         st.rerun()
 
-    st.markdown("<hr style='border-color:#212A36;margin:14px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size:0.65rem;color:#8693A5;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>HISTORY</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#2A3B5E;margin:14px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.65rem;color:#8DA0C0;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>HISTORY</div>", unsafe_allow_html=True)
 
     if st.session_state.history:
         for item in st.session_state.history[:10]:
@@ -815,8 +815,8 @@ with st.sidebar:
                     st.session_state.active_tab = "single"
                     st.rerun()
 
-    st.markdown("<hr style='border-color:#212A36;margin:14px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size:0.65rem;color:#8693A5;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>COMPARISONS</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#2A3B5E;margin:14px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.65rem;color:#8DA0C0;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px'>COMPARISONS</div>", unsafe_allow_html=True)
 
     if st.session_state.compare_sessions_list:
         for csession in st.session_state.compare_sessions_list[:10]:
@@ -847,7 +847,7 @@ if st.session_state.result is None:
 
     if st.session_state.active_tab == "compare":
         st.markdown("<div style='padding:16px 0'>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size:0.75rem;color:#9AA7B8;margin-bottom:10px'>How many tickers do you want to compare?</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:0.75rem;color:#9DB0CE;margin-bottom:10px'>How many tickers do you want to compare?</div>", unsafe_allow_html=True)
 
         count_cols = st.columns(5)
         for i, c in enumerate(count_cols):
@@ -955,7 +955,7 @@ if st.session_state.result is None:
                             st.session_state.current_compare_session_id = st.session_state.compare_sessions_list[0]["id"]
 
         if st.session_state.compare_results:
-            st.markdown("<hr style='border-color:#212A36;margin:20px 0'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#2A3B5E;margin:20px 0'>", unsafe_allow_html=True)
             tickers_list = list(st.session_state.compare_results.keys())
 
             ranked = sorted(tickers_list, key=lambda t: parse_result(st.session_state.compare_results[t])["up_prob"], reverse=True)
@@ -974,10 +974,10 @@ if st.session_state.result is None:
             for i, t in enumerate(ranked):
                 p = parse_result(st.session_state.compare_results[t])
                 rank_color = "#34D399" if p["up_prob"] >= p["down_prob"] else "#F87171"
-                rank_html += f"<div class='semi-card' style='display:flex;justify-content:space-between;align-items:center;padding:8px 14px'><span style='font-size:0.8rem;color:#E8ECF2'>{i+1}. {display_name(t)}</span><span style='font-family:Inter,sans-serif;font-weight:700;color:{rank_color}'>{p['up_prob']}% / {p['down_prob']}%</span></div>"
+                rank_html += f"<div class='semi-card' style='display:flex;justify-content:space-between;align-items:center;padding:8px 14px'><span style='font-size:0.8rem;color:#EAF0FA'>{i+1}. {display_name(t)}</span><span style='font-family:Inter,sans-serif;font-weight:700;color:{rank_color}'>{p['up_prob']}% / {p['down_prob']}%</span></div>"
             st.markdown(rank_html, unsafe_allow_html=True)
 
-            st.markdown("<hr style='border-color:#212A36;margin:20px 0'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#2A3B5E;margin:20px 0'>", unsafe_allow_html=True)
 
             cols = st.columns(len(tickers_list))
             factor_groups = [
@@ -991,13 +991,13 @@ if st.session_state.result is None:
                     r = st.session_state.compare_results[t]
                     parsed = parse_result(r)
                     scores = r.get("scores", {})
-                    st.markdown(f"<div style='font-family:Inter,sans-serif;font-size:0.9rem;font-weight:700;color:#E8ECF2;margin-bottom:8px' title='{display_name(t)}'>{display_name(t)}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='font-family:Inter,sans-serif;font-size:0.9rem;font-weight:700;color:#EAF0FA;margin-bottom:8px' title='{display_name(t)}'>{display_name(t)}</div>", unsafe_allow_html=True)
                     up_color = "#34D399" if parsed["up_prob"] >= parsed["down_prob"] else "#F87171"
                     st.markdown(f"""
                     <div class='metric-card' style='margin-bottom:10px'>
                         <div class='metric-lbl'>Upside / Downside</div>
                         <div style='font-family:Inter,sans-serif;font-size:1.4rem;font-weight:700;color:{up_color}'>{parsed['up_prob']}% / {parsed['down_prob']}%</div>
-                        <div style='font-size:0.68rem;color:#8693A5;margin-top:4px'>Confidence: {parsed['confidence']}</div>
+                        <div style='font-size:0.68rem;color:#8DA0C0;margin-top:4px'>Confidence: {parsed['confidence']}</div>
                     </div>
                     """, unsafe_allow_html=True)
                     for group_label, pairs in factor_groups:
@@ -1012,9 +1012,9 @@ if st.session_state.result is None:
                             full_val = f"{label}: {tooltip_body}"
                             st.markdown(f"<div class='semi-card hover-expand' style='padding:8px 10px'><div class='card-key' style='font-size:0.58rem'>{label}</div><div class='card-val' style='font-size:0.7rem'>{sentiment_label}</div>{score_badge(key, scores)}<div class='hover-tooltip'>{full_val}</div></div>", unsafe_allow_html=True)
 
-            st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
-            st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#E8ECF2;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
-            st.markdown("<div style='font-size:0.75rem;color:#9AA7B8;margin-bottom:12px'>Ask about any or all of the compared tickers - e.g. \"which has the strongest fundamentals?\" or \"compare their supply chain risk\"</div>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color:#2A3B5E;margin:24px 0'>", unsafe_allow_html=True)
+            st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#EAF0FA;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size:0.75rem;color:#9DB0CE;margin-bottom:12px'>Ask about any or all of the compared tickers - e.g. \"which has the strongest fundamentals?\" or \"compare their supply chain risk\"</div>", unsafe_allow_html=True)
 
             if "compare_followup_history" not in st.session_state:
                 st.session_state.compare_followup_history = []
@@ -1093,8 +1093,8 @@ Refusal message (use ONLY for clearly unrelated requests like recipes or medical
                 st.session_state.compare_followup_history = []
                 st.rerun()
 
-        st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
-        st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#E8ECF2;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color:#2A3B5E;margin:24px 0'>", unsafe_allow_html=True)
+        st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#EAF0FA;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
 
         cem1, cem2 = st.columns([4, 1])
         with cem1:
@@ -1192,10 +1192,10 @@ else:
     with col_h1:
         st.markdown(f"""
         <div style='padding:24px 32px 0'>
-            <div style='font-family:Inter,sans-serif;font-size:1.3rem;font-weight:700;color:#E8ECF2;margin-bottom:4px'>
+            <div style='font-family:Inter,sans-serif;font-size:1.3rem;font-weight:700;color:#EAF0FA;margin-bottom:4px'>
                 Factor Analysis <span class='ticker-chip'>{st.session_state.ticker}</span>
             </div>
-            <div style='font-size:0.75rem;color:#9AA7B8'>18-Factor Agentic RAG - Real-time APIs - University of Warwick</div>
+            <div style='font-size:0.75rem;color:#9DB0CE'>18-Factor Agentic RAG - Real-time APIs - University of Warwick</div>
         </div>
         """, unsafe_allow_html=True)
     with col_h2:
@@ -1380,8 +1380,8 @@ if st.session_state.result:
             val = smart_truncate(result.get(key, "N/A"))
         st.markdown(f"<div class='semi-card'><div class='card-key'>{label}</div><div class='card-val'>{val}</div>{score_badge(key, scores)}</div>", unsafe_allow_html=True)
 
-    st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-family:Inter,sans-serif;font-size:1rem;font-weight:600;color:#E8ECF2;margin-bottom:14px'>Prediction</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#2A3B5E;margin:24px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-family:Inter,sans-serif;font-size:1rem;font-weight:600;color:#EAF0FA;margin-bottom:14px'>Prediction</div>", unsafe_allow_html=True)
 
     p1, p2, p3 = st.columns([1.2, 1.2, 2.6])
     with p1:
@@ -1404,18 +1404,18 @@ if st.session_state.result:
         st.markdown(f"""
         <div class='metric-card' style='text-align:left'>
             <div style='display:grid;grid-template-columns:1fr 1fr;gap:16px'>
-                <div><div style='font-size:0.62rem;color:#8693A5;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px'>Bullish</div>{bullish_html}</div>
-                <div><div style='font-size:0.62rem;color:#8693A5;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px'>Bearish</div>{bearish_html}</div>
+                <div><div style='font-size:0.62rem;color:#8DA0C0;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px'>Bullish</div>{bullish_html}</div>
+                <div><div style='font-size:0.62rem;color:#8DA0C0;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px'>Bearish</div>{bearish_html}</div>
             </div>
-            <div style='margin-top:12px;font-size:0.7rem;color:#8693A5'>Confidence: <strong style='color:#8BB8FF'>{confidence}</strong></div>
+            <div style='margin-top:12px;font-size:0.7rem;color:#8DA0C0'>Confidence: <strong style='color:#8BB8FF'>{confidence}</strong></div>
         </div>""", unsafe_allow_html=True)
 
     if reasoning:
         st.markdown(f"<div class='reasoning-card'>{reasoning}</div>", unsafe_allow_html=True)
 
-    st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#E8ECF2;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size:0.75rem;color:#9AA7B8;margin-bottom:12px'>Ask about factors, what-if scenarios, or deeper insights</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#2A3B5E;margin:24px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#EAF0FA;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.75rem;color:#9DB0CE;margin-bottom:12px'>Ask about factors, what-if scenarios, or deeper insights</div>", unsafe_allow_html=True)
 
     for msg in st.session_state.followup_history:
         if msg["role"] == "user":
@@ -1494,8 +1494,8 @@ Refusal message (use only for clearly unrelated requests): "I'm focused on semic
     elif ask_button and not followup_q:
         st.markdown("<div class='val-error'>Warning: Please type a question first.</div>", unsafe_allow_html=True)
 
-    st.markdown("<hr style='border-color:#212A36;margin:24px 0'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#E8ECF2;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:#2A3B5E;margin:24px 0'>", unsafe_allow_html=True)
+    st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#EAF0FA;margin-bottom:12px'>Email Summary</div>", unsafe_allow_html=True)
 
     em1, em2 = st.columns([4, 1])
     with em1:

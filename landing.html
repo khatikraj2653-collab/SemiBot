@@ -12,8 +12,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0A0D12;--surface:#10151C;--surface-2:#161C25;--line:#212A36;--line-2:#2E3A4B;
-  --text:#E8ECF2;--text-2:#B4BFCE;--text-3:#8693A5;
+  --bg:#0F1B33;--surface:#16243F;--surface-2:#1C2D4D;--line:#2A3B5E;--line-2:#3A4E78;
+  --text:#EAF0FA;--text-2:#BAC8E0;--text-3:#8DA0C0;
   --accent:#5B9BFF;--accent-hi:#8BB8FF;--accent-ink:#06101F;--accent-soft:rgba(91,155,255,0.12);
   --up:#34D399;--down:#F87171;--warn:#FBBF24;--violet:#A78BFA;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -27,7 +27,7 @@ button{font-family:var(--sans);cursor:pointer;}
 :focus-visible{outline:2px solid var(--accent-hi);outline-offset:3px;border-radius:6px;}
 
 /* ---------- nav ---------- */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(10,13,18,0.82);backdrop-filter:blur(14px);}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(15,27,51,0.82);backdrop-filter:blur(14px);}
 .nav-logo{display:flex;align-items:center;gap:10px;}
 .nav-icon{width:32px;height:32px;border-radius:8px;background:var(--accent-soft);border:1px solid rgba(91,155,255,0.35);display:flex;align-items:center;justify-content:center;color:var(--accent-hi);}
 .nav-icon svg{width:18px;height:18px;}
@@ -171,7 +171,7 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
 
 /* ---------- research paper page ---------- */
 #researchpage{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;}
-.rp-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(10,13,18,0.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
+.rp-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 48px;border-bottom:1px solid var(--line);background:rgba(15,27,51,0.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
 .rp-back{background:var(--surface);border:1px solid var(--line-2);color:var(--text);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;transition:border-color .15s;}
 .rp-back:hover{border-color:var(--accent);}
 .rp-brand{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;color:var(--text);}
@@ -245,7 +245,7 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
 </style>
 </head>
 <body>
-<div id="welcomeModal" style="display:none;position:fixed;inset:0;background:rgba(5,8,12,0.85);z-index:500;align-items:center;justify-content:center;padding:16px;" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+<div id="welcomeModal" style="display:none;position:fixed;inset:0;background:rgba(7,13,26,0.85);z-index:500;align-items:center;justify-content:center;padding:16px;" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
   <div style="background:var(--surface);border:1px solid var(--line-2);border-radius:16px;padding:32px;max-width:440px;text-align:left;box-shadow:0 24px 60px rgba(0,0,0,.6);">
     <div id="welcomeTitle" style="font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.02em;">Welcome to SemiBot</div>
     <div style="font-size:14.5px;color:var(--text-2);line-height:1.7;margin-bottom:22px;">An AI semiconductor equity analyser built on 18 causal factors. Analyse a single stock, or compare up to 5 tickers side by side. Built as MSc Applied AI research at the University of Warwick.</div>
@@ -335,7 +335,7 @@ footer{position:relative;z-index:5;padding:26px 48px;border-top:1px solid var(--
     <h2 class="section-title">Move the factors. Watch the probability change.</h2>
     <p class="section-sub">SemiBot's UP% is not a guess from the language model. It is a weighted sum of 18 scores. Pick a factor, change its score, or switch a whole layer off, and see exactly how much it matters.</p>
 <style>
-.cm{--bg:#0A0D12;--surface:#10151C;--surface-2:#161C25;--line:#212A36;--line-2:#2E3A4B;--text:#E8ECF2;--text-2:#B4BFCE;--text-3:#8693A5;--accent:#5B9BFF;--accent-hi:#8BB8FF;--up:#34D399;--down:#F87171;--neutral:#4B586A;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+.cm{--bg:#0F1B33;--surface:#16243F;--surface-2:#1C2D4D;--line:#2A3B5E;--line-2:#3A4E78;--text:#EAF0FA;--text-2:#BAC8E0;--text-3:#8DA0C0;--accent:#5B9BFF;--accent-hi:#8BB8FF;--up:#34D399;--down:#F87171;--neutral:#4A5C80;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
   font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:18px;box-sizing:border-box;line-height:1.5;position:relative;}
 .cm *{box-sizing:border-box;}
 .cm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
@@ -425,7 +425,7 @@ var FACT = [
 ];
 var LAYERS = [['macro','Macroeconomic','#5B9BFF'],['fund','Fundamental','#A78BFA'],['market','Market intelligence','#34D399'],['ext','External signals','#FBBF24']];
 var NS = 'http://www.w3.org/2000/svg';
-var UP = '#34D399', DOWN = '#F87171', NEUTRAL = '#4B586A';
+var UP = '#34D399', DOWN = '#F87171', NEUTRAL = '#4A5C80';
 
 var root = document.getElementById('cm');
 var svg = document.getElementById('cm-svg');
@@ -487,7 +487,7 @@ function build(){
     slot++;
   });
   // faint orbit
-  el('ellipse', {cx:G.cx, cy:G.cy, rx:G.rx, ry:G.ry, fill:'none', stroke:'#212A36', 'stroke-width':1, 'stroke-dasharray':'2 6'}, gl);
+  el('ellipse', {cx:G.cx, cy:G.cy, rx:G.rx, ry:G.ry, fill:'none', stroke:'#2A3B5E', 'stroke-width':1, 'stroke-dasharray':'2 6'}, gl);
   FACT.forEach(function(f){
     var k = f[0], p = pos[k], r = G.nr(f[3]);
     var dx = G.cx - p.x, dy = G.cy - p.y, d = Math.sqrt(dx*dx+dy*dy);
@@ -518,7 +518,7 @@ function build(){
   // orb
   var C = 2*Math.PI*(G.orbR+8);
   orb.C = C;
-  el('circle', {cx:G.cx, cy:G.cy, r:G.orbR, fill:'#0A0D12', stroke:'#2E3A4B', 'stroke-width':1}, go);
+  el('circle', {cx:G.cx, cy:G.cy, r:G.orbR, fill:'#0F1B33', stroke:'#3A4E78', 'stroke-width':1}, go);
   el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:DOWN, 'stroke-width':8, opacity:.9}, go);
   orb.gauge = el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:UP, 'stroke-width':8, 'class':'gauge', transform:'rotate(-90 ' + G.cx + ' ' + G.cy + ')', 'stroke-dasharray':'0 ' + C}, go);
   orb.num = el('text', {'class':'orbnum', x:G.cx, y:G.cy + 8, 'text-anchor':'middle', 'font-size':G.orbR*0.62}, go);
