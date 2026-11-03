@@ -561,6 +561,108 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"], .stApp {
 }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ---------- skeuomorphism: brushed steel, glass buttons, recessed screens ---------- */
+:root {
+    --bg:#1D222A; --surface:#2F3642; --surface-2:#363D4A; --line:#10141A; --line-2:#4A5260;
+    --panel:linear-gradient(180deg,#3E4652 0%,#313845 55%,#2A303B 100%);
+    --metal-btn:linear-gradient(180deg,#566070 0%,#3C4452 48%,#323946 52%,#3B4351 100%);
+    --screen:linear-gradient(180deg,#0C1015 0%,#151A21 100%);
+    --glass:linear-gradient(180deg,#A6CDFF 0%,#5B9BFF 46%,#2F6BD1 54%,#4E8AE6 100%);
+    --bevel:inset 0 1px 0 rgba(255,255,255,.17),inset 0 -1px 0 rgba(0,0,0,.45),0 8px 18px rgba(0,0,0,.5);
+    --bevel-sm:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -1px 0 rgba(0,0,0,.45),0 3px 6px rgba(0,0,0,.5);
+    --well:inset 0 3px 8px rgba(0,0,0,.85),inset 0 -1px 0 rgba(255,255,255,.05),0 1px 0 rgba(255,255,255,.08);
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .075 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --brushed:repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 4px);
+}
+html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"], .stApp {
+    background: var(--grain), var(--brushed), linear-gradient(180deg,#232932,#171B21) !important;
+    background-attachment: fixed !important;
+}
+h1, h2, h3 { text-shadow: 0 1px 0 rgba(255,255,255,.07), 0 -1px 1px rgba(0,0,0,.65); }
+[data-testid="stSidebar"] {
+    background: var(--brushed), linear-gradient(180deg,#3A424E,#2A303A) !important;
+    border-right: 1px solid #0A0D11 !important;
+    box-shadow: inset -1px 0 0 rgba(255,255,255,.1), 6px 0 16px rgba(0,0,0,.5) !important;
+}
+.stButton > button,
+[data-testid="stSidebar"] .stButton > button,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a {
+    background: var(--metal-btn) !important;
+    border: 1px solid #11151A !important;
+    box-shadow: var(--bevel-sm) !important;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.65) !important;
+}
+.stButton > button:hover,
+[data-testid="stSidebar"] .stButton > button:hover,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {
+    background: var(--metal-btn) !important;
+    border-color: #11151A !important;
+    filter: brightness(1.12);
+}
+.stButton > button:active,
+[data-testid="stSidebar"] .stButton > button:active {
+    background: linear-gradient(180deg,#2E3541,#3A4250) !important;
+    box-shadow: inset 0 3px 7px rgba(0,0,0,.7) !important;
+    transform: translateY(1px) !important; filter: none;
+}
+.stButton > button[kind="primary"],
+.stButton > button[data-testid="stBaseButton-primary"] {
+    background: var(--glass) !important;
+    border: 1px solid #1A4590 !important;
+    color: var(--accent-ink) !important;
+    text-shadow: 0 1px 0 rgba(255,255,255,.45) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -2px 3px rgba(10,40,100,.35), 0 3px 7px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.4) !important;
+}
+.stButton > button[kind="primary"]:hover,
+.stButton > button[data-testid="stBaseButton-primary"]:hover { background: var(--glass) !important; border-color: #1A4590 !important; filter: brightness(1.09); transform: none; }
+.stButton > button[kind="primary"]:active,
+.stButton > button[data-testid="stBaseButton-primary"]:active {
+    background: linear-gradient(180deg,#2F6BD1 0%,#3F7CE0 50%,#5B9BFF 100%) !important;
+    box-shadow: inset 0 3px 7px rgba(0,10,40,.65), 0 0 0 1px rgba(0,0,0,.4) !important;
+}
+.stTextInput input { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.stTextInput input:focus { box-shadow: none !important; }
+.stTextInput [data-baseweb="base-input"],
+.stTextInput [data-baseweb="input"],
+[data-baseweb="select"] > div {
+    background: var(--screen) !important;
+    border: 1px solid #07090C !important;
+    border-radius: 10px !important;
+    box-shadow: var(--well) !important;
+}
+.stTextInput [data-baseweb="base-input"]:focus-within,
+.stTextInput [data-baseweb="input"]:focus-within,
+[data-baseweb="select"] > div:focus-within { box-shadow: var(--well), 0 0 0 2px var(--accent) !important; }
+[data-baseweb="popover"] ul, [data-baseweb="menu"] { background: var(--panel) !important; border: 1px solid #0E1217 !important; box-shadow: 0 10px 24px rgba(0,0,0,.65) !important; }
+.semi-card, .reasoning-card, .bot-bubble, .hist-item {
+    background: var(--panel) !important;
+    border: 1px solid #0E1217 !important;
+    box-shadow: var(--bevel);
+}
+.semi-card { border-radius: 12px; }
+.semi-card:hover { filter: brightness(1.07); }
+.semi-card.hover-expand .hover-tooltip { background: var(--panel); border: 1px solid #0E1217; box-shadow: 0 12px 28px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.18); }
+.metric-card {
+    background: var(--screen) !important;
+    border: 1px solid #07090C !important;
+    box-shadow: var(--well);
+}
+.metric-num-up { text-shadow: 0 0 12px rgba(52,211,153,.55); }
+.metric-num-dn { text-shadow: 0 0 12px rgba(248,113,113,.5); }
+.reasoning-card { border-left: 3px solid var(--accent) !important; }
+.user-bubble, .semibot-bubble-user {
+    background: linear-gradient(180deg,#B2D3FF 0%,#6FA6FF 50%,#5B9BFF 100%);
+    border: 1px solid #1A4590; color: #06101F;
+    text-shadow: 0 1px 0 rgba(255,255,255,.4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 3px 6px rgba(0,0,0,.5);
+}
+.sec-label::after { height: 2px; background: rgba(0,0,0,.6); box-shadow: 0 1px 0 rgba(255,255,255,.08); }
+.bar-track { height: 12px; padding: 2px; background: var(--screen); border: 1px solid #07090C; box-shadow: var(--well); }
+.bar-up, .bar-dn { background-image: linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,0) 55%); }
+.disclaimer, .val-error { border: 1px solid #07090C; background: var(--screen); box-shadow: var(--well); }
+.ticker-chip { background: var(--screen); border: 1px solid #07090C; box-shadow: inset 0 2px 4px rgba(0,0,0,.7); }
+.ticker-wrap { background: var(--screen) !important; border-top: 1px solid #000 !important; box-shadow: inset 0 3px 8px rgba(0,0,0,.8); }
 </style>
 """, unsafe_allow_html=True)
 

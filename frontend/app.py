@@ -92,7 +92,7 @@ st.markdown("""
 [data-testid="stSidebarNav"] { display: none !important; }
 .block-container { padding: 0 !important; max-width: 100% !important; }
 [data-testid="stAppViewContainer"], [data-testid="stMain"] {
-    background: #1E2633 !important;
+    background: repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 4px), linear-gradient(180deg,#232932,#171B21) !important;
 }
 
 /* Style the Get Started page link to match landing page nav button */
@@ -120,6 +120,8 @@ st.markdown("""
     transform: translateY(-1px) !important;
 }
 [data-testid="stPageLink"] a p { color: #06101F !important; }
+[data-testid="stPageLink"] a { background: linear-gradient(180deg,#A6CDFF 0%,#5B9BFF 46%,#2F6BD1 54%,#4E8AE6 100%) !important; border: 1px solid #1A4590 !important; text-shadow: 0 1px 0 rgba(255,255,255,.45) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -2px 3px rgba(10,40,100,.35), 0 3px 7px rgba(0,0,0,.55) !important; }
+[data-testid="stPageLink"] a:hover { filter: brightness(1.09); transform: none !important; }
 [data-testid="stPageLink"] svg { display: none !important; }
 
 /* Force Streamlit iframe to have no background interference */
@@ -177,7 +179,7 @@ iframe_fixes = """
 
 /* Ensure body background matches original exactly */
 body {
-    background: #1E2633 !important;
+    background-color: #1D222A !important;
 }
 </style>
 """

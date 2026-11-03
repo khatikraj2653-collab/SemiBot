@@ -189,6 +189,48 @@ BUBBLE_CSS = """
     color: #9AA6B8 !important;
     opacity: 1 !important;
 }
+
+/* skeuomorphism */
+.st-key-semibot_bubble_toggle button {
+    background: radial-gradient(circle at 35% 25%, #CFE3FF 0%, #5B9BFF 42%, #2A62C4 100%) !important;
+    border: 1px solid #1A4590 !important;
+    box-shadow: inset 0 2px 2px rgba(255,255,255,.7), inset 0 -3px 5px rgba(10,40,100,.45), 0 6px 14px rgba(0,0,0,.65) !important;
+}
+.st-key-semibot_bubble_toggle button:hover { filter: brightness(1.1); transform: none; background: radial-gradient(circle at 35% 25%, #CFE3FF 0%, #5B9BFF 42%, #2A62C4 100%) !important; }
+.st-key-semibot_bubble_toggle button:active { box-shadow: inset 0 4px 8px rgba(0,10,40,.6), 0 0 0 1px rgba(0,0,0,.4) !important; transform: translateY(1px); }
+.st-key-semibot_bubble_panel {
+    background: linear-gradient(180deg,#3A424E,#2A303A) !important;
+    border: 1px solid #0A0D11 !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 20px 50px rgba(0,0,0,.7) !important;
+}
+.st-key-semibot_bubble_header {
+    border-bottom: 1px solid #0A0D11 !important;
+    background: linear-gradient(180deg,#262B34,#2D333E) !important;
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,.07) !important;
+}
+.st-key-semibot_bubble_messages {
+    background: linear-gradient(180deg,#0C1015,#151A21) !important;
+    box-shadow: inset 0 3px 8px rgba(0,0,0,.85) !important;
+}
+.semibot-bubble-user {
+    background: linear-gradient(180deg,#B2D3FF 0%,#6FA6FF 50%,#5B9BFF 100%);
+    border: 1px solid #1A4590; color: #06101F;
+    text-shadow: 0 1px 0 rgba(255,255,255,.4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 3px 6px rgba(0,0,0,.5);
+}
+.semibot-bubble-bot {
+    background: linear-gradient(180deg,#434B58,#323946);
+    border: 1px solid #11151A;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.17), 0 3px 6px rgba(0,0,0,.5);
+}
+.st-key-semibot_bubble_inputrow { border-top: 1px solid #0A0D11 !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.st-key-semibot_bubble_panel [data-baseweb="base-input"],
+.st-key-semibot_bubble_panel [data-baseweb="input"] {
+    background: linear-gradient(180deg,#0C1015,#151A21) !important;
+    border: 1px solid #07090C !important;
+    border-radius: 10px !important;
+    box-shadow: inset 0 3px 7px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.08) !important;
+}
 </style>
 """
 
