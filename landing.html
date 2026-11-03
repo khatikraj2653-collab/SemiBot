@@ -532,6 +532,15 @@ footer{background:linear-gradient(180deg,#2B313B,#232830);border-top:1px solid #
 .cm-driver{border-top:1px solid rgba(0,0,0,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
 .cm-tip{background:var(--panel);border:1px solid #0E1217;box-shadow:0 10px 24px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.18);}
 .cm .node circle.body{filter:drop-shadow(0 3px 3px rgba(0,0,0,.75));}
+/* 3D scene: floor (orbit + links), nodes and orb sit on separate depth layers; the whole stack tilts with the pointer */
+.cm-stage{perspective:1100px;perspective-origin:50% 40%;}
+.cm-scene{position:relative;transform-style:preserve-3d;transform:rotateX(14deg) scale(.95);will-change:transform;}
+.cm-scene svg{pointer-events:none;overflow:visible;}
+#cm-svg2,#cm-svg3{position:absolute;left:0;top:0;}
+#cm-svg2{transform:translateZ(38px);}
+#cm-svg3{transform:translateZ(84px);}
+#cm-svg2 .node{pointer-events:auto;}
+.cm.compact .cm-scene{transform:rotateX(8deg) scale(.97);}
 .cm input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:26px;}
 .cm input[type=range]::-webkit-slider-runnable-track{height:9px;border-radius:99px;background:var(--screen);border:1px solid #07090C;box-shadow:inset 0 2px 4px rgba(0,0,0,.85),0 1px 0 rgba(255,255,255,.08);}
 .cm input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;border:1px solid #14181E;background:radial-gradient(circle at 35% 28%,#E6EBF3,#8F99A8 52%,#4B525D);box-shadow:0 3px 5px rgba(0,0,0,.65),inset 0 -2px 3px rgba(0,0,0,.3);}
@@ -549,7 +558,11 @@ footer{background:linear-gradient(180deg,#2B313B,#232830);border-top:1px solid #
   <div class="cm-chips" id="cm-chips"></div>
   <div class="cm-body">
     <div class="cm-stage" id="cm-stage">
-      <svg id="cm-svg" role="group" aria-label="Causal map of 18 factors feeding the UP probability"></svg>
+      <div class="cm-scene" id="cm-scene">
+        <svg id="cm-svg" role="group" aria-label="Causal map of 18 factors feeding the UP probability"></svg>
+        <svg id="cm-svg2"></svg>
+        <svg id="cm-svg3" aria-hidden="true"></svg>
+      </div>
       <div class="cm-tip" id="cm-tip" role="tooltip"></div>
     </div>
     <aside class="cm-side" id="cm-side"></aside>
@@ -571,7 +584,7 @@ var NS = 'http://www.w3.org/2000/svg';
 var UP = '#34D399', DOWN = '#F87171', NEUTRAL = '#55627A';
 
 var root = document.getElementById('cm');
-var svg = document.getElementById('cm-svg');
+var svg = document.getElementById('cm-svg'), svg2 = document.getElementById('cm-svg2'), svg3 = document.getElementById('cm-svg3'), scene = document.getElementById('cm-scene');
 var stage = document.getElementById('cm-stage');
 var tip = document.getElementById('cm-tip');
 var side = document.getElementById('cm-side');
@@ -614,11 +627,15 @@ function geometry(){
 }
 
 function build(){
-  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  [svg, svg2, svg3].forEach(function(s){ while (s.firstChild) s.removeChild(s.firstChild); });
   nodes = {}; links = {}; orb = {};
   G = geometry();
-  svg.setAttribute('viewBox', '0 0 ' + G.W + ' ' + G.H);
-  var gl = el('g', {}, svg), gn = el('g', {}, svg), go = el('g', {}, svg);
+  [svg, svg2, svg3].forEach(function(s){ s.setAttribute('viewBox', '0 0 ' + G.W + ' ' + G.H); });
+  var defs = el('defs', {}, svg);
+  var sh = el('radialGradient', {id:'cmsh'}, defs); el('stop', {offset:'0%', 'stop-color':'#000', 'stop-opacity':.6}, sh); el('stop', {offset:'100%', 'stop-color':'#000', 'stop-opacity':0}, sh);
+  var defs2 = el('defs', {}, svg2), hl = el('radialGradient', {id:'cmhl', cx:'35%', cy:'30%', r:'70%'}, defs2);
+  el('stop', {offset:'0%', 'stop-color':'#fff', 'stop-opacity':.55}, hl); el('stop', {offset:'100%', 'stop-color':'#fff', 'stop-opacity':0}, hl);
+  var gl = el('g', {}, svg), gn = el('g', {}, svg2), go = el('g', {}, svg3);
   // slot angles: 18 factors + a gap after every layer
   var slot = 0, total = FACT.length + LAYERS.length, pos = {}, lowN = 0;
   LAYERS.forEach(function(l){
@@ -637,9 +654,12 @@ function build(){
     var ex = G.cx - dx/d*(G.orbR+14), ey = G.cy - dy/d*(G.orbR+14);
     var sx = p.x + dx/d*r, sy = p.y + dy/d*r;
     links[k] = el('line', {x1:sx, y1:sy, x2:ex, y2:ey, 'class':'link', 'stroke-linecap':'round'}, gl);
+    el('ellipse', {cx:p.x + 6, cy:p.y + 4, rx:r*1.5, ry:r*0.85, fill:'url(#cmsh)'}, gl);
     var g = el('g', {'class':'node', tabindex:0, role:'button', transform:'translate(' + p.x + ',' + p.y + ')'}, gn);
     el('circle', {'class':'ring', r:r+6}, g);
+    el('circle', {cy:5, r:r, fill:'#05070A', opacity:.7}, g);
     var body = el('circle', {'class':'body', r:r, 'stroke-width':2.5}, g);
+    el('circle', {cx:-r*0.28, cy:-r*0.32, r:r*0.55, fill:'url(#cmhl)', 'pointer-events':'none'}, g);
     var num = el('text', {'class':'snum', 'text-anchor':'middle', y:4}, g);
     var low = p.s > 0.85, anchor = low ? "middle" : (p.c > 0.1 ? "start" : (p.c < -0.1 ? "end" : "middle"));
     var lx = anchor==="start" ? r+9 : (anchor==="end" ? -(r+9) : 0);
@@ -661,6 +681,8 @@ function build(){
   // orb
   var C = 2*Math.PI*(G.orbR+8);
   orb.C = C;
+  el('circle', {cx:G.cx, cy:G.cy + 16, r:G.orbR + 12, fill:'#05080C', opacity:.85}, go);
+  el('circle', {cx:G.cx, cy:G.cy + 8, r:G.orbR + 12, fill:'#141A22', stroke:'#2A3342', 'stroke-width':1}, go);
   el('circle', {cx:G.cx, cy:G.cy, r:G.orbR, fill:'#0F1318', stroke:'#4A5870', 'stroke-width':1}, go);
   el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:DOWN, 'stroke-width':8, opacity:.9}, go);
   orb.gauge = el('circle', {cx:G.cx, cy:G.cy, r:G.orbR+8, fill:'none', stroke:UP, 'stroke-width':8, 'class':'gauge', transform:'rotate(-90 ' + G.cx + ' ' + G.cy + ')', 'stroke-dasharray':'0 ' + C}, go);
@@ -668,6 +690,7 @@ function build(){
   orb.lab = el('text', {'class':'orbsub', x:G.cx, y:G.cy - G.orbR*0.46, 'text-anchor':'middle'}, go);
   orb.lab.textContent = 'UP probability';
   orb.sub = el('text', {'class':'orbsub', x:G.cx, y:G.cy + G.orbR*0.55, 'text-anchor':'middle'}, go);
+  el('ellipse', {cx:G.cx - G.orbR*0.28, cy:G.cy - G.orbR*0.62, rx:G.orbR*0.6, ry:G.orbR*0.22, fill:'url(#cmhl)', opacity:.5, transform:'rotate(-16 ' + (G.cx - G.orbR*0.28) + ' ' + (G.cy - G.orbR*0.62) + ')', 'pointer-events':'none'}, go);
   orb.shown = null;
   orb.sel = null;
 }
@@ -675,10 +698,10 @@ function build(){
 function tweenTo(target){
   var token = orb.token = (orb.token || 0) + 1;
   var from = orb.shown == null ? target : orb.shown, t0 = null;
-  function finish(){ if (orb.token === token) { orb.shown = target; orb.num.textContent = target + '%'; } }
+  function finish(){ if (orb.token === token) { orb.done = token; orb.shown = target; orb.num.textContent = target + '%'; } }
   if (from === target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
   function step(ts){
-    if (orb.token !== token) return;
+    if (orb.token !== token || orb.done === token) return;
     if (t0 == null) t0 = ts;
     var p = Math.min(1, (ts - t0) / 380), v = Math.round(from + (target - from) * p);
     orb.num.textContent = v + '%';
@@ -827,6 +850,27 @@ function init(){
   build(); buildChips(); buildSide(); update(); lastLayout = layoutKey(); fitFrame();
 }
 init();
+// pointer-driven tilt of the 3D stack (gentle idle sway when the pointer is away)
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+  var t = {rx:14, ry:0, trx:14, try_:0, hover:false};
+  stage.addEventListener('pointermove', function(e){
+    if (e.pointerType === 'touch') return;
+    var r = stage.getBoundingClientRect(), px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    t.hover = true; t.try_ = (px - 0.5) * 26; t.trx = (compact ? 8 : 14) + (0.5 - py) * 14;
+  });
+  stage.addEventListener('pointerleave', function(){ t.hover = false; });
+  function loop(ts){
+    requestAnimationFrame(loop);
+    if (document.hidden) return;
+    var base = compact ? 8 : 14;
+    if (!t.hover) { t.trx = base + Math.sin(ts / 2600) * 2; t.try_ = Math.sin(ts / 3200) * 7; }
+    t.rx += (t.trx - t.rx) * 0.08; t.ry += (t.try_ - t.ry) * 0.08;
+    scene.style.transform = 'rotateX(' + t.rx.toFixed(2) + 'deg) rotateY(' + t.ry.toFixed(2) + 'deg) scale(' + (compact ? 0.97 : 0.95) + ')';
+  }
+  requestAnimationFrame(loop);
+})();
 window.addEventListener('resize', function(){ if (layoutKey() !== lastLayout) init(); else fitFrame(); });
 if (window.ResizeObserver) new ResizeObserver(fitFrame).observe(root);
 })();
