@@ -113,7 +113,7 @@ BUBBLE_CSS = """
     width: 380px !important;
     max-width: calc(100vw - 32px) !important;
     max-height: calc(100vh - 140px) !important;
-    background: #262F3E !important;
+    background: #252D3B !important;
     border: 1px solid #4A5870 !important;
     border-radius: 16px !important;
     padding: 0 !important;
@@ -175,12 +175,12 @@ BUBBLE_CSS = """
 }
 .st-key-semibot_bubble_panel [data-baseweb="base-input"],
 .st-key-semibot_bubble_panel [data-baseweb="input"] {
-    background: #1E2633 !important;
+    background: #252D3B !important;
     border: 1px solid #4A5870 !important;
     border-radius: 8px !important;
 }
 .st-key-semibot_bubble_panel .stTextInput input {
-    background: #1E2633 !important;
+    background: #252D3B !important;
     color: #EDF0F5 !important;
     font-size: 0.86rem !important;
     -webkit-text-fill-color: #EDF0F5 !important;
@@ -188,6 +188,34 @@ BUBBLE_CSS = """
 .st-key-semibot_bubble_panel .stTextInput input::placeholder {
     color: #9AA6B8 !important;
     opacity: 1 !important;
+}
+
+/* neumorphism */
+.st-key-semibot_bubble_toggle button {
+    box-shadow: 7px 7px 16px #171D28, -6px -6px 14px #323D50 !important;
+}
+.st-key-semibot_bubble_toggle button:active { box-shadow: inset 4px 4px 9px rgba(5,25,60,.55), inset -3px -3px 8px rgba(160,200,255,.35) !important; transform: none; }
+.st-key-semibot_bubble_panel {
+    border: 0 !important;
+    box-shadow: 12px 12px 28px #171D28, -10px -10px 24px #323D50 !important;
+}
+.st-key-semibot_bubble_header {
+    border-bottom: 0 !important;
+    background: #252D3B !important;
+    box-shadow: 0 6px 12px -6px #171D28 !important;
+}
+.semibot-bubble-user, .semibot-bubble-bot {
+    border: 0;
+    background: #252D3B;
+    box-shadow: 4px 4px 9px #171D28, -4px -4px 9px #323D50;
+}
+.semibot-bubble-user { box-shadow: inset 3px 3px 6px #171D28, inset -3px -3px 6px #323D50; }
+.st-key-semibot_bubble_inputrow { border-top: 0 !important; }
+.st-key-semibot_bubble_panel [data-baseweb="base-input"],
+.st-key-semibot_bubble_panel [data-baseweb="input"] {
+    border: 0 !important;
+    border-radius: 12px !important;
+    box-shadow: inset 4px 4px 8px #171D28, inset -4px -4px 8px #323D50 !important;
 }
 </style>
 """
