@@ -67,18 +67,50 @@ def logo_url(ticker: str) -> str | None:
 
 
 def render_ticker_logo(ticker: str, size: int = 48):
-    """Render a company logo (verified before rendering so no broken icons).
-    Uses Streamlit's native st.image to avoid iframe-sandboxing issues."""
+    """Inject the ticker logo INSIDE the single-ticker selectbox (left of the
+    selected text) via a tiny JS helper that reaches into the parent document
+    from an components.v1.html iframe. Silently no-ops without a URL."""
     url = logo_url(ticker)
     if not url:
         return
-    # Centre with columns; st.image handles errors natively (no broken-icon placeholder)
-    _l, _m, _r = st.columns([2, 1, 2])
-    with _m:
-        try:
-            st.image(url, width=size)
-        except Exception:
-            pass
+    import streamlit.components.v1 as components
+    components.html(
+        f"""
+        <script>
+        (function(){{
+          const logoUrl = {url!r};
+          function place() {{
+            try {{
+              const doc = window.parent.document;
+              const boxes = doc.querySelectorAll('div[data-baseweb="select"]');
+              if (!boxes.length) return false;
+              const box = boxes[boxes.length - 1];
+              // Remove any previous logo (ticker changed) so we always show latest
+              const old = box.querySelector('.sb-ticker-logo');
+              if (old) old.remove();
+              box.style.position = 'relative';
+              const img = doc.createElement('img');
+              img.src = logoUrl;
+              img.className = 'sb-ticker-logo';
+              img.style.cssText = 'position:absolute;left:14px;top:50%;transform:translateY(-50%);' +
+                                  'width:22px;height:22px;border-radius:4px;background:#fff;' +
+                                  'padding:2px;object-fit:contain;z-index:10;' +
+                                  'box-shadow:0 1px 3px rgba(0,0,0,0.4);pointer-events:none;';
+              box.insertBefore(img, box.firstChild);
+              const inner = box.querySelector('div');
+              if (inner) inner.style.paddingLeft = '34px';
+              return true;
+            }} catch(e) {{ return false; }}
+          }}
+          let tries = 0;
+          const iv = setInterval(function(){{
+            if (place() || ++tries > 25) clearInterval(iv);
+          }}, 120);
+        }})();
+        </script>
+        """,
+        height=0,
+    )
 
 
 def get_ticker_from_query() -> str | None:
