@@ -1,5 +1,6 @@
 import os
 
+import streamlit as st
 from langgraph.graph import StateGraph, START, END
 import sqlite3
 from langgraph.checkpoint.sqlite import SqliteSaver
@@ -7,6 +8,7 @@ from graph.state import SemiconductorState
 from graph.nodes import generate_prediction
 from graph.subgraphs import build_macro_subgraph, build_fundamental_subgraph, build_market_subgraph, build_external_subgraph
 
+@st.cache_resource(show_spinner=False)
 def build_graph():
     db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'semibot_checkpoints.db')
     conn = sqlite3.connect(db_path, check_same_thread=False)
@@ -31,4 +33,4 @@ def build_graph():
 
     return graph.compile(checkpointer=checkpointer)
 
-app = build_graph()
+app = build_graph()  # cached — only runs the heavy build the first time

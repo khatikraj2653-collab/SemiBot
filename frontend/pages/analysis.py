@@ -8,6 +8,27 @@ import re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import streamlit as st
+
+# Show a loading message IMMEDIATELY so users don't see a blank page while
+# the heavy imports below (LangGraph, FAISS, HuggingFace embeddings,
+# yfinance) run on first visit. Cleared at the end of the script.
+_loading_placeholder = st.empty()
+_loading_placeholder.markdown(
+    """
+    <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+                background:#171B21;z-index:999999;flex-direction:column;gap:14px;">
+      <div style="width:44px;height:44px;border:3px solid rgba(91,155,255,.2);
+                  border-top-color:#5B9BFF;border-radius:50%;
+                  animation:sb-spin 0.9s linear infinite;"></div>
+      <div style="color:#C7D1DF;font-family:Inter,sans-serif;font-size:14px;">
+        Loading SemiBot analysis engine…
+      </div>
+      <style>@keyframes sb-spin{to{transform:rotate(360deg)}}</style>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 import time
 from zoneinfo import ZoneInfo
 from datetime import datetime
@@ -1669,3 +1690,6 @@ SemiBot v1.0 | University of Warwick | MSc Applied AI | ACM FinNLP
     st.markdown("</div>", unsafe_allow_html=True)
 
 render_ticker_tape()
+
+# Clear the full-screen loader now that the page has fully rendered.
+_loading_placeholder.empty()
