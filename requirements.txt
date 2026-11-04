@@ -149,3 +149,4 @@ yfinance==1.5.1
 zstandard==0.25.0
 langchain-mcp-adapters==0.3.0
 mcp==1.28.1
+fpdf2==2.8.4

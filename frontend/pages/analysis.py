@@ -47,6 +47,13 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from log_client import log_event
 from chat_bubble import render_chat_bubble, _live_price_block
 from causal_map import render_causal_map, FACTOR_KEYS
+from extras import (
+    render_ticker_logo,
+    get_ticker_from_query,
+    set_ticker_in_query,
+    render_copy_link_button,
+    render_download_pdf_button,
+)
 
 # PATH FIX 2: Go up TWO levels to find .env at project root
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), '.env'))
@@ -1301,13 +1308,26 @@ if not st.session_state.result:
     print(f"[TIMING] Before search bar: {_time.time() - _t0:.2f}s", flush=True)
     col_l, col_m, col_r = st.columns([1, 4, 1])
     with col_m:
+        # Deep-link support: pre-select ticker from ?ticker=XXX if present
+        _default_idx = 0
+        _url_ticker = get_ticker_from_query()
+        if _url_ticker and "single_ticker_select" not in st.session_state:
+            for _i, _opt in enumerate(["Enter ticker or company name..."] + TICKER_OPTIONS):
+                if _url_ticker in _opt.upper():
+                    _default_idx = _i
+                    break
+
         selected_option = st.selectbox(
-            "",
+            "Ticker",
             options=["Enter ticker or company name..."] + TICKER_OPTIONS,
+            index=_default_idx,
             label_visibility="collapsed",
             key="single_ticker_select"
         )
         ticker_input = extract_ticker_from_option(selected_option) if selected_option != "Enter ticker or company name..." else ""
+        # Show company logo preview below the selectbox
+        if ticker_input:
+            render_ticker_logo(ticker_input, size=52)
         analyse = st.button("Analyse ->", use_container_width=True, type="primary")
 
 else:
@@ -1438,7 +1458,17 @@ if analyse and ticker_input:
         except GeneratorExit:
             pass
         except Exception as e:
-            st.error(f"Analysis failed: {str(e)}")
+            # Nicer error UX: toast + persistent card with retry hint
+            try:
+                st.toast(f"Analysis failed — {type(e).__name__}", icon="⚠️")
+            except Exception:
+                pass
+            st.error(
+                f"**Analysis failed.**  \n"
+                f"`{type(e).__name__}: {str(e)[:200]}`  \n\n"
+                "This usually clears up on retry. If it persists, Yahoo Finance may be rate-limited — "
+                "wait ~30 seconds and try again."
+            )
 
 elif analyse and not ticker_input:
     st.markdown("<div class='val-error'>Warning: Please enter a ticker symbol or company name first.</div>", unsafe_allow_html=True)
@@ -1535,6 +1565,25 @@ if st.session_state.result:
 
     if reasoning:
         st.markdown(f"<div class='reasoning-card'>{reasoning}</div>", unsafe_allow_html=True)
+
+    # Keep URL in sync with current ticker so the page is shareable
+    set_ticker_in_query(ticker)
+
+    # Share + export actions
+    st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.75rem;color:#A4AFC0;margin:16px 0 4px;text-transform:uppercase;letter-spacing:0.08em'>Share &amp; Export</div>", unsafe_allow_html=True)
+    _share_col1, _share_col2 = st.columns([3, 1])
+    with _share_col1:
+        render_copy_link_button(ticker)
+    with _share_col2:
+        render_download_pdf_button(
+            ticker=ticker,
+            prediction=f"UP {up_prob}%" if up_prob >= down_prob else f"DOWN {down_prob}%",
+            up_pct=up_prob,
+            down_pct=down_prob,
+            scores=scores,
+            reasoning=reasoning,
+            timestamp=uk_time_str(),
+        )
 
     st.markdown("<hr style='border-color:#3A4658;margin:24px 0'>", unsafe_allow_html=True)
     st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.95rem;font-weight:600;color:#EDF0F5;margin-bottom:6px'>Ask a follow-up question</div>", unsafe_allow_html=True)
