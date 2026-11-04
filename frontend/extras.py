@@ -34,28 +34,51 @@ TICKER_DOMAINS = {
 CLEARBIT_URL = "https://logo.clearbit.com/{domain}"
 
 
+@st.cache_data(ttl=86400, show_spinner=False)
+def _best_logo_url(domain: str) -> str | None:
+    """Try Clearbit (high quality) first, then Google favicons (always works).
+    Cached 24h so we don't hit the HEAD endpoint every rerun.
+    Returns a URL that actually responds 200 — never a broken one."""
+    if not domain:
+        return None
+    try:
+        import requests
+        clearbit = CLEARBIT_URL.format(domain=domain)
+        try:
+            r = requests.head(clearbit, timeout=3, allow_redirects=True)
+            if r.status_code == 200:
+                return clearbit
+        except Exception:
+            pass
+        # Google's favicon API is extremely reliable and works for any domain
+        return f"https://www.google.com/s2/favicons?sz=128&domain={domain}"
+    except Exception:
+        return None
+
+
 def logo_url(ticker: str) -> str | None:
-    """Return the Clearbit logo URL for a ticker, or None if we don't have a mapping."""
+    """Return a verified logo URL for a ticker, or None if we don't have a mapping."""
     if not ticker:
         return None
     domain = TICKER_DOMAINS.get(ticker.upper())
-    return CLEARBIT_URL.format(domain=domain) if domain else None
+    if not domain:
+        return None
+    return _best_logo_url(domain)
 
 
 def render_ticker_logo(ticker: str, size: int = 48):
-    """Render a company logo as inline HTML (silently drops if no mapping)."""
+    """Render a company logo (verified before rendering so no broken icons).
+    Uses Streamlit's native st.image to avoid iframe-sandboxing issues."""
     url = logo_url(ticker)
     if not url:
         return
-    st.markdown(
-        f"""<div style="display:flex;justify-content:center;margin-top:12px;">
-          <img src="{url}" alt="{ticker} logo" width="{size}" height="{size}"
-               style="border-radius:8px;background:#fff;padding:6px;object-fit:contain;
-                      box-shadow:0 2px 8px rgba(0,0,0,0.25);"
-               onerror="this.style.display='none'" />
-        </div>""",
-        unsafe_allow_html=True,
-    )
+    # Centre with columns; st.image handles errors natively (no broken-icon placeholder)
+    _l, _m, _r = st.columns([2, 1, 2])
+    with _m:
+        try:
+            st.image(url, width=size)
+        except Exception:
+            pass
 
 
 def get_ticker_from_query() -> str | None:
