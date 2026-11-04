@@ -392,12 +392,13 @@ footer{background:linear-gradient(180deg,#2B313B,#232830);border-top:1px solid #
     <a href="#compare" onclick="document.getElementById('compare').scrollIntoView({behavior:'smooth'});return false;">Compare</a>
     <a href="#" onclick="showResearch();return false;">Research</a>
     <a href="#skills" onclick="document.getElementById('skills').scrollIntoView({behavior:'smooth'});return false;">Skills</a>
+    <a href="#tickers" onclick="document.getElementById('tickers').scrollIntoView({behavior:'smooth'});return false;">Tickers</a>
   </div>
   <button class="nav-cta" onclick="goApp()">Get Started →</button>
 </nav>
 
 <div class="strip" aria-label="Tickers covered">
-  <span class="strip-label">Covers 48 tickers</span>
+  <span class="strip-label">Covers 50 tickers</span>
   <div class="strip-tickers"><span>NVDA</span><span>TSM</span><span>ASML</span><span>MU</span><span>AMD</span><span>AVGO</span><span>INTC</span><span>QCOM</span><span>ARM</span><span>AMAT</span><span>LRCX</span><span>KLAC</span><span>005930.KS</span><span>000660.KS</span><span>8035.T</span><span>IFX.DE</span><span>+ more</span></div>
 </div>
 
@@ -1042,6 +1043,131 @@ if (window.ResizeObserver) new ResizeObserver(fitFrame).observe(root);
       <span class="sk-chip">three.js / WebGL</span>
       <span class="sk-chip">Streamlit Community Cloud</span>
       <span class="sk-chip">Git / GitHub</span>
+    </div>
+  </div>
+</section>
+
+<style id="tickers-css">
+#tickers .tk-wrap{max-width:1180px;margin:0 auto;}
+#tickers .tk-lede{color:var(--text-2);max-width:720px;margin:6px auto 28px;text-align:center;font-size:14.5px;}
+#tickers .tk-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;}
+#tickers .tk-group{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+#tickers .tk-group h3{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8EA6C4;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+#tickers .tk-group h3 .tk-count{background:rgba(142,166,196,.14);color:#C7D1DF;padding:2px 8px;border-radius:10px;font-size:10.5px;letter-spacing:.06em;}
+#tickers .tk-list{display:flex;flex-direction:column;gap:9px;}
+#tickers .tk-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;border-bottom:1px dashed rgba(142,166,196,.15);}
+#tickers .tk-row:last-child{border-bottom:none;}
+#tickers .tk-name{font-size:13.5px;color:#E8ECF1;font-weight:500;}
+#tickers .tk-sym{font-family:var(--mono,monospace);font-size:12px;color:#5B9BFF;font-weight:600;white-space:nowrap;}
+#tickers .tk-flag{margin-right:6px;}
+</style>
+
+<section id="tickers" class="block alt">
+  <span class="section-badge">Coverage</span>
+  <h2 class="section-title">All <em>50 tickers</em> SemiBot supports</h2>
+  <p class="tk-lede">The full semiconductor coverage universe — from US design and fabless leaders through global foundries, memory, equipment, and analog specialists.</p>
+
+  <div class="tk-wrap">
+    <div class="tk-groups">
+
+      <div class="tk-group">
+        <h3><span class="tk-flag">🇺🇸</span>US — Design &amp; Fabless <span class="tk-count">7</span></h3>
+        <div class="tk-list">
+          <div class="tk-row"><span class="tk-name">NVIDIA</span><span class="tk-sym">NVDA</span></div>
+          <div class="tk-row"><span class="tk-name">AMD</span><span class="tk-sym">AMD</span></div>
+          <div class="tk-row"><span class="tk-name">Intel</span><span class="tk-sym">INTC</span></div>
+          <div class="tk-row"><span class="tk-name">Qualcomm</span><span class="tk-sym">QCOM</span></div>
+          <div class="tk-row"><span class="tk-name">Broadcom</span><span class="tk-sym">AVGO</span></div>
+          <div class="tk-row"><span class="tk-name">Marvell</span><span class="tk-sym">MRVL</span></div>
+          <div class="tk-row"><span class="tk-name">Arm Holdings</span><span class="tk-sym">ARM</span></div>
+        </div>
+      </div>
+
+      <div class="tk-group">
+        <h3><span class="tk-flag">🏭</span>Equipment &amp; Lithography <span class="tk-count">7</span></h3>
+        <div class="tk-list">
+          <div class="tk-row"><span class="tk-name">ASML Holding</span><span class="tk-sym">ASML</span></div>
+          <div class="tk-row"><span class="tk-name">Applied Materials</span><span class="tk-sym">AMAT</span></div>
+          <div class="tk-row"><span class="tk-name">Lam Research</span><span class="tk-sym">LRCX</span></div>
+          <div class="tk-row"><span class="tk-name">KLA Corporation</span><span class="tk-sym">KLAC</span></div>
+          <div class="tk-row"><span class="tk-name">Onto Innovation</span><span class="tk-sym">ONTO</span></div>
+          <div class="tk-row"><span class="tk-name">ACM Research</span><span class="tk-sym">ACMR</span></div>
+          <div class="tk-row"><span class="tk-name">MKS Instruments</span><span class="tk-sym">MKSI</span></div>
+        </div>
+      </div>
+
+      <div class="tk-group">
+        <h3><span class="tk-flag">🔬</span>Analog &amp; Mixed-Signal <span class="tk-count">7</span></h3>
+        <div class="tk-list">
+          <div class="tk-row"><span class="tk-name">Texas Instruments</span><span class="tk-sym">TXN</span></div>
+          <div class="tk-row"><span class="tk-name">Analog Devices</span><span class="tk-sym">ADI</span></div>
+          <div class="tk-row"><span class="tk-name">Microchip Technology</span><span class="tk-sym">MCHP</span></div>
+          <div class="tk-row"><span class="tk-name">Monolithic Power</span><span class="tk-sym">MPWR</span></div>
+          <div class="tk-row"><span class="tk-name">Skyworks Solutions</span><span class="tk-sym">SWKS</span></div>
+          <div class="tk-row"><span class="tk-name">Qorvo</span><span class="tk-sym">QRVO</span></div>
+          <div class="tk-row"><span class="tk-name">Silicon Labs</span><span class="tk-sym">SLAB</span></div>
+        </div>
+      </div>
+
+      <div class="tk-group">
+        <h3><span class="tk-flag">💾</span>Memory &amp; Storage <span class="tk-count">4</span></h3>
+        <div class="tk-list">
+          <div class="tk-row"><span class="tk-name">Micron Technology</span><span class="tk-sym">MU</span></div>
+          <div class="tk-row"><span class="tk-name">SanDisk</span><span class="tk-sym">SNDK</span></div>
+          <div class="tk-row"><span class="tk-name">SK Hynix</span><span class="tk-sym">000660.KS</span></div>
+          <div class="tk-row"><span class="tk-name">Samsung Electronics</span><span class="tk-sym">005930.KS</span></div>
+        </div>
+      </div>
+
+      <div class="tk-group">
+        <h3><span class="tk-flag">🇹🇼</span>Taiwan Foundries &amp; IC <span class="tk-count">5</span></h3>
+        <div class="tk-list">
+          <div class="tk-row"><span class="tk-name">TSMC</span><span class="tk-sym">TSM</span></div>
+          <div class="tk-row"><span class="tk-name">UMC</span><span class="tk-sym">UMC</span></div>
+          <div class="tk-row"><span class="tk-name">Delta Electronics</span><span class="tk-sym">2308.TW</span></div>
+          <div class="tk-row"><span class="tk-name">MediaTek</span><span class="tk-sym">2454.TW</span></div>
+          <div class="tk-row"><span class="tk-name">ASE Technology</span><span class="tk-sym">3711.TW</span></div>
+        </div>
+      </div>
+
+      <div class="tk-group">
+        <h3><span class="tk-flag">🇯🇵</span>Japan — Equipment &amp; IC <span class="tk-count">4</span></h3>
+        <div class="tk-list">
+          <div class="tk-row"><span class="tk-name">Renesas Electronics</span><span class="tk-sym">6723.T</span></div>
+          <div class="tk-row"><span class="tk-name">Advantest</span><span class="tk-sym">6857.T</span></div>
+          <div class="tk-row"><span class="tk-name">Tokyo Electron</span><span class="tk-sym">8035.T</span></div>
+          <div class="tk-row"><span class="tk-name">Kioxia</span><span class="tk-sym">285A.T</span></div>
+        </div>
+      </div>
+
+      <div class="tk-group">
+        <h3><span class="tk-flag">🇪🇺</span>Europe &amp; Globalised <span class="tk-count">6</span></h3>
+        <div class="tk-list">
+          <div class="tk-row"><span class="tk-name">Infineon Technologies</span><span class="tk-sym">IFX.DE</span></div>
+          <div class="tk-row"><span class="tk-name">ASM International</span><span class="tk-sym">ASMI.AS</span></div>
+          <div class="tk-row"><span class="tk-name">BE Semiconductor</span><span class="tk-sym">BE.NA</span></div>
+          <div class="tk-row"><span class="tk-name">STMicroelectronics</span><span class="tk-sym">STM</span></div>
+          <div class="tk-row"><span class="tk-name">NXP Semiconductors</span><span class="tk-sym">NXPI</span></div>
+          <div class="tk-row"><span class="tk-name">GlobalFoundries</span><span class="tk-sym">GFS</span></div>
+        </div>
+      </div>
+
+      <div class="tk-group">
+        <h3><span class="tk-flag">⚡</span>Specialty &amp; Discrete <span class="tk-count">10</span></h3>
+        <div class="tk-list">
+          <div class="tk-row"><span class="tk-name">ON Semiconductor</span><span class="tk-sym">ON</span></div>
+          <div class="tk-row"><span class="tk-name">Allegro MicroSystems</span><span class="tk-sym">ALGM</span></div>
+          <div class="tk-row"><span class="tk-name">Diodes Incorporated</span><span class="tk-sym">DIOD</span></div>
+          <div class="tk-row"><span class="tk-name">Astera Labs</span><span class="tk-sym">ALAB</span></div>
+          <div class="tk-row"><span class="tk-name">FormFactor</span><span class="tk-sym">FORM</span></div>
+          <div class="tk-row"><span class="tk-name">Rambus</span><span class="tk-sym">RMBS</span></div>
+          <div class="tk-row"><span class="tk-name">Cirrus Logic</span><span class="tk-sym">CRUS</span></div>
+          <div class="tk-row"><span class="tk-name">Semtech</span><span class="tk-sym">SMTC</span></div>
+          <div class="tk-row"><span class="tk-name">SiTime</span><span class="tk-sym">SITM</span></div>
+          <div class="tk-row"><span class="tk-name">MACOM Technology</span><span class="tk-sym">MTSI</span></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
