@@ -134,10 +134,82 @@ iframe[title="streamlit_component"] {
 # Native navigation button - fixed position, styled as nav CTA
 st.page_link("pages/analysis.py", label="Get Started →")
 
+# ---- Live ticker prices for the coverage strip ----
+# Fetched once per 2 minutes (cached) so the landing page shows real
+# prices with scrolling animation instead of a static list.
+import yfinance as yf
+
+TICKER_SYMBOLS = [
+    "NVDA", "TSM", "ASML", "MU", "AMD", "AVGO", "INTC", "QCOM",
+    "ARM", "AMAT", "LRCX", "KLAC", "005930.KS", "000660.KS", "8035.T", "IFX.DE",
+]
+
+@st.cache_data(ttl=120, show_spinner=False)
+def fetch_ticker_prices():
+    out = []
+    try:
+        data = yf.download(
+            " ".join(TICKER_SYMBOLS),
+            period="2d",
+            interval="1d",
+            progress=False,
+            group_by="ticker",
+            auto_adjust=False,
+            threads=True,
+        )
+    except Exception:
+        return [{"symbol": s, "price": None, "change": None} for s in TICKER_SYMBOLS]
+    for s in TICKER_SYMBOLS:
+        try:
+            closes = data[s]["Close"].dropna()
+            if len(closes) >= 2:
+                price = float(closes.iloc[-1])
+                prev = float(closes.iloc[-2])
+                change = (price - prev) / prev * 100 if prev else 0.0
+                out.append({"symbol": s, "price": price, "change": change})
+            elif len(closes) == 1:
+                out.append({"symbol": s, "price": float(closes.iloc[-1]), "change": 0.0})
+            else:
+                out.append({"symbol": s, "price": None, "change": None})
+        except Exception:
+            out.append({"symbol": s, "price": None, "change": None})
+    return out
+
+def build_ticker_strip_html(rows):
+    def fmt(r):
+        if r["price"] is None:
+            return f'<span class="t-item"><b>{r["symbol"]}</b></span>'
+        price_str = f"{r['price']:.2f}"
+        chg = r["change"] or 0.0
+        sign = "+" if chg >= 0 else ""
+        color_class = "t-up" if chg >= 0 else "t-dn"
+        return (
+            f'<span class="t-item"><b>{r["symbol"]}</b> '
+            f'<span class="t-px">{price_str}</span> '
+            f'<span class="{color_class}">{sign}{chg:.2f}%</span></span>'
+        )
+    items = "".join(fmt(r) for r in rows)
+    # Duplicate once so the CSS animation loops seamlessly
+    inner = items + items
+    return f'<div class="strip-tickers scrolling"><div class="strip-move">{inner}</div></div>'
+
+ticker_rows = fetch_ticker_prices()
+live_ticker_html = build_ticker_strip_html(ticker_rows)
+
 # Load landing.html from project root
 landing_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'landing.html')
 with open(landing_path, 'r', encoding='utf-8') as f:
     html_content = f.read()
+
+# Replace the static ticker strip with the live scrolling one
+import re
+html_content = re.sub(
+    r'<div class="strip-tickers">.*?</div>',
+    live_ticker_html,
+    html_content,
+    count=1,
+    flags=re.DOTALL,
+)
 
 # Make goApp click the real Streamlit Get Started link
 html_content = html_content.replace(
@@ -175,6 +247,31 @@ iframe_fixes = """
 /* Hide the nav Get Started button (replaced by Streamlit page_link above) */
 .nav-cta {
     display: none !important;
+}
+
+/* Scrolling live ticker tape */
+.strip-tickers.scrolling {
+    overflow: hidden !important;
+    text-overflow: unset !important;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+.strip-tickers.scrolling .strip-move {
+    display: inline-block;
+    white-space: nowrap;
+    animation: strip-scroll 60s linear infinite;
+    will-change: transform;
+}
+.strip-tickers.scrolling:hover .strip-move { animation-play-state: paused; }
+.strip-tickers .t-item { margin-right: 28px; font-family: var(--mono, monospace); font-size: 12.5px; }
+.strip-tickers .t-item b { color: #E8ECF1; font-weight: 600; margin-right: 6px; }
+.strip-tickers .t-px { color: #C7D1DF; margin-right: 6px; }
+.strip-tickers .t-up { color: #34D399; font-weight: 600; }
+.strip-tickers .t-dn { color: #F87171; font-weight: 600; }
+@keyframes strip-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
 }
 
 /* Ensure body background matches original exactly */
