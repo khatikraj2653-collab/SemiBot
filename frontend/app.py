@@ -12,6 +12,26 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# Full-screen loader shown IMMEDIATELY so users don't see a blank page while
+# the heavy imports and landing HTML render on first visit.
+# Cleared at the end of the script.
+_loading_placeholder = st.empty()
+_loading_placeholder.markdown(
+    """
+    <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+                background:#171B21;z-index:999999;flex-direction:column;gap:14px;">
+      <div style="width:44px;height:44px;border:3px solid rgba(91,155,255,.2);
+                  border-top-color:#5B9BFF;border-radius:50%;
+                  animation:sb-ld 0.9s linear infinite;"></div>
+      <div style="color:#C7D1DF;font-family:Inter,sans-serif;font-size:14px;">
+        Loading SemiBot…
+      </div>
+      <style>@keyframes sb-ld{to{transform:rotate(360deg)}}</style>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 # SEO tags injected into the real top-level document (st.markdown runs in
 # Streamlit's own DOM, unlike st.components.v1.html which sandboxes into an
 # iframe Google's crawler won't associate with this page's <head>).
@@ -286,3 +306,6 @@ html_content = html_content.replace('<head>', '<head>' + iframe_fixes)
 st.components.v1.html(html_content, height=7400, scrolling=True)
 
 render_chat_bubble()
+
+# Clear the full-screen loader now that the landing page has rendered.
+_loading_placeholder.empty()
