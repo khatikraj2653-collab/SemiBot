@@ -191,6 +191,32 @@ def init_history_table():
     conn.commit()
     conn.close()
 
+def purge_stale_history_rows():
+    """Delete pre-Option-B snapshots from analysis_history. A row is stale if
+    its saved scores dict has 0 for every macro factor now owned by Python's
+    band tables (cpi, ppi, fed_rate, usd_index, beta). Any run after the
+    Option B commit always writes non-zero values for these, so an all-zero
+    pattern is a reliable pre-fix signature. Safe to call every startup —
+    idempotent after cleanup and auto-heals any future prompt regression."""
+    try:
+        conn = sqlite3.connect(get_db_path())
+        rows = conn.execute("SELECT id, result_json FROM analysis_history").fetchall()
+        stale_ids = []
+        for rid, rj in rows:
+            try:
+                s = (json.loads(rj) or {}).get("scores") or {}
+                if all(s.get(k, 0) == 0 for k in ("cpi", "ppi", "fed_rate", "usd_index", "beta")):
+                    stale_ids.append((rid,))
+            except Exception:
+                continue
+        if stale_ids:
+            conn.executemany("DELETE FROM analysis_history WHERE id = ?", stale_ids)
+            conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+
 def save_history(ticker, up_prob, timestamp, result, followup_history):
     conn = sqlite3.connect(get_db_path())
     conn.execute(
@@ -302,6 +328,10 @@ def get_historical_context(ticker, limit=5):
 
 init_history_table()
 init_compare_table()
+# One-time per session: wipe pre-Option-B snapshots (all-zero macro scores).
+if not st.session_state.get("_purged_stale_history"):
+    purge_stale_history_rows()
+    st.session_state["_purged_stale_history"] = True
 
 TICKER_TAPE = ["MU", "NVDA", "AMD", "INTC", "TSM", "ASML", "QCOM", "AVGO", "AMAT", "LRCX", "ARM", "TXN", "ADI", "MCHP", "ON"]
 
