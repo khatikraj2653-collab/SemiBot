@@ -253,31 +253,16 @@ def _parse_scores(raw_content: str, score_map: dict) -> dict:
 def generate_prediction(state: SemiconductorState) -> dict:
     from tools.cache_utils import _looks_like_error
 
-    # Inject Python band-based HINTS for numeric factors. The LLM still
-    # decides the final score — if it disagrees with the suggestion it can
-    # pick its own integer. The hint only exists to give the model a
-    # concrete numeric anchor so it stops anchoring on 0 for near-mean values.
-    def _with_hint(factor_key):
-        raw = state.get(factor_key, "")
-        if factor_key not in HINTABLE_FACTORS or _looks_like_error(raw):
-            return raw
-        suggested = _suggest_numeric_score(factor_key, raw)
-        if suggested is None:
-            return raw
-        sign = "+" if suggested >= 0 else ""
-        return f"{raw}  [PYTHON HINT: suggested score = {sign}{suggested} based on band table — accept if you agree, override with your own integer -10..+10 if you disagree]"
-
     prompt_inputs = {
-        "ticker": state["ticker"],
-        "cpi": _with_hint("cpi"), "ppi": _with_hint("ppi"),
-        "fed_rate": _with_hint("fed_rate"), "usd_index": _with_hint("usd_index"),
+        "ticker": state["ticker"], "cpi": state["cpi"], "ppi": state["ppi"],
+        "fed_rate": state["fed_rate"], "usd_index": state["usd_index"],
         "pe_ratio": state["pe_ratio"], "market_cap": state["market_cap"],
         "earnings_guidance": state["earnings_guidance"], "insider_selling": state["insider_selling"],
         "sector_rally": state["sector_rally"], "technical_signal": state["technical_signal"],
         "analyst_ratings": state["analyst_ratings"], "sell_the_news": state["sell_the_news"],
         "geopolitics": state["geopolitics"], "supply_chain": state["supply_chain"],
         "news_sentiment": state["news_sentiment"], "capital_rotation": state["capital_rotation"],
-        "competitor_contagion": state["competitor_contagion"], "beta": _with_hint("beta")
+        "competitor_contagion": state["competitor_contagion"], "beta": state["beta"]
     }
     rendered_messages = scoring_prompt.format_messages(**prompt_inputs)
     scoring_response = llm.invoke(rendered_messages)
@@ -347,6 +332,19 @@ def generate_prediction(state: SemiconductorState) -> dict:
         for factor_key in score_map.values():
             if _looks_like_error(state.get(factor_key, "")):
                 scores[factor_key] = 0
+
+    # OPTION B: Python owns numeric-factor scores via band tables. The LLM's
+    # score for these factors is overridden by the deterministic band value.
+    # Text-heavy factors (news, geopolitics, supply chain, etc.) stay fully
+    # LLM-scored. This guarantees macros always get a real signal instead of
+    # defaulting to 0.
+    for factor_key in HINTABLE_FACTORS:
+        raw = str(state.get(factor_key, ""))
+        if _looks_like_error(raw):
+            continue  # already forced to 0 above
+        python_score = _suggest_numeric_score(factor_key, raw)
+        if python_score is not None:
+            scores[factor_key] = python_score
 
     up_prob, down_prob = calculate_probability(scores)
 
