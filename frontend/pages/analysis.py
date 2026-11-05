@@ -1528,6 +1528,25 @@ if analyse and ticker_input:
 
             progress_bar.empty()
 
+            # SAFETY NET: apply Python band-table overrides here in analysis.py
+            # (which we KNOW is reloading fresh — build v3 marker proves it).
+            # If generate_prediction's Option B didn't execute (e.g. because
+            # Python module import cache pinned the old nodes.py), this
+            # guarantees the UI shows real band-based scores for macros.
+            try:
+                from graph.nodes import _suggest_numeric_score, HINTABLE_FACTORS
+                from tools.cache_utils import _looks_like_error
+                if isinstance(result.get("scores"), dict):
+                    for factor_key in HINTABLE_FACTORS:
+                        raw = str(result.get(factor_key, ""))
+                        if _looks_like_error(raw):
+                            continue
+                        suggested = _suggest_numeric_score(factor_key, raw)
+                        if suggested is not None:
+                            result["scores"][factor_key] = suggested
+            except Exception as _e:
+                print(f"[safety-net Option B] skipped: {_e}", flush=True)
+
             st.session_state.result = result
             st.session_state.ticker = final_ticker
             st.session_state.followup_history = []
