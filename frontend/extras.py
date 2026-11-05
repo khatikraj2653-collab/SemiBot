@@ -238,17 +238,32 @@ def build_analysis_pdf(ticker: str, prediction: str, up_pct, down_pct,
 
 def render_download_pdf_button(ticker: str, prediction: str, up_pct, down_pct,
                                 scores: dict, reasoning: str, timestamp: str):
-    """One-click 'Download PDF' button that builds and offers the PDF."""
+    """One-click 'Download PDF' button that builds and offers the PDF.
+    Always renders something so the user never sees an empty column."""
+    try:
+        from fpdf import FPDF  # noqa: F401 — import check only
+    except ImportError:
+        st.button(
+            "PDF export unavailable",
+            disabled=True,
+            use_container_width=True,
+            help="fpdf2 is not installed in this environment.",
+        )
+        return
     try:
         pdf_bytes = build_analysis_pdf(ticker, prediction, up_pct, down_pct, scores, reasoning, timestamp)
         st.download_button(
-            label="Download PDF report",
+            label="📄 Download PDF",
             data=pdf_bytes,
-            file_name=f"semibot_{ticker}_{timestamp.replace(':', '').replace(' ', '_')}.pdf",
+            file_name=f"semibot_{ticker}_{timestamp.replace(':', '').replace(' ', '_').replace('-', '')}.pdf",
             mime="application/pdf",
-            use_container_width=False,
+            use_container_width=True,
+            type="primary",
         )
-    except ImportError:
-        st.caption("PDF export unavailable (fpdf2 not installed — add `fpdf2` to requirements.txt)")
     except Exception as e:
-        st.caption(f"PDF export failed: {e}")
+        st.button(
+            "PDF export failed",
+            disabled=True,
+            use_container_width=True,
+            help=str(e)[:200],
+        )

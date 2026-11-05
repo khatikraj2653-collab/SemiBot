@@ -40,11 +40,33 @@ def get_fed_rate() -> str:
 @tool
 @cached_tool(TTL_SLOW)
 def get_usd_index() -> str:
-    """Fetches current USD Index (DXY) value as dollar strength signal."""
+    """Fetches current USD Index (DXY) value as dollar strength signal.
+    Tries yfinance .info first; on rate-limit or missing value, falls
+    back to the last daily close via .history(), then to FRED's broad
+    USD index (DTWEXBGS) so the signal never silently 404s."""
+    import yfinance as yf
+
+    # 1) Try yfinance .info (live price)
     try:
-        import yfinance as yf
         dxy = yf.Ticker("DX-Y.NYB")
         price = dxy.info.get('regularMarketPrice')
-        return f"USD Index (DXY): {price}"
+        if isinstance(price, (int, float)) and price > 0:
+            return f"USD Index (DXY): {round(price, 2)}"
+    except Exception:
+        pass
+
+    # 2) Fallback: last close from 5d history (cheaper than .info)
+    try:
+        hist = yf.Ticker("DX-Y.NYB").history(period="5d")
+        if hist is not None and not hist.empty:
+            last = float(hist['Close'].dropna().iloc[-1])
+            return f"USD Index (DXY): {round(last, 2)} (last close)"
+    except Exception:
+        pass
+
+    # 3) FRED trade-weighted USD index as last resort
+    try:
+        val = fred.get_series('DTWEXBGS').dropna().iloc[-1]
+        return f"USD Index (FRED trade-weighted): {round(float(val), 2)}"
     except Exception as e:
         return f"USD Index: Data unavailable ({str(e)})"

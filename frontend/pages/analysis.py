@@ -1571,7 +1571,7 @@ if st.session_state.result:
 
     # Share + export actions
     st.markdown("<div style='font-family:Inter,sans-serif;font-size:0.75rem;color:#A4AFC0;margin:16px 0 4px;text-transform:uppercase;letter-spacing:0.08em'>Share &amp; Export</div>", unsafe_allow_html=True)
-    _share_col1, _share_col2 = st.columns([3, 1])
+    _share_col1, _share_col2 = st.columns([2, 1])
     with _share_col1:
         render_copy_link_button(ticker)
     with _share_col2:

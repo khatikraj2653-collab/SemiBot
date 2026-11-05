@@ -335,14 +335,37 @@ def get_competitor_contagion(ticker: str) -> str:
 @tool
 @cached_tool(TTL_SLOW)
 def get_beta(ticker: str) -> str:
-    """Fetches beta coefficient as market volatility sensitivity signal."""
+    """Fetches beta coefficient as market volatility sensitivity signal.
+    Falls back to computing beta from 1y daily returns vs SPY when Yahoo
+    doesn't report one (e.g. many non-US listings)."""
     try:
         stock = yf.Ticker(ticker)
-        beta = stock.info.get('beta', 'N/A')
-        if beta != 'N/A':
+        beta = stock.info.get('beta', None)
+        if isinstance(beta, (int, float)):
             volatility = 'High volatility' if beta > 1.5 else 'Moderate' if beta > 1 else 'Low volatility'
-            return f"Beta: {beta} ({volatility})"
-        return f"Beta: N/A for {ticker}"
+            return f"Beta: {round(beta, 2)} ({volatility})"
+        # Fallback: compute beta vs SPY from 1y daily returns
+        try:
+            import pandas as pd
+            hist = yf.download(
+                [ticker, "SPY"], period="1y", interval="1d",
+                progress=False, auto_adjust=True, threads=False,
+            )
+            closes = hist["Close"] if "Close" in hist else hist
+            if closes is None or closes.empty:
+                return f"Beta: N/A for {ticker}"
+            rets = closes.pct_change().dropna()
+            if len(rets) < 30 or ticker not in rets.columns or "SPY" not in rets.columns:
+                return f"Beta: N/A for {ticker}"
+            cov = rets[ticker].cov(rets["SPY"])
+            var = rets["SPY"].var()
+            if var == 0 or pd.isna(cov) or pd.isna(var):
+                return f"Beta: N/A for {ticker}"
+            b = float(cov / var)
+            volatility = 'High volatility' if b > 1.5 else 'Moderate' if b > 1 else 'Low volatility'
+            return f"Beta: {round(b, 2)} ({volatility}) [computed vs SPY, 1y daily]"
+        except Exception:
+            return f"Beta: N/A for {ticker}"
     except Exception as e:
         return f"Beta: Data unavailable ({str(e)})"
 

@@ -114,7 +114,13 @@ Write a 2-3 sentence reasoning that correctly reflects the DOMINANT direction ab
 FACTOR SCORES:
 {scores_text}
 
-Identify the 3 most bullish and 3 most bearish factors (by weight x score).
+Identify the bullish (score > 0) and bearish (score < 0) factors by weight x score.
+
+IMPORTANT RULES:
+- List up to 3 bullish factors, but ONLY ones with score > 0. If fewer than 3 have a positive score, list only those that do. If none have a positive score, write "none" after BULLISH_FACTORS:.
+- List up to 3 bearish factors, but ONLY ones with score < 0. If fewer than 3 have a negative score, list only those that do. If none have a negative score, write "none" after BEARISH_FACTORS:.
+- NEVER list a factor with score 0 (Neutral) in either list.
+
 Format EXACTLY like this:
 BULLISH_FACTORS: [factor1] | [factor2] | [factor3]
 BEARISH_FACTORS: [factor1] | [factor2] | [factor3]

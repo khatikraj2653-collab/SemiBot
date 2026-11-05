@@ -24,8 +24,10 @@ def get_market_cap(ticker: str) -> str:
     """Fetches current market capitalization for a given ticker."""
     try:
         stock = yf.Ticker(ticker)
-        mc = stock.info.get('marketCap', 'N/A')
-        return f"Market Cap: ${mc:,}"
+        mc = stock.info.get('marketCap', None)
+        if isinstance(mc, (int, float)) and mc > 0:
+            return f"Market Cap: ${mc:,.0f}"
+        return f"Market Cap: N/A (not reported for {ticker})"
     except Exception as e:
         return f"Market Cap: Data unavailable ({str(e)})"
 

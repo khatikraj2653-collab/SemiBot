@@ -37,10 +37,26 @@ def get_technical_signal(ticker: str) -> str:
     try:
         stock = yf.Ticker(ticker)
         hist = stock.history(period="1y")
-        ma50 = hist['Close'].rolling(50).mean().iloc[-1]
-        ma200 = hist['Close'].rolling(200).mean().iloc[-1]
-        signal = "Golden Cross (Bullish)" if ma50 > ma200 else "Death Cross (Bearish)"
-        return f"MA50: {round(ma50,2)}, MA200: {round(ma200,2)}, Signal: {signal}"
+        # Need at least 200 trading days for a meaningful 200-day MA
+        if hist is None or hist.empty or len(hist) < 50:
+            return f"Technical Signal: Not enough price history for {ticker} ({0 if hist is None else len(hist)} days)"
+        closes = hist['Close'].dropna()
+        if len(closes) < 50:
+            return f"Technical Signal: Not enough price history for {ticker}"
+        ma50_series = closes.rolling(50).mean().dropna()
+        if ma50_series.empty:
+            return f"Technical Signal: Not enough price history for {ticker}"
+        ma50 = float(ma50_series.iloc[-1])
+        # 200-day MA may be unavailable for younger listings — degrade gracefully
+        if len(closes) >= 200:
+            ma200_series = closes.rolling(200).mean().dropna()
+            ma200 = float(ma200_series.iloc[-1])
+            signal = "Golden Cross (Bullish)" if ma50 > ma200 else "Death Cross (Bearish)"
+            return f"MA50: {round(ma50,2)}, MA200: {round(ma200,2)}, Signal: {signal}"
+        # Fallback: compare current price vs 50-day MA
+        last_price = float(closes.iloc[-1])
+        signal = "Above 50-day MA (Bullish)" if last_price > ma50 else "Below 50-day MA (Bearish)"
+        return f"MA50: {round(ma50,2)}, Price: {round(last_price,2)}, Signal: {signal} (200-day MA unavailable)"
     except Exception as e:
         return f"Technical Signal: Data unavailable ({str(e)})"
 
