@@ -83,10 +83,9 @@ Beta: {beta}
 
 Ignore any irrelevant content in the factor data below (e.g., unrelated financial products, credit cards, generic advertisements, or promotional text not about {ticker} or the semiconductor industry) — score only based on genuinely relevant information.
 
-CRITICAL — MISSING DATA RULE (overrides everything else):
-If a factor's value contains ANY of these phrases, you MUST score it exactly 0 (Neutral):
-"Data unavailable", "Too Many Requests", "Rate limited", "Try after a while", "N/A", "Not enough", "out-of-bounds", "Cannot specify", "did not return", "all sources failed", "Data temporarily unavailable".
-This applies even if the factor's name sounds important. A factor we could not fetch has ZERO signal — not bullish, not bearish. Do not reason about what the value "would probably be". Do not punish a stock because its USD Index fetch rate-limited. Score = 0, always, for any missing/error value.
+Score every factor that has real data, using the full -10 to +10 range. Be decisive — a P/E of 104 is clearly high, Fed Rate of 3.88% is clearly accommodative vs 2023 peaks, Beta of 3.28 is clearly high volatility, SOXX down 23% is clearly bearish for the sector. Do NOT default to 0 Neutral just because you are uncertain — pick a direction and a magnitude.
+
+NARROW EXCEPTION — score exactly 0 (Neutral) ONLY IF the factor's value is literally missing or errored, meaning it contains one of these phrases: "Data unavailable", "Too Many Requests", "Rate limited", "No recent transactions found", "mean score: N/A", or is "N/A" standing alone with no accompanying numeric data. For every OTHER factor with real data (even if the signal is mild), give it a real non-zero score.
 
 Return ONLY this exact format, no other text:
 CPI_SCORE: [integer -10 to 10]
