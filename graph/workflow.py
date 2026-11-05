@@ -19,7 +19,12 @@ try:
 except Exception as _e:
     print(f"[cache] purge skipped: {_e}", flush=True)
 
-@st.cache_resource(show_spinner=False)
+# NOTE: do NOT @st.cache_resource this. The compiled graph captures function
+# references (generate_prediction, subgraph nodes) at build time. Caching the
+# result pins old function refs across code deploys, so new scoring logic
+# (e.g. Python band overrides) never executes until the cache is manually
+# cleared. Rebuild is cheap — the subgraphs are plain Python; the expensive
+# work (LLM calls, API fetches) happens per-invocation, not per-build.
 def build_graph():
     db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'semibot_checkpoints.db')
     conn = sqlite3.connect(db_path, check_same_thread=False)
@@ -44,4 +49,4 @@ def build_graph():
 
     return graph.compile(checkpointer=checkpointer)
 
-app = build_graph()  # cached — only runs the heavy build the first time
+app = build_graph()
