@@ -18,6 +18,15 @@ llm = ChatOpenAI(
     temperature=0
 )
 
+# A second instance with higher temperature, used for retry calls only —
+# gpt-4o at temp=0 anchors hard on 0 for "near-mean" numeric factors; a
+# small temperature kick helps it break out of that pattern on retry.
+llm_retry = ChatOpenAI(
+    model="gpt-4o",
+    api_key=os.getenv("OPENAI_API_KEY"),
+    temperature=0.4
+)
+
 
 def resolve_ticker(user_input: str) -> str:
     quick_map = {
@@ -232,16 +241,18 @@ def generate_prediction(state: SemiconductorState) -> dict:
 
         offender_list = "\n".join(f"- {k}: '{v}'" for k, v in zero_offenders)
         complaint = (
-            f"PROBLEM: Your previous response scored {len(zero_offenders)} factors as 0 "
-            f"even though they have REAL DATA (none of them match the NARROW EXCEPTION list). "
-            f"This directly violates the MANDATORY DECISIVE SCORING rule.\n\n"
-            f"These factors must each get a NON-ZERO integer between -10 and +10:\n"
-            f"{offender_list}\n\n"
-            f"Re-output ALL 18 scores in the same format. Apply the calibration reference, "
-            f"few-shot examples, and TEXT-HEAVY FACTORS rule. Every factor listed above MUST "
-            f"be non-zero. Keep your previously non-zero scores unless you want to change them."
+            f"YOUR PREVIOUS RESPONSE IS REJECTED. You scored {len(zero_offenders)} factors as 0 "
+            f"despite them having REAL DATA. 0 is only allowed for the NARROW EXCEPTION list "
+            f"(missing data / error strings). NONE of the listed factors match that exception.\n\n"
+            f"The following scores MUST be changed to a non-zero integer between -10 and +10. "
+            f"Picking 0 again for ANY of these is a fatal error:\n{offender_list}\n\n"
+            f"Think: every one of these has real numeric or textual data. Even 'mildly supportive' "
+            f"deserves +1 or +2. Even 'slight headwind' deserves -1 or -2. 0 means 'the signal does "
+            f"not exist' — these signals DO exist.\n\n"
+            f"Re-output ALL 18 scores in the exact same format. Keep any previously non-zero "
+            f"scores. Commit to a direction for every listed factor."
         )
-        retry_response = llm.invoke(
+        retry_response = llm_retry.invoke(
             rendered_messages
             + [AIMessage(content=scoring_response.content), HumanMessage(content=complaint)]
         )
