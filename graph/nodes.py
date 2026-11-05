@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
 
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_openai import ChatOpenAI
 from graph.state import SemiconductorState
 from tools.macro_tools import get_cpi, get_ppi, get_fed_rate, get_usd_index
@@ -154,36 +155,10 @@ REASONING: [2-3 sentences]
 CONFIDENCE: [High/Medium/Low]
 """)
 
-def generate_prediction(state: SemiconductorState) -> dict:
-    scoring_response = (scoring_prompt | llm).invoke({
-        "ticker": state["ticker"], "cpi": state["cpi"], "ppi": state["ppi"],
-        "fed_rate": state["fed_rate"], "usd_index": state["usd_index"],
-        "pe_ratio": state["pe_ratio"], "market_cap": state["market_cap"],
-        "earnings_guidance": state["earnings_guidance"], "insider_selling": state["insider_selling"],
-        "sector_rally": state["sector_rally"], "technical_signal": state["technical_signal"],
-        "analyst_ratings": state["analyst_ratings"], "sell_the_news": state["sell_the_news"],
-        "geopolitics": state["geopolitics"], "supply_chain": state["supply_chain"],
-        "news_sentiment": state["news_sentiment"], "capital_rotation": state["capital_rotation"],
-        "competitor_contagion": state["competitor_contagion"], "beta": state["beta"]
-    })
-
-    scores = {}
-    score_map = {
-        "CPI_SCORE": "cpi", "PPI_SCORE": "ppi", "FED_RATE_SCORE": "fed_rate",
-        "USD_INDEX_SCORE": "usd_index", "PE_RATIO_SCORE": "pe_ratio",
-        "MARKET_CAP_SCORE": "market_cap", "EARNINGS_GUIDANCE_SCORE": "earnings_guidance",
-        "INSIDER_SELLING_SCORE": "insider_selling", "SECTOR_RALLY_SCORE": "sector_rally",
-        "TECHNICAL_SIGNAL_SCORE": "technical_signal", "ANALYST_RATINGS_SCORE": "analyst_ratings",
-        "SELL_THE_NEWS_SCORE": "sell_the_news", "GEOPOLITICS_SCORE": "geopolitics",
-        "SUPPLY_CHAIN_SCORE": "supply_chain", "NEWS_SENTIMENT_SCORE": "news_sentiment",
-        "CAPITAL_ROTATION_SCORE": "capital_rotation", "COMPETITOR_CONTAGION_SCORE": "competitor_contagion",
-        "BETA_SCORE": "beta"
-    }
+def _parse_scores(raw_content: str, score_map: dict) -> dict:
     import re
-    for line in scoring_response.content.split("\n"):
-        # Strip markdown decoration (**, -, *, backticks, leading numbering)
-        # so decorated output like '**CPI_SCORE:** +3' or '- CPI_SCORE: 3 (bullish)'
-        # still matches rather than silently falling to the 0 backfill below.
+    scores = {}
+    for line in raw_content.split("\n"):
         cleaned = re.sub(r'^[\s\-\*\d\.\`]*\**\s*', '', line).strip().rstrip('*').strip()
         for score_key, factor_key in score_map.items():
             if cleaned.startswith(score_key + ":"):
@@ -197,19 +172,87 @@ def generate_prediction(state: SemiconductorState) -> dict:
                 else:
                     scores[factor_key] = 0
                 break
+    return scores
+
+
+def generate_prediction(state: SemiconductorState) -> dict:
+    prompt_inputs = {
+        "ticker": state["ticker"], "cpi": state["cpi"], "ppi": state["ppi"],
+        "fed_rate": state["fed_rate"], "usd_index": state["usd_index"],
+        "pe_ratio": state["pe_ratio"], "market_cap": state["market_cap"],
+        "earnings_guidance": state["earnings_guidance"], "insider_selling": state["insider_selling"],
+        "sector_rally": state["sector_rally"], "technical_signal": state["technical_signal"],
+        "analyst_ratings": state["analyst_ratings"], "sell_the_news": state["sell_the_news"],
+        "geopolitics": state["geopolitics"], "supply_chain": state["supply_chain"],
+        "news_sentiment": state["news_sentiment"], "capital_rotation": state["capital_rotation"],
+        "competitor_contagion": state["competitor_contagion"], "beta": state["beta"]
+    }
+    rendered_messages = scoring_prompt.format_messages(**prompt_inputs)
+    scoring_response = llm.invoke(rendered_messages)
+
+    score_map = {
+        "CPI_SCORE": "cpi", "PPI_SCORE": "ppi", "FED_RATE_SCORE": "fed_rate",
+        "USD_INDEX_SCORE": "usd_index", "PE_RATIO_SCORE": "pe_ratio",
+        "MARKET_CAP_SCORE": "market_cap", "EARNINGS_GUIDANCE_SCORE": "earnings_guidance",
+        "INSIDER_SELLING_SCORE": "insider_selling", "SECTOR_RALLY_SCORE": "sector_rally",
+        "TECHNICAL_SIGNAL_SCORE": "technical_signal", "ANALYST_RATINGS_SCORE": "analyst_ratings",
+        "SELL_THE_NEWS_SCORE": "sell_the_news", "GEOPOLITICS_SCORE": "geopolitics",
+        "SUPPLY_CHAIN_SCORE": "supply_chain", "NEWS_SENTIMENT_SCORE": "news_sentiment",
+        "CAPITAL_ROTATION_SCORE": "capital_rotation", "COMPETITOR_CONTAGION_SCORE": "competitor_contagion",
+        "BETA_SCORE": "beta"
+    }
+    scores = _parse_scores(scoring_response.content, score_map)
     for key in FACTOR_WEIGHTS:
         if key not in scores:
             scores[key] = 0
 
-    # Deterministic guardrail: the LLM sometimes hallucinates a non-zero
-    # score for factors whose raw data is clearly an error/missing marker.
-    # Force those scores to exactly 0 regardless of what the LLM returned,
-    # so a rate-limited USD Index can never show up as "-2 Bearish".
+    # Deterministic guardrail: force 0 for factors whose raw data is
+    # literally missing (rate-limit, N/A, etc). This never overrides
+    # the LLM's scoring of real data — only protects against scoring
+    # error strings as bullish/bearish.
     from tools.cache_utils import _looks_like_error
     for factor_key in score_map.values():
         raw = state.get(factor_key, "")
         if _looks_like_error(raw):
             scores[factor_key] = 0
+
+    # LLM self-correction loop: if the LLM picked 0 for factors with real
+    # data, hand it back its own response with the list of offenders and
+    # ask it to re-score. Pure LLM-only — we don't override any score,
+    # just force the model to reconsider. Max 2 retries then accept what
+    # the LLM decides.
+    for attempt in range(2):
+        zero_offenders = []
+        for factor_key in score_map.values():
+            raw = str(state.get(factor_key, ""))
+            if scores.get(factor_key, 0) == 0 and not _looks_like_error(raw):
+                zero_offenders.append((factor_key, raw[:150]))
+        if not zero_offenders:
+            break
+
+        offender_list = "\n".join(f"- {k}: '{v}'" for k, v in zero_offenders)
+        complaint = (
+            f"PROBLEM: Your previous response scored {len(zero_offenders)} factors as 0 "
+            f"even though they have REAL DATA (none of them match the NARROW EXCEPTION list). "
+            f"This directly violates the MANDATORY DECISIVE SCORING rule.\n\n"
+            f"These factors must each get a NON-ZERO integer between -10 and +10:\n"
+            f"{offender_list}\n\n"
+            f"Re-output ALL 18 scores in the same format. Apply the calibration reference, "
+            f"few-shot examples, and TEXT-HEAVY FACTORS rule. Every factor listed above MUST "
+            f"be non-zero. Keep your previously non-zero scores unless you want to change them."
+        )
+        retry_response = llm.invoke(
+            rendered_messages
+            + [AIMessage(content=scoring_response.content), HumanMessage(content=complaint)]
+        )
+        scoring_response = retry_response
+        scores = _parse_scores(retry_response.content, score_map)
+        for key in FACTOR_WEIGHTS:
+            if key not in scores:
+                scores[key] = 0
+        for factor_key in score_map.values():
+            if _looks_like_error(state.get(factor_key, "")):
+                scores[factor_key] = 0
 
     up_prob, down_prob = calculate_probability(scores)
 
