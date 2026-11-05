@@ -42,9 +42,7 @@ _ERROR_MARKERS = (
     "Rate limited",
     "Try after a while",
     "Cannot specify",
-    "Not enough",
     "out-of-bounds",
-    "did not return",
     "all sources failed",
     "N/A for ",
     "No recent transactions found",  # insider_selling placeholder — not a bearish signal
@@ -64,17 +62,12 @@ def _looks_like_error(value: str) -> bool:
         return True
     if any(m in value for m in _ERROR_MARKERS):
         return True
-    # Patterns like "Forward EPS: N/A, Earnings Growth: N/A" — if the content
-    # is almost entirely label: N/A pairs with no substantive data, treat as
-    # missing. Count "N/A" occurrences versus non-placeholder digits.
+    # Require OVERWHELMINGLY placeholders before flagging as error, so a
+    # mega-cap value like "Market Cap: $1T (ADR N/A)" or a text-heavy
+    # geopolitics summary with one 'N/A' sub-metric is not misclassified.
     na_count = value.count("N/A") + value.count("n/a")
     digit_count = sum(c.isdigit() for c in value)
-    if na_count >= 2 and digit_count < 4:
-        return True
-    # Single "N/A" as the only value after a label — e.g. "Beta: N/A"
-    # (bare N/A, not "N/A for 2023"). Heuristic: short string, N/A present,
-    # almost no digits.
-    if na_count >= 1 and digit_count < 2 and len(value) < 60:
+    if na_count >= 3 and digit_count < 2:
         return True
     return False
 

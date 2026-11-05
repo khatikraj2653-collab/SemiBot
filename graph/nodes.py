@@ -83,7 +83,7 @@ Beta: {beta}
 
 Ignore any irrelevant content in the factor data below (e.g., unrelated financial products, credit cards, generic advertisements, or promotional text not about {ticker} or the semiconductor industry) — score only based on genuinely relevant information.
 
-MANDATORY DECISIVE SCORING: If a factor has real data, you MUST assign a non-zero score. 0 Neutral is NOT the default — it is reserved only for factors whose value is literally missing (see EXCEPTION below). Pick a direction (+ or -) and a magnitude between 1 and 10.
+NARROW EXCEPTION — score exactly 0 ONLY IF the factor's value contains "Data unavailable", "Too Many Requests", "Rate limited", "No recent transactions found", "mean score: N/A", or is bare "N/A" with no accompanying numeric data. This is the ONLY case where 0 is correct.
 
 Calibration reference (apply this reasoning, not these exact numbers):
 - Earnings Growth above 50% → strongly bullish (+7 to +10). 159% growth is extraordinary, score +10.
@@ -96,7 +96,18 @@ Calibration reference (apply this reasoning, not these exact numbers):
 - Supply Chain / Geopolitics / Capital Rotation with any directional content — read the actual text and score accordingly, not default 0.
 - Market Cap of a mega-cap stable company → mildly bullish (+1 to +3) for stability; tiny micro-cap → bearish.
 
-NARROW EXCEPTION — score exactly 0 ONLY IF the factor's value contains "Data unavailable", "Too Many Requests", "Rate limited", "No recent transactions found", "mean score: N/A", or is bare "N/A" with no accompanying numeric data. Otherwise, never score 0.
+Few-shot examples (input string → correct integer score):
+- CPI: 336.3 (near long-run mean, cooling) → +1
+- Fed Rate: 3.88% (below 4%, supportive for growth) → +3
+- USD Index (DXY): 101.42 (strong dollar, headwind for semi exporters) → -2
+- PPI: 295.71 (producer prices stable, mild tailwind) → +1
+- Geopolitics: TSMC Taiwan Strait tensions, US-China export controls expanding → -5 (any active escalation forces a sign; never 0 for text with directional content)
+- Supply Chain: HBM capacity tight, lead times extending → +3 (tightness = pricing power for memory names)
+- News Sentiment: Strong Buy consensus, 12 of 15 analysts → +6
+
+RULE FOR TEXT-HEAVY FACTORS (Geopolitics, Supply Chain, News Sentiment, Capital Rotation, Competitor Contagion): if the text describes ANY directional condition — tightening/loosening, gain/loss, escalation/de-escalation, buy/sell consensus, bull/bear framing — you MUST pick a sign. Substantive-but-neutral-sounding prose still gets a non-zero score.
+
+MANDATORY DECISIVE SCORING — THIS IS THE LAST AND MOST IMPORTANT RULE: If a factor has real data (does not match the NARROW EXCEPTION above), you MUST assign a non-zero integer between -10 and +10. 0 is NOT the safe default. Pick a direction and a magnitude for every factor with real data, even mild signals.
 
 Return ONLY this exact format, no other text:
 CPI_SCORE: [integer -10 to 10]
@@ -168,14 +179,24 @@ def generate_prediction(state: SemiconductorState) -> dict:
         "CAPITAL_ROTATION_SCORE": "capital_rotation", "COMPETITOR_CONTAGION_SCORE": "competitor_contagion",
         "BETA_SCORE": "beta"
     }
+    import re
     for line in scoring_response.content.split("\n"):
-        line = line.strip()
+        # Strip markdown decoration (**, -, *, backticks, leading numbering)
+        # so decorated output like '**CPI_SCORE:** +3' or '- CPI_SCORE: 3 (bullish)'
+        # still matches rather than silently falling to the 0 backfill below.
+        cleaned = re.sub(r'^[\s\-\*\d\.\`]*\**\s*', '', line).strip().rstrip('*').strip()
         for score_key, factor_key in score_map.items():
-            if line.startswith(score_key + ":"):
-                try:
-                    scores[factor_key] = int(line.split(":")[-1].strip())
-                except:
+            if cleaned.startswith(score_key + ":"):
+                tail = cleaned.split(":", 1)[-1]
+                m = re.search(r'-?\d+', tail)
+                if m:
+                    try:
+                        scores[factor_key] = max(-10, min(10, int(m.group(0))))
+                    except (ValueError, TypeError):
+                        scores[factor_key] = 0
+                else:
                     scores[factor_key] = 0
+                break
     for key in FACTOR_WEIGHTS:
         if key not in scores:
             scores[key] = 0
