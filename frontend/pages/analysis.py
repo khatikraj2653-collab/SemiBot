@@ -1352,6 +1352,28 @@ if not st.session_state.result:
             render_ticker_logo(ticker_input, size=52)
         analyse = st.button("Analyse ->", use_container_width=True, type="primary")
 
+        # "Try sample" quick-start chips so first-time visitors can see a
+        # working analysis in one click instead of needing to pick a ticker.
+        st.markdown(
+            "<div style='text-align:center;font-size:0.7rem;color:#6B7A8F;"
+            "letter-spacing:0.08em;text-transform:uppercase;margin:12px 0 6px'>"
+            "Or try one of these</div>",
+            unsafe_allow_html=True,
+        )
+        _s1, _s2, _s3, _s4 = st.columns(4)
+        _sample_tickers = [("NVDA", _s1), ("AMD", _s2), ("ASML", _s3), ("TSM", _s4)]
+        for _tk, _col in _sample_tickers:
+            with _col:
+                if st.button(_tk, use_container_width=True, key=f"_sample_{_tk}"):
+                    # Flip into analysis mode with this ticker
+                    st.session_state["_prefilled_sample"] = _tk
+                    st.query_params["ticker"] = _tk
+                    st.rerun()
+        # If a sample button was clicked, override ticker_input + fire analysis
+        if st.session_state.get("_prefilled_sample"):
+            ticker_input = st.session_state.pop("_prefilled_sample")
+            analyse = True
+
 else:
     col_h1, col_h2 = st.columns([5, 1])
     with col_h1:
