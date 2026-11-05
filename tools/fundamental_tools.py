@@ -13,9 +13,12 @@ def get_pe_ratio(ticker: str) -> str:
     """Fetches trailing P/E ratio for a given semiconductor ticker."""
     try:
         stock = yf.Ticker(ticker)
-        pe = stock.info.get('trailingPE', 'N/A')
-        return f"P/E Ratio: {pe}"
+        pe = stock.info.get('trailingPE', None)
+        if isinstance(pe, (int, float)) and pe > 0:
+            return f"P/E Ratio: {round(pe, 2)}"
+        return f"P/E Ratio: N/A (not reported for {ticker})"
     except Exception as e:
+        # Normalize the error message so our error-cache skipper recognises it
         return f"P/E Ratio: Data unavailable ({str(e)})"
 
 @tool
@@ -37,9 +40,11 @@ def get_earnings_guidance(ticker: str) -> str:
     """Fetches next earnings date and forward EPS estimate for a given ticker."""
     try:
         stock = yf.Ticker(ticker)
-        eps = stock.info.get('forwardEps', 'N/A')
-        growth = stock.info.get('earningsGrowth', 'N/A')
-        return f"Forward EPS: {eps}, Earnings Growth: {growth}"
+        eps = stock.info.get('forwardEps', None)
+        growth = stock.info.get('earningsGrowth', None)
+        eps_str = f"{round(float(eps), 2)}" if isinstance(eps, (int, float)) else "N/A"
+        growth_str = f"{round(float(growth) * 100, 2)}%" if isinstance(growth, (int, float)) else "N/A"
+        return f"Forward EPS: {eps_str}, Earnings Growth: {growth_str}"
     except Exception as e:
         return f"Earnings Guidance: Data unavailable ({str(e)})"
 

@@ -8,6 +8,17 @@ from graph.state import SemiconductorState
 from graph.nodes import generate_prediction
 from graph.subgraphs import build_macro_subgraph, build_fundamental_subgraph, build_market_subgraph, build_external_subgraph
 
+# One-time at import: purge any stale error rows left in the SQLite factor
+# cache from before we started skipping error caching, so old "Cannot specify
+# ',' with 's'" / "Too Many Requests" etc. don't keep being served.
+try:
+    from tools.cache_utils import purge_error_cache
+    _purged = purge_error_cache()
+    if _purged:
+        print(f"[cache] purged {_purged} stale error rows", flush=True)
+except Exception as _e:
+    print(f"[cache] purge skipped: {_e}", flush=True)
+
 @st.cache_resource(show_spinner=False)
 def build_graph():
     db_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'semibot_checkpoints.db')

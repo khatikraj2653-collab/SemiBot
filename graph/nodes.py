@@ -83,6 +83,8 @@ Beta: {beta}
 
 Ignore any irrelevant content in the factor data below (e.g., unrelated financial products, credit cards, generic advertisements, or promotional text not about {ticker} or the semiconductor industry) — score only based on genuinely relevant information.
 
+CRITICAL: If a factor's value is "N/A", "Data unavailable", "Not enough", "Too Many Requests", or contains any explicit missing-data marker, score it exactly 0 (Neutral). DO NOT fabricate a bullish or bearish score for missing data — a factor we could not fetch has no signal.
+
 Return ONLY this exact format, no other text:
 CPI_SCORE: [integer -10 to 10]
 PPI_SCORE: [integer -10 to 10]
