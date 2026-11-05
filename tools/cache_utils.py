@@ -37,14 +37,18 @@ _init_cache_table()
 # rate limit or API hiccup doesn't poison the cache for 24 hours.
 _ERROR_MARKERS = (
     "Data unavailable",
+    "Data temporarily unavailable",
     "Too Many Requests",
     "Rate limited",
+    "Try after a while",
     "Cannot specify",
-    "N/A for ",
     "Not enough",
     "out-of-bounds",
-    "Data temporarily unavailable",
     "did not return",
+    "all sources failed",
+    "N/A for ",
+    "No recent transactions found",  # insider_selling placeholder — not a bearish signal
+    "mean score: N/A",  # analyst_ratings placeholder
 )
 
 # Short TTL used when we DO cache something that looks slightly suspect
@@ -53,9 +57,26 @@ _SHORT_TTL = 300  # 5 minutes
 
 
 def _looks_like_error(value: str) -> bool:
-    if not isinstance(value, str) or not value:
+    """True if the string looks like a failed fetch / missing-data placeholder
+    rather than a real signal. Used both for cache-skip and for the scoring
+    guardrail so the LLM never scores an error string as bullish/bearish."""
+    if not isinstance(value, str) or not value.strip():
         return True
-    return any(m in value for m in _ERROR_MARKERS)
+    if any(m in value for m in _ERROR_MARKERS):
+        return True
+    # Patterns like "Forward EPS: N/A, Earnings Growth: N/A" — if the content
+    # is almost entirely label: N/A pairs with no substantive data, treat as
+    # missing. Count "N/A" occurrences versus non-placeholder digits.
+    na_count = value.count("N/A") + value.count("n/a")
+    digit_count = sum(c.isdigit() for c in value)
+    if na_count >= 2 and digit_count < 4:
+        return True
+    # Single "N/A" as the only value after a label — e.g. "Beta: N/A"
+    # (bare N/A, not "N/A for 2023"). Heuristic: short string, N/A present,
+    # almost no digits.
+    if na_count >= 1 and digit_count < 2 and len(value) < 60:
+        return True
+    return False
 
 
 def cached_tool(ttl_seconds):
