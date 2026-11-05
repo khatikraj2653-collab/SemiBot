@@ -83,7 +83,10 @@ Beta: {beta}
 
 Ignore any irrelevant content in the factor data below (e.g., unrelated financial products, credit cards, generic advertisements, or promotional text not about {ticker} or the semiconductor industry) — score only based on genuinely relevant information.
 
-CRITICAL: If a factor's value is "N/A", "Data unavailable", "Not enough", "Too Many Requests", or contains any explicit missing-data marker, score it exactly 0 (Neutral). DO NOT fabricate a bullish or bearish score for missing data — a factor we could not fetch has no signal.
+CRITICAL — MISSING DATA RULE (overrides everything else):
+If a factor's value contains ANY of these phrases, you MUST score it exactly 0 (Neutral):
+"Data unavailable", "Too Many Requests", "Rate limited", "Try after a while", "N/A", "Not enough", "out-of-bounds", "Cannot specify", "did not return", "all sources failed", "Data temporarily unavailable".
+This applies even if the factor's name sounds important. A factor we could not fetch has ZERO signal — not bullish, not bearish. Do not reason about what the value "would probably be". Do not punish a stock because its USD Index fetch rate-limited. Score = 0, always, for any missing/error value.
 
 Return ONLY this exact format, no other text:
 CPI_SCORE: [integer -10 to 10]
@@ -166,6 +169,16 @@ def generate_prediction(state: SemiconductorState) -> dict:
     for key in FACTOR_WEIGHTS:
         if key not in scores:
             scores[key] = 0
+
+    # Deterministic guardrail: the LLM sometimes hallucinates a non-zero
+    # score for factors whose raw data is clearly an error/missing marker.
+    # Force those scores to exactly 0 regardless of what the LLM returned,
+    # so a rate-limited USD Index can never show up as "-2 Bearish".
+    from tools.cache_utils import _looks_like_error
+    for factor_key in score_map.values():
+        raw = state.get(factor_key, "")
+        if _looks_like_error(raw):
+            scores[factor_key] = 0
 
     up_prob, down_prob = calculate_probability(scores)
 
