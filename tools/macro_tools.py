@@ -69,4 +69,11 @@ def get_usd_index() -> str:
         val = fred.get_series('DTWEXBGS').dropna().iloc[-1]
         return f"USD Index (FRED trade-weighted): {round(float(val), 2)}"
     except Exception as e:
+        try:
+            import sys as _sys, os as _os
+            _sys.path.append(_os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), 'frontend'))
+            from studio_logger import log_app_error
+            log_app_error("USD Index", "all_sources_failed", str(e)[:200])
+        except Exception:
+            pass
         return f"USD Index: Data unavailable ({str(e)})"
