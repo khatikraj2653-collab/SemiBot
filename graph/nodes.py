@@ -83,9 +83,20 @@ Beta: {beta}
 
 Ignore any irrelevant content in the factor data below (e.g., unrelated financial products, credit cards, generic advertisements, or promotional text not about {ticker} or the semiconductor industry) — score only based on genuinely relevant information.
 
-Score every factor that has real data, using the full -10 to +10 range. Be decisive — a P/E of 104 is clearly high, Fed Rate of 3.88% is clearly accommodative vs 2023 peaks, Beta of 3.28 is clearly high volatility, SOXX down 23% is clearly bearish for the sector. Do NOT default to 0 Neutral just because you are uncertain — pick a direction and a magnitude.
+MANDATORY DECISIVE SCORING: If a factor has real data, you MUST assign a non-zero score. 0 Neutral is NOT the default — it is reserved only for factors whose value is literally missing (see EXCEPTION below). Pick a direction (+ or -) and a magnitude between 1 and 10.
 
-NARROW EXCEPTION — score exactly 0 (Neutral) ONLY IF the factor's value is literally missing or errored, meaning it contains one of these phrases: "Data unavailable", "Too Many Requests", "Rate limited", "No recent transactions found", "mean score: N/A", or is "N/A" standing alone with no accompanying numeric data. For every OTHER factor with real data (even if the signal is mild), give it a real non-zero score.
+Calibration reference (apply this reasoning, not these exact numbers):
+- Earnings Growth above 50% → strongly bullish (+7 to +10). 159% growth is extraordinary, score +10.
+- Insider executives selling >$5M of stock in recent transactions → bearish (-5 to -8). Executives rarely sell in size unless they expect weakness.
+- P/E ratio above 60 for a non-hypergrowth semi → bearish (-3 to -6). Above 100 → clearly bearish (-5 to -7). Below 20 → bullish.
+- Fed Rate below 4% → mildly bullish for growth stocks (+2 to +4). Above 5% → bearish.
+- USD Index above 105 → bearish for semi exporters (-2 to -5). Below 100 → bullish.
+- Beta above 2.5 → noted as high volatility but scored based on market trend direction, not neutral.
+- News Sentiment with "Strong Buy" / "Buy" consensus from many analysts → bullish (+4 to +7).
+- Supply Chain / Geopolitics / Capital Rotation with any directional content — read the actual text and score accordingly, not default 0.
+- Market Cap of a mega-cap stable company → mildly bullish (+1 to +3) for stability; tiny micro-cap → bearish.
+
+NARROW EXCEPTION — score exactly 0 ONLY IF the factor's value contains "Data unavailable", "Too Many Requests", "Rate limited", "No recent transactions found", "mean score: N/A", or is bare "N/A" with no accompanying numeric data. Otherwise, never score 0.
 
 Return ONLY this exact format, no other text:
 CPI_SCORE: [integer -10 to 10]
