@@ -164,6 +164,72 @@ REASONING: [2-3 sentences]
 CONFIDENCE: [High/Medium/Low]
 """)
 
+def _extract_number(s):
+    """Pull the first signed decimal from a factor data string, or None."""
+    import re
+    if not isinstance(s, str):
+        return None
+    m = re.search(r'-?\d+\.?\d*', s)
+    if not m:
+        return None
+    try:
+        return float(m.group(0))
+    except (ValueError, TypeError):
+        return None
+
+
+def _suggest_numeric_score(factor_key: str, raw: str):
+    """Band-based score suggestion for numeric factors. Returns None if the
+    factor isn't a band-mapped numeric or the value can't be parsed. The LLM
+    sees this as a HINT it can accept or override — it never overrides the
+    LLM's final choice."""
+    v = _extract_number(raw)
+    if v is None:
+        return None
+
+    if factor_key == "cpi":
+        # CPI level (semi stocks): higher = inflation = Fed hawkish = bearish for growth
+        if v < 280: return 4
+        if v < 300: return 2
+        if v < 320: return 1
+        if v < 335: return -1
+        if v < 345: return -2
+        if v < 360: return -3
+        return -4
+    if factor_key == "ppi":
+        if v < 270: return 2
+        if v < 290: return 1
+        if v < 300: return -1
+        if v < 310: return -2
+        return -3
+    if factor_key == "fed_rate":
+        # Lower rates = bullish for growth semis
+        if v < 2.5: return 5
+        if v < 3.5: return 3
+        if v < 4.5: return 1
+        if v < 5: return -2
+        return -4
+    if factor_key == "usd_index":
+        # Stronger USD = headwind for semi EXPORTERS
+        if v < 92: return 5
+        if v < 97: return 3
+        if v < 101: return 1
+        if v < 103: return -2
+        if v < 106: return -4
+        return -6
+    if factor_key == "beta":
+        # Beta signals volatility — use mild values, let LLM override based on market trend
+        if v < 0.8: return 2
+        if v < 1.2: return 1
+        if v < 1.8: return -1
+        if v < 2.5: return -2
+        return -3
+    return None
+
+
+HINTABLE_FACTORS = {"cpi", "ppi", "fed_rate", "usd_index", "beta"}
+
+
 def _parse_scores(raw_content: str, score_map: dict) -> dict:
     import re
     scores = {}
@@ -185,16 +251,33 @@ def _parse_scores(raw_content: str, score_map: dict) -> dict:
 
 
 def generate_prediction(state: SemiconductorState) -> dict:
+    from tools.cache_utils import _looks_like_error
+
+    # Inject Python band-based HINTS for numeric factors. The LLM still
+    # decides the final score — if it disagrees with the suggestion it can
+    # pick its own integer. The hint only exists to give the model a
+    # concrete numeric anchor so it stops anchoring on 0 for near-mean values.
+    def _with_hint(factor_key):
+        raw = state.get(factor_key, "")
+        if factor_key not in HINTABLE_FACTORS or _looks_like_error(raw):
+            return raw
+        suggested = _suggest_numeric_score(factor_key, raw)
+        if suggested is None:
+            return raw
+        sign = "+" if suggested >= 0 else ""
+        return f"{raw}  [PYTHON HINT: suggested score = {sign}{suggested} based on band table — accept if you agree, override with your own integer -10..+10 if you disagree]"
+
     prompt_inputs = {
-        "ticker": state["ticker"], "cpi": state["cpi"], "ppi": state["ppi"],
-        "fed_rate": state["fed_rate"], "usd_index": state["usd_index"],
+        "ticker": state["ticker"],
+        "cpi": _with_hint("cpi"), "ppi": _with_hint("ppi"),
+        "fed_rate": _with_hint("fed_rate"), "usd_index": _with_hint("usd_index"),
         "pe_ratio": state["pe_ratio"], "market_cap": state["market_cap"],
         "earnings_guidance": state["earnings_guidance"], "insider_selling": state["insider_selling"],
         "sector_rally": state["sector_rally"], "technical_signal": state["technical_signal"],
         "analyst_ratings": state["analyst_ratings"], "sell_the_news": state["sell_the_news"],
         "geopolitics": state["geopolitics"], "supply_chain": state["supply_chain"],
         "news_sentiment": state["news_sentiment"], "capital_rotation": state["capital_rotation"],
-        "competitor_contagion": state["competitor_contagion"], "beta": state["beta"]
+        "competitor_contagion": state["competitor_contagion"], "beta": _with_hint("beta")
     }
     rendered_messages = scoring_prompt.format_messages(**prompt_inputs)
     scoring_response = llm.invoke(rendered_messages)
