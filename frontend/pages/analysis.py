@@ -92,6 +92,26 @@ with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
     ROBOT_IMG = f.read()
 print(f"[TIMING] After robot image load: {_time.time() - _t0:.2f}s", flush=True)
 
+def source_badge(raw_value: str) -> str:
+    """Inspect a factor's raw value string and return a tiny HTML badge
+    indicating whether the value came from a fallback source (FRED, last
+    close, computed vs SPY, etc.) instead of the primary live source."""
+    if not isinstance(raw_value, str) or not raw_value:
+        return ""
+    low = raw_value.lower()
+    if "fred" in low and "trade-weighted" in low:
+        return "<span class='src-badge src-fallback' title='Primary source rate-limited — showing FRED trade-weighted USD fallback'>🟡 FRED fallback</span>"
+    if "(last close)" in low:
+        return "<span class='src-badge src-fallback' title='Live quote unavailable — showing last close'>🟡 last close</span>"
+    if "[computed vs spy" in low:
+        return "<span class='src-badge src-fallback' title='Yahoo did not report beta — computed from 1y returns vs SPY'>🟡 computed</span>"
+    if "not reported for" in low or "not enough price history" in low:
+        return "<span class='src-badge src-missing' title='Data not reported by the source'>⚪ not reported</span>"
+    if "data unavailable" in low or "too many requests" in low or "rate limited" in low:
+        return "<span class='src-badge src-error' title='All sources failed'>🔴 unavailable</span>"
+    return ""
+
+
 def score_badge(key, scores):
     score = scores.get(key)
     if score is None:
@@ -1557,25 +1577,42 @@ if st.session_state.result:
         except Exception as e:
             st.caption(f"Causal map unavailable: {e}")
 
+    # CSS for the fallback source badges (injected once per render)
+    st.markdown("""
+    <style>
+      .src-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:10px;font-size:10px;letter-spacing:.04em;vertical-align:middle;font-weight:600;}
+      .src-fallback{background:rgba(245,165,36,.14);color:#F5A524;border:1px solid rgba(245,165,36,.25);}
+      .src-missing{background:rgba(142,154,170,.12);color:#8EA0AB;border:1px solid rgba(142,154,170,.2);}
+      .src-error{background:rgba(248,113,113,.14);color:#F87171;border:1px solid rgba(248,113,113,.3);}
+    </style>
+    """, unsafe_allow_html=True)
+
+    def _card(label, key, raw_override=None):
+        raw = raw_override if raw_override is not None else str(result.get(key, "N/A"))
+        shown = smart_truncate(raw) if raw_override is None else raw
+        badge = source_badge(raw)
+        st.markdown(
+            f"<div class='semi-card'><div class='card-key'>{label}{badge}</div>"
+            f"<div class='card-val'>{shown}</div>{score_badge(key, scores)}</div>",
+            unsafe_allow_html=True,
+        )
+
     st.markdown("<div class='sec-label'>Macroeconomic</div>", unsafe_allow_html=True)
     for label, key in [("CPI","cpi"),("PPI","ppi"),("Fed Rate","fed_rate"),("USD Index","usd_index")]:
-        st.markdown(f"<div class='semi-card'><div class='card-key'>{label}</div><div class='card-val'>{smart_truncate(result.get(key,'N/A'))}</div>{score_badge(key, scores)}</div>", unsafe_allow_html=True)
+        _card(label, key)
 
     st.markdown("<div class='sec-label'>Fundamental</div>", unsafe_allow_html=True)
     for label, key in [("P/E Ratio","pe_ratio"),("Market Cap","market_cap"),("Earnings Guidance","earnings_guidance"),("Insider Selling","insider_selling")]:
-        st.markdown(f"<div class='semi-card'><div class='card-key'>{label}</div><div class='card-val'>{smart_truncate(result.get(key,'N/A'))}</div>{score_badge(key, scores)}</div>", unsafe_allow_html=True)
+        _card(label, key)
 
     st.markdown("<div class='sec-label'>Market Intelligence</div>", unsafe_allow_html=True)
     for label, key in [("Sector Rally","sector_rally"),("Technical Signal","technical_signal"),("Analyst Ratings","analyst_ratings"),("Sell-the-News","sell_the_news")]:
-        st.markdown(f"<div class='semi-card'><div class='card-key'>{label}</div><div class='card-val'>{smart_truncate(result.get(key,'N/A'))}</div>{score_badge(key, scores)}</div>", unsafe_allow_html=True)
+        _card(label, key)
 
     st.markdown("<div class='sec-label'>External Signals</div>", unsafe_allow_html=True)
     for label, key in [("Geopolitics","geopolitics"),("Supply Chain","supply_chain"),("News Sentiment","news_sentiment"),("Capital Rotation","capital_rotation"),("Competitor Contagion","competitor_contagion"),("Beta","beta")]:
-        if key == "competitor_contagion":
-            val = str(result.get(key, "N/A"))
-        else:
-            val = smart_truncate(result.get(key, "N/A"))
-        st.markdown(f"<div class='semi-card'><div class='card-key'>{label}</div><div class='card-val'>{val}</div>{score_badge(key, scores)}</div>", unsafe_allow_html=True)
+        raw = str(result.get(key, "N/A")) if key == "competitor_contagion" else None
+        _card(label, key, raw_override=raw)
 
     st.markdown("<hr style='border-color:#3A4658;margin:24px 0'>", unsafe_allow_html=True)
     st.markdown("<div style='font-family:Inter,sans-serif;font-size:1rem;font-weight:600;color:#EDF0F5;margin-bottom:14px'>Prediction</div>", unsafe_allow_html=True)

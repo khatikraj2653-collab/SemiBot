@@ -111,6 +111,24 @@
 .cm input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;border:1px solid #14181E;background:radial-gradient(circle at 35% 28%,#E6EBF3,#8F99A8 52%,#4B525D);box-shadow:0 3px 5px rgba(0,0,0,.65),inset 0 -2px 3px rgba(0,0,0,.3);}
 .cm input[type=range]::-moz-range-track{height:9px;border-radius:99px;background:#0C1015;border:1px solid #07090C;}
 .cm input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;border:1px solid #14181E;background:radial-gradient(circle at 35% 28%,#E6EBF3,#8F99A8 52%,#4B525D);box-shadow:0 3px 5px rgba(0,0,0,.65);}
+/* mobile fallback: hide 3D causal map, show scores list */
+.cm-mobile{display:none;}
+.cm-mobile h4{margin:4px 0 10px;font-size:14px;font-weight:600;color:var(--text);letter-spacing:-0.01em;}
+.cm-mobile .mb-group{margin:14px 0 6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);}
+.cm-mobile .mb-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px;}
+.cm-mobile .mb-row:first-of-type{border-top:0;}
+.cm-mobile .mb-label{color:var(--text-2);}
+.cm-mobile .mb-score{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums;min-width:36px;text-align:right;}
+.cm-mobile .mb-score.pos{color:var(--up);} .cm-mobile .mb-score.neg{color:var(--down);} .cm-mobile .mb-score.zero{color:var(--text-3);}
+.cm-mobile .mb-prob{display:flex;align-items:baseline;gap:10px;padding:10px 12px;margin-bottom:10px;background:var(--screen);border:1px solid #07090C;border-radius:10px;box-shadow:inset 0 2px 5px rgba(0,0,0,.7);}
+.cm-mobile .mb-prob b{font-family:var(--mono);font-size:22px;color:var(--text);}
+.cm-mobile .mb-prob span{font-size:12px;color:var(--text-3);letter-spacing:.06em;text-transform:uppercase;}
+@media (max-width: 720px){
+  .cm{padding:14px;}
+  .cm-head .cm-btn, .cm-chips, .cm-body, .cm-foot{display:none !important;}
+  .cm-mobile{display:block;}
+  .cm-sub{display:none;}
+}
 </style>
 <div class="cm" id="cm">
   <div class="cm-head">
@@ -133,6 +151,7 @@
     <aside class="cm-side" id="cm-side"></aside>
   </div>
   <div class="cm-foot" id="cm-foot"></div>
+  <div class="cm-mobile" id="cm-mobile"></div>
   <div class="cm-sr" id="cm-live" aria-live="polite"></div>
 </div>
 <script>
@@ -164,6 +183,27 @@ document.getElementById('cm-title').textContent = sample ? 'Try it: interactive 
 document.getElementById('cm-foot').textContent = sample
   ? 'Illustrative scores, not a prediction for any stock. Run a real analysis to see live scores for a ticker. Node size = factor weight, colour = score, line thickness = effect on UP%.'
   : 'What-if view only: the original model scores are unchanged and nothing here is saved. Node size = factor weight, colour = score, line thickness = effect on UP%. Not financial advice.';
+
+// mobile fallback: render scores as a simple grouped list
+(function(){
+  var mb = document.getElementById('cm-mobile'); if(!mb) return;
+  var LAYER_NAME = {macro:'Macroeconomic', fund:'Fundamental', market:'Market intelligence', ext:'External signals'};
+  var probSum = 0, wSum = 0;
+  FACT.forEach(function(f){ probSum += (base[f[0]]||0) * f[3]; wSum += f[3]; });
+  var upProb = Math.max(15, Math.min(85, Math.round((probSum + 1000) / 20)));
+  var html = '<h4>' + (sample ? 'Sample scores (illustrative)' : ('Scores for ' + (D.ticker || ''))) + '</h4>';
+  html += '<div class="mb-prob"><b>' + upProb + '%</b><span>UP probability (model)</span></div>';
+  ['macro','fund','market','ext'].forEach(function(lk){
+    html += '<div class="mb-group">' + LAYER_NAME[lk] + '</div>';
+    FACT.filter(function(f){ return f[2]===lk; }).forEach(function(f){
+      var v = base[f[0]] || 0;
+      var cls = v>0 ? 'pos' : (v<0 ? 'neg' : 'zero');
+      var sign = v>0 ? '+' : (v<0 ? '−' : '');
+      html += '<div class="mb-row"><span class="mb-label">'+f[1]+'</span><span class="mb-score '+cls+'">'+sign+Math.abs(v)+'</span></div>';
+    });
+  });
+  mb.innerHTML = html;
+})();
 
 function layerOf(k){ for (var i=0;i<FACT.length;i++) if (FACT[i][0]===k) return FACT[i][2]; }
 function eff(k){ return muted[layerOf(k)] ? 0 : cur[k]; }
