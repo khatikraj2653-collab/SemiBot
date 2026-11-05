@@ -72,6 +72,10 @@ from extras import (
     render_copy_link_button,
     render_download_pdf_button,
 )
+from keyboard import bind_ctrl_enter_submit
+
+# Bind Ctrl+Enter / Cmd+Enter → click the primary Analyse button
+bind_ctrl_enter_submit()
 
 # PATH FIX 2: Go up TWO levels to find .env at project root
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), '.env'))
