@@ -165,11 +165,14 @@ CONFIDENCE: [High/Medium/Low]
 """)
 
 def _extract_number(s):
-    """Pull the first signed decimal from a factor data string, or None."""
+    """Extract the actual numeric value from a factor string. Takes the first
+    number AFTER the first colon, so labels containing numbers (e.g. '10Y',
+    '2-Year', '5-Year') don't contaminate the extraction."""
     import re
     if not isinstance(s, str):
         return None
-    m = re.search(r'-?\d+\.?\d*', s)
+    tail = s.split(":", 1)[1] if ":" in s else s
+    m = re.search(r'-?\d+\.?\d*', tail)
     if not m:
         return None
     try:
