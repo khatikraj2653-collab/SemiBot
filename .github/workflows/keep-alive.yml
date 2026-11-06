@@ -13,9 +13,13 @@ jobs:
     timeout-minutes: 3
     steps:
       - name: Ping app
+        # No -f: Streamlit's sleeping-app interstitial can send curl into a
+        # redirect loop (exit 47). We only need to generate traffic so the
+        # app stays warm — not care about the final HTTP code.
         run: |
-          curl -fsSL --max-time 60 --retry 3 --retry-delay 5 \
-            https://semibot-raj.streamlit.app/ \
+          curl -sSL --max-redirs 5 --max-time 90 \
             -A "GitHub-Actions-Keepalive" \
-            -o /dev/null
-          echo "Pinged SemiBot OK at $(date -u)"
+            -o /dev/null \
+            -w "HTTP %{http_code} · %{num_redirects} redirect(s) · %{time_total}s\n" \
+            https://semibot-raj.streamlit.app/ || true
+          echo "Ping attempt completed at $(date -u)"
