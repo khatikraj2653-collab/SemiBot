@@ -414,7 +414,10 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"], .stApp {
 }
 .stSpinner > div { color: var(--text) !important; }
 [data-testid="stStatusWidget"] { color: var(--text) !important; }
-#MainMenu, footer, header { visibility: hidden; }
+#MainMenu, footer { visibility: hidden; }
+/* display:none (not visibility:hidden) so the header does not reserve 60px
+   of dark empty space above the page's own nav. */
+header, [data-testid="stHeader"] { display: none !important; }
 [data-testid="stToolbar"] { display: none; }
 [data-testid="stDecoration"] { display: none; }
 .block-container { padding: 0 !important; padding-bottom: 72px !important; max-width: 1180px !important; margin: 0 auto !important; }

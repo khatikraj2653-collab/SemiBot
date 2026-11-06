@@ -112,7 +112,10 @@ if "visit_logged" not in st.session_state:
 # Hide ALL Streamlit chrome including sidebar and page nav
 st.markdown("""
 <style>
-#MainMenu, footer, header { visibility: hidden; }
+#MainMenu, footer { visibility: hidden; }
+/* display:none (not visibility:hidden) so the header does not reserve 60px
+   of dark empty space above the landing page's own nav. */
+header, [data-testid="stHeader"] { display: none !important; }
 [data-testid="stToolbar"] { display: none; }
 [data-testid="stDecoration"] { display: none; }
 [data-testid="stSidebar"] { display: none !important; }
