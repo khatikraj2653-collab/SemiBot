@@ -1528,20 +1528,70 @@ if analyse and ticker_input:
 
             progress_bar.empty()
 
-            # SAFETY NET: apply Python band-table overrides here in analysis.py
-            # (which we KNOW is reloading fresh — build v3 marker proves it).
-            # If generate_prediction's Option B didn't execute (e.g. because
-            # Python module import cache pinned the old nodes.py), this
-            # guarantees the UI shows real band-based scores for macros.
+            # SAFETY NET: Python band overrides for numeric macros. Inlined
+            # so stale graph.nodes import can't poison the extraction.
             try:
-                from graph.nodes import _suggest_numeric_score, HINTABLE_FACTORS
+                import re as _re_sn
                 from tools.cache_utils import _looks_like_error
+
+                def _sn_extract(s):
+                    if not isinstance(s, str):
+                        return None
+                    tail = s.split(":", 1)[1] if ":" in s else s
+                    m = _re_sn.search(r'-?\d+\.?\d*', tail)
+                    if not m:
+                        return None
+                    try:
+                        return float(m.group(0))
+                    except (ValueError, TypeError):
+                        return None
+
+                def _sn_semi_band(k, raw):
+                    v = _sn_extract(raw)
+                    if v is None:
+                        return None
+                    if k == "cpi":
+                        if v < 280: return 4
+                        if v < 300: return 2
+                        if v < 320: return 1
+                        if v < 335: return -1
+                        if v < 345: return -2
+                        if v < 360: return -3
+                        return -4
+                    if k == "ppi":
+                        if v < 270: return 2
+                        if v < 290: return 1
+                        if v < 300: return -1
+                        if v < 310: return -2
+                        return -3
+                    if k == "fed_rate":
+                        if v < 2.5: return 5
+                        if v < 3.5: return 3
+                        if v < 4.5: return 1
+                        if v < 5: return -2
+                        return -4
+                    if k == "usd_index":
+                        if v < 92: return 5
+                        if v < 97: return 3
+                        if v < 101: return 1
+                        if v < 103: return -2
+                        if v < 106: return -4
+                        return -6
+                    if k == "beta":
+                        if v < 0.8: return 2
+                        if v < 1.2: return 1
+                        if v < 1.8: return -1
+                        if v < 2.5: return -2
+                        return -3
+                    return None
+
+                _sn_keys = {"cpi", "ppi", "fed_rate", "usd_index", "beta"}
                 if isinstance(result.get("scores"), dict):
-                    for factor_key in HINTABLE_FACTORS:
+                    for factor_key in _sn_keys:
                         raw = str(result.get(factor_key, ""))
                         if _looks_like_error(raw):
                             continue
-                        suggested = _suggest_numeric_score(factor_key, raw)
+                        suggested = _sn_semi_band(factor_key, raw)
                         if suggested is not None:
                             result["scores"][factor_key] = suggested
             except Exception as _e:
