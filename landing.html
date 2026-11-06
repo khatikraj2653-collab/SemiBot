@@ -2028,11 +2028,8 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
   }
 
   function tick(now){
-    // fade trail
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(0, 0, innerWidth, innerHeight);
-
+    // Fully transparent clear so the page stays bright behind the canvas.
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
     // Additive glow for sparks
     ctx.globalCompositeOperation = 'lighter';
 
