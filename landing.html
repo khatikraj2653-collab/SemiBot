@@ -2042,13 +2042,13 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     }
     var count, speedLo, speedHi, sizeLo, sizeHi, decayLo, decayHi, flashSize;
     if (bucket === 'small'){
-      count = 35 + ((Math.random()*20)|0); speedLo=1.4; speedHi=3.6; sizeLo=1.1; sizeHi=1.9; decayLo=0.012; decayHi=0.025; flashSize=12;
+      count = 18 + ((Math.random()*10)|0); speedLo=1.4; speedHi=3.6; sizeLo=1.1; sizeHi=1.9; decayLo=0.012; decayHi=0.025; flashSize=12;
     } else if (bucket === 'medium'){
-      count = 70 + ((Math.random()*40)|0); speedLo=2.0; speedHi=5.2; sizeLo=1.4; sizeHi=2.4; decayLo=0.009; decayHi=0.018; flashSize=18;
+      count = 35 + ((Math.random()*20)|0); speedLo=2.0; speedHi=5.2; sizeLo=1.4; sizeHi=2.4; decayLo=0.009; decayHi=0.018; flashSize=18;
     } else if (bucket === 'large'){
-      count = 140 + ((Math.random()*60)|0); speedLo=2.5; speedHi=7.5; sizeLo=1.7; sizeHi=3.0; decayLo=0.007; decayHi=0.014; flashSize=28;
+      count = 70 + ((Math.random()*30)|0); speedLo=2.5; speedHi=7.5; sizeLo=1.7; sizeHi=3.0; decayLo=0.007; decayHi=0.014; flashSize=28;
     } else { // mega
-      count = 240 + ((Math.random()*120)|0); speedLo=3; speedHi=9; sizeLo=1.9; sizeHi=3.6; decayLo=0.005; decayHi=0.011; flashSize=42;
+      count = 120 + ((Math.random()*60)|0); speedLo=3; speedHi=9; sizeLo=1.9; sizeHi=3.6; decayLo=0.005; decayHi=0.011; flashSize=42;
     }
 
     // Center flash
@@ -2141,12 +2141,15 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     }
     ctx.globalAlpha = 1;
 
-    // Spawn — higher rate, with clear variety
+    // Wave scheduler — launch a cluster, wait for the BOOM to finish, then next.
     var elapsed = now - startTime;
-    if (spawning){
-      if (Math.random() < 0.14) launch();                            // regular stream
-      if (Math.random() < 0.05) { launch(); launch(); }              // paired bursts
-      if (Math.random() < 0.012) launch('mega');                     // occasional mega
+    if (spawning && !waveActive && now - lastWaveEnd >= waveGap){
+      fireWave();
+    }
+    // Wave is "done" once every rocket has exploded and most sparks have faded.
+    if (waveActive && rockets.length === 0 && sparks.length <= 20){
+      waveActive = false;
+      lastWaveEnd = now;
     }
     if (elapsed > DURATION) spawning = false;
     if (!spawning && rockets.length === 0 && sparks.length === 0){
@@ -2155,17 +2158,40 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     requestAnimationFrame(tick);
   }
 
-  // Opening sequence: small → medium → large → MEGA to show the full range
-  var opener = [
+  // Wave pattern: launch together, boom together, pause, repeat.
+  var waveActive = false;
+  var lastWaveEnd = 0;
+  var waveGap = 650;  // ms of quiet between waves
+  var waveNum = 0;
+
+  function pickWave(){
+    waveNum++;
+    var r = Math.random();
+    if (r < 0.28) return ['small', 'small'];
+    if (r < 0.55) return ['medium', 'medium'];
+    if (r < 0.78) return ['small', 'medium', 'large'];
+    if (r < 0.93) return ['medium', 'large'];
+    return ['large', 'mega'];  // rare showstopper
+  }
+
+  function fireWave(){
+    waveActive = true;
+    var sizes = pickWave();
+    sizes.forEach(function(sz, i){
+      setTimeout(function(){ launch(sz); }, i * 160);  // slight stagger so they don't all leave the same spot
+    });
+  }
+
+  // Opening showcase: small → medium → large → mega as a single opening wave,
+  // then normal wave cadence takes over.
+  waveActive = true;
+  [
     {t:0,    size:'small'},
-    {t:120,  size:'small'},
-    {t:260,  size:'medium'},
-    {t:420,  size:'medium'},
-    {t:620,  size:'large'},
-    {t:860,  size:'large'},
-    {t:1100, size:'mega'}
-  ];
-  opener.forEach(function(o){ setTimeout(function(){ launch(o.size); }, o.t); });
+    {t:220,  size:'medium'},
+    {t:460,  size:'large'},
+    {t:720,  size:'mega'}
+  ].forEach(function(o){ setTimeout(function(){ launch(o.size); }, o.t); });
+
   requestAnimationFrame(tick);
 })();
 </script>
