@@ -652,6 +652,29 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"], .stApp {
     font-size: 1rem; color: var(--text-2);
     margin-bottom: 30px; text-align: center; line-height: 1.7; max-width: 560px;
 }
+/* Robot mascot (same treatment as GoldBot/SilverBot, blue tint) */
+@keyframes bounce{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-10px) rotate(-3deg);}}
+.robot-rig{position:relative;display:inline-block;animation:bounce 3s ease-in-out infinite;margin-bottom:16px;}
+.robot-img{display:block;}
+.robot-wrap-outer{position:relative;display:inline-block;}
+.robot-wrap-outer::before{
+    content:'';position:absolute;top:50%;left:50%;
+    width:220px;height:220px;transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(91,155,255,0.55) 0%,rgba(130,170,255,0.3) 40%,rgba(160,190,255,0.1) 65%,transparent 80%);
+    border-radius:50%;z-index:-1;
+    animation:shine-pulse 3s ease-in-out infinite;
+}
+@keyframes shine-pulse{
+    0%,100%{opacity:0.6;transform:translate(-50%,-50%) scale(1);}
+    50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
+}
+.robot-wrap-outer::after{
+    content:'';position:absolute;left:50%;bottom:4px;transform:translateX(-50%);
+    width:170px;height:26px;border-radius:50%;pointer-events:none;z-index:-1;
+    background:radial-gradient(ellipse at center,rgba(91,155,255,.55) 0%,rgba(130,170,255,.25) 45%,transparent 75%);
+    animation:disc-pulse 3.2s ease-in-out infinite;
+}
+@keyframes disc-pulse{0%,100%{opacity:.55;transform:translateX(-50%) scaleX(1);}50%{opacity:.95;transform:translateX(-50%) scaleX(1.08);}}
 .quick-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
 .quick-chip {
     font-family: var(--mono);
@@ -1366,6 +1389,11 @@ if not st.session_state.result:
     st.markdown(f"""
     <div class='hero-wrap'>
         <div class='hero-badge'><span class='bdot'></span> 18-factor causal analysis</div>
+        <div class='robot-wrap-outer'>
+            <div class='robot-rig'>
+                <img class='robot-img' src='data:image/png;base64,{ROBOT_IMG}' width='180' style='border-radius:24px;filter:drop-shadow(0 0 24px rgba(91,155,255,0.5)) sepia(1) hue-rotate(195deg) saturate(2.5) brightness(1.05);'/>
+            </div>
+        </div>
         <div class='hero-greeting'>Analyse a <em>semiconductor stock</em></div>
         <div class='hero-sub'>
             An LLM scores 18 causal factors across macro, fundamentals, market signals and supply-chain risk.
