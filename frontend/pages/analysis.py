@@ -8,6 +8,7 @@ import re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 # Loader logic: full-screen overlay on FIRST visit only (hides heavy
 # cold-start imports). On subsequent reruns (button clicks, filter
@@ -1404,6 +1405,177 @@ if not st.session_state.result:
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    # Diwali fireworks — fire once per session when the empty-state hero first renders.
+    # Streamlit strips <script> from st.markdown, so we inject into the parent document
+    # from a 0-height components iframe (srcdoc, same-origin, so window.parent works).
+    if not st.session_state.get("_diwali_fx_fired"):
+        st.session_state._diwali_fx_fired = True
+        _FIREWORKS_JS = r"""
+(function(){
+  if (document.getElementById('semibot-diwali-fx-canvas')) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  function vw(){ return (window.visualViewport && window.visualViewport.width)  || document.documentElement.clientWidth  || innerWidth; }
+  function vh(){ return Math.min((window.visualViewport && window.visualViewport.height) || document.documentElement.clientHeight || innerHeight, 900); }
+  var cv = document.createElement('canvas');
+  cv.id = 'semibot-diwali-fx-canvas';
+  cv.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:2147483646;';
+  document.body.appendChild(cv);
+  var ctx = cv.getContext('2d');
+  var W = vw(), H = vh();
+  function resize(){
+    W = vw(); H = vh();
+    cv.width = W * devicePixelRatio; cv.height = H * devicePixelRatio;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  resize(); addEventListener('resize', resize);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
+
+  var COLORS = ['#FFD700','#FF4E50','#4ECDC4','#FF8C42','#E8509C','#95E1D3','#F38181','#AA96DA','#FFF1AF','#B388EB','#8FFFC2','#FF6B9D','#FFFFFF'];
+  var rockets = [], sparks = [];
+  var DURATION = 20000;
+  var startTime = performance.now();
+  var spawning = true;
+
+  function rnd(a,b){ return a + Math.random() * (b - a); }
+
+  function launch(sizeTag){
+    var x = rnd(W * 0.06, W * 0.94);
+    var targetY = rnd(H * 0.10, H * 0.55);
+    var startY = H + 10;
+    var color = COLORS[(Math.random() * COLORS.length) | 0];
+    var vy0 = -Math.sqrt(2 * 0.09 * (startY - targetY));
+    rockets.push({x:x, y:startY, vx: rnd(-0.6, 0.6), vy: vy0, color: color, trail: [], size: sizeTag || 'mix'});
+  }
+
+  function pushSpark(x, y, vx, vy, color, decay, size, opts){
+    sparks.push({
+      x:x, y:y, vx:vx, vy:vy, color:color, life: (opts && opts.life) || 1,
+      decay: decay, size: size,
+      twinkle: !opts || opts.twinkle !== false ? Math.random() < 0.4 : false,
+      gravity: (opts && opts.gravity !== undefined) ? opts.gravity : 0.07,
+      drag: (opts && opts.drag !== undefined) ? opts.drag : 0.992
+    });
+  }
+  function flash(x, y, color, size){
+    sparks.push({x:x, y:y, vx:0, vy:0, color:color, life:1, decay:0.09, size:size, flash:true});
+  }
+
+  function explode(x, y, color, sizeTag){
+    var bucket = sizeTag;
+    if (bucket === 'mix' || !bucket){
+      var r = Math.random();
+      bucket = r < 0.30 ? 'small' : r < 0.70 ? 'medium' : r < 0.93 ? 'large' : 'mega';
+    }
+    var count, speedLo, speedHi, sizeLo, sizeHi, decayLo, decayHi, flashSize;
+    if (bucket === 'small'){ count = 18 + ((Math.random()*10)|0); speedLo=1.4; speedHi=3.6; sizeLo=1.1; sizeHi=1.9; decayLo=0.012; decayHi=0.025; flashSize=12; }
+    else if (bucket === 'medium'){ count = 35 + ((Math.random()*20)|0); speedLo=2.0; speedHi=5.2; sizeLo=1.4; sizeHi=2.4; decayLo=0.009; decayHi=0.018; flashSize=18; }
+    else if (bucket === 'large'){ count = 70 + ((Math.random()*30)|0); speedLo=2.5; speedHi=7.5; sizeLo=1.7; sizeHi=3.0; decayLo=0.007; decayHi=0.014; flashSize=28; }
+    else { count = 120 + ((Math.random()*60)|0); speedLo=3; speedHi=9; sizeLo=1.9; sizeHi=3.6; decayLo=0.005; decayHi=0.011; flashSize=42; }
+
+    flash(x, y, '#FFFFFF', flashSize);
+    var pattern = Math.random();
+    for (var i = 0; i < count; i++){
+      var angle = (Math.PI * 2 * i / count) + rnd(-0.04, 0.04);
+      var speed, c;
+      if (pattern < 0.25) speed = (speedLo + speedHi) * 0.5 + rnd(-0.3, 0.3);
+      else if (pattern < 0.55) speed = rnd(speedLo, speedHi);
+      else if (pattern < 0.80) speed = rnd(speedLo, speedHi);
+      else speed = rnd(speedLo * 0.6, speedHi * 0.8);
+      c = Math.random() < 0.18 ? COLORS[(Math.random() * COLORS.length) | 0] : color;
+      var vx = Math.cos(angle) * speed, vy = Math.sin(angle) * speed;
+      var opts = {};
+      if (pattern >= 0.80) { opts.gravity = 0.12; opts.drag = 0.985; }
+      pushSpark(x, y, vx, vy, c, rnd(decayLo, decayHi), rnd(sizeLo, sizeHi), opts);
+    }
+    if (bucket === 'mega'){
+      setTimeout(function(){
+        if (!document.body.contains(cv)) return;
+        var sc = Math.random() < 0.5 ? COLORS[(Math.random()*COLORS.length)|0] : color;
+        var scount = 60 + ((Math.random()*40)|0);
+        for (var k = 0; k < scount; k++){
+          var a = (Math.PI * 2 * k / scount);
+          var sp = rnd(1.5, 3.5);
+          pushSpark(x + rnd(-40, 40), y + rnd(-40, 40), Math.cos(a)*sp, Math.sin(a)*sp, sc, rnd(0.012, 0.022), rnd(1.3, 2.2), {});
+        }
+        flash(x, y, sc, 20);
+      }, 350 + Math.random() * 250);
+    }
+  }
+
+  var waveActive = false, lastWaveEnd = 0, waveGap = 650;
+  function pickWave(){
+    var r = Math.random();
+    if (r < 0.28) return ['small', 'small'];
+    if (r < 0.55) return ['medium', 'medium'];
+    if (r < 0.78) return ['small', 'medium', 'large'];
+    if (r < 0.93) return ['medium', 'large'];
+    return ['large', 'mega'];
+  }
+  function fireWave(){
+    waveActive = true;
+    var sizes = pickWave();
+    sizes.forEach(function(sz, i){ setTimeout(function(){ launch(sz); }, i * 160); });
+  }
+
+  function tick(now){
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (var i = rockets.length - 1; i >= 0; i--){
+      var r = rockets[i];
+      r.trail.push({x: r.x, y: r.y});
+      if (r.trail.length > 10) r.trail.shift();
+      r.x += r.vx; r.y += r.vy; r.vy += 0.09;
+      for (var t = 0; t < r.trail.length; t++){
+        var tp = r.trail[t], a = (t + 1) / r.trail.length;
+        ctx.beginPath(); ctx.arc(tp.x, tp.y, 2.0 * a, 0, Math.PI*2);
+        ctx.fillStyle = r.color; ctx.globalAlpha = a * 0.75; ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.arc(r.x, r.y, 3.0, 0, Math.PI*2);
+      ctx.fillStyle = '#FFFFFF'; ctx.fill();
+      if (r.vy >= -0.5){ explode(r.x, r.y, r.color, r.size); rockets.splice(i, 1); }
+    }
+
+    for (var j = sparks.length - 1; j >= 0; j--){
+      var p = sparks[j];
+      if (p.flash){
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI*2);
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.life * 0.65; ctx.fill();
+      } else {
+        p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.vx *= p.drag; p.vy *= p.drag;
+        var size = p.size;
+        if (p.twinkle) size *= (0.5 + Math.abs(Math.sin(now * 0.025 + j)) * 0.7);
+        ctx.beginPath(); ctx.arc(p.x, p.y, size, 0, Math.PI*2);
+        ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(0, p.life); ctx.fill();
+      }
+      p.life -= p.decay;
+      if (p.life <= 0) sparks.splice(j, 1);
+    }
+    ctx.globalAlpha = 1;
+
+    var elapsed = now - startTime;
+    if (spawning && !waveActive && now - lastWaveEnd >= waveGap) fireWave();
+    if (waveActive && rockets.length === 0 && sparks.length <= 20){ waveActive = false; lastWaveEnd = now; }
+    if (elapsed > DURATION) spawning = false;
+    if (!spawning && rockets.length === 0 && sparks.length === 0){ cv.remove(); return; }
+    requestAnimationFrame(tick);
+  }
+
+  waveActive = true;
+  [{t:0, size:'small'}, {t:220, size:'medium'}, {t:460, size:'large'}, {t:720, size:'mega'}]
+    .forEach(function(o){ setTimeout(function(){ launch(o.size); }, o.t); });
+  requestAnimationFrame(tick);
+})();
+"""
+        _inject = (
+            "<script>(function(){try{var p=window.parent;if(!p||p===window)return;var d=p.document;if(d.getElementById('semibot-diwali-fx-script'))return;var s=d.createElement('script');s.id='semibot-diwali-fx-script';s.textContent="
+            + json.dumps(_FIREWORKS_JS)
+            + ";d.body.appendChild(s);}catch(e){console.warn('diwali-fx inject blocked:',e);}})();</script>"
+        )
+        components.html(_inject, height=0)
 
     print(f"[TIMING] Before search bar: {_time.time() - _t0:.2f}s", flush=True)
     col_l, col_m, col_r = st.columns([1, 4, 1])
