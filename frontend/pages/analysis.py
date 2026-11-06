@@ -679,6 +679,47 @@ header, [data-testid="stHeader"] { display: none !important; }
     animation:disc-pulse 3.2s ease-in-out infinite;
 }
 @keyframes disc-pulse{0%,100%{opacity:.55;transform:translateX(-50%) scaleX(1);}50%{opacity:.95;transform:translateX(-50%) scaleX(1.08);}}
+/* Speech bubbles cycling next to the robot */
+.robot-cloud{
+    position:absolute;top:-10px;right:-200px;
+    background:rgba(15,25,40,0.95);border:1px solid rgba(91,155,255,0.45);
+    border-radius:50px;padding:10px 20px;font-size:13px;font-weight:600;
+    color:#E4ECF8;white-space:nowrap;opacity:0;
+    animation:semi-cloud-cycle 45s ease-in-out infinite;
+    box-shadow:0 4px 18px rgba(0,0,0,0.35),0 0 20px rgba(91,155,255,0.12);
+}
+.robot-cloud::before{
+    content:'';position:absolute;width:14px;height:14px;border-radius:50%;
+    background:rgba(15,25,40,0.95);border:1px solid rgba(91,155,255,0.45);
+    left:10px;bottom:-18px;
+}
+.robot-cloud::after{
+    content:'';position:absolute;width:7px;height:7px;border-radius:50%;
+    background:rgba(15,25,40,0.95);border:1px solid rgba(91,155,255,0.45);
+    left:0px;bottom:-28px;
+}
+.robot-cloud:nth-child(1){animation-delay:0s;}
+.robot-cloud:nth-child(2){animation-delay:3s;}
+.robot-cloud:nth-child(3){animation-delay:6s;}
+.robot-cloud:nth-child(4){animation-delay:9s;}
+.robot-cloud:nth-child(5){animation-delay:12s;}
+.robot-cloud:nth-child(6){animation-delay:15s;}
+.robot-cloud:nth-child(7){animation-delay:18s;}
+.robot-cloud:nth-child(8){animation-delay:21s;}
+.robot-cloud:nth-child(9){animation-delay:24s;}
+.robot-cloud:nth-child(10){animation-delay:27s;}
+.robot-cloud:nth-child(11){animation-delay:30s;}
+.robot-cloud:nth-child(12){animation-delay:33s;}
+.robot-cloud:nth-child(13){animation-delay:36s;}
+.robot-cloud:nth-child(14){animation-delay:39s;}
+.robot-cloud:nth-child(15){animation-delay:42s;}
+@keyframes semi-cloud-cycle{
+    0%{opacity:0;transform:translateY(6px);}
+    3%{opacity:1;transform:translateY(0);}
+    9%{opacity:1;transform:translateY(0);}
+    12%{opacity:0;transform:translateY(-6px);}
+    100%{opacity:0;}
+}
 .quick-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
 .quick-chip {
     font-family: var(--mono);
@@ -1397,6 +1438,21 @@ if not st.session_state.result:
             <div class='robot-rig'>
                 <img class='robot-img' src='data:image/png;base64,{ROBOT_IMG}' width='180' style='border-radius:24px;filter:drop-shadow(0 0 24px rgba(91,155,255,0.5)) sepia(1) hue-rotate(195deg) saturate(2.5) brightness(1.05);'/>
             </div>
+            <div class='robot-cloud'>18 causal factors tracked ⚡</div>
+            <div class='robot-cloud'>Ask me anything 👋</div>
+            <div class='robot-cloud'>RAG-grounded analysis 📚</div>
+            <div class='robot-cloud'>No hallucination 🎯</div>
+            <div class='robot-cloud'>Real yields monitored 📉</div>
+            <div class='robot-cloud'>USD Index live 💵</div>
+            <div class='robot-cloud'>VIX tracked 😨</div>
+            <div class='robot-cloud'>Fed policy watched 🏦</div>
+            <div class='robot-cloud'>Fab capacity signals 🏭</div>
+            <div class='robot-cloud'>CoWoS supply flagged ⚙️</div>
+            <div class='robot-cloud'>HBM shortage tracked 🔥</div>
+            <div class='robot-cloud'>Export controls live 🌏</div>
+            <div class='robot-cloud'>Deterministic UP/DOWN ⚖️</div>
+            <div class='robot-cloud'>48 tickers backtested 📈</div>
+            <div class='robot-cloud'>SemiBot for chips 💎</div>
         </div>
         <div class='hero-greeting'>Analyse a <em>semiconductor stock</em></div>
         <div class='hero-sub'>
