@@ -336,22 +336,17 @@ def generate_prediction(state: SemiconductorState) -> dict:
             if _looks_like_error(state.get(factor_key, "")):
                 scores[factor_key] = 0
 
-    # OPTION B v3 — DIAGNOSTIC: force visually-distinctive sentinels for
-    # numeric factors. If UI shows CPI=-7, PPI=-7, Fed=-7, USD=-7, we KNOW
-    # this code is running and any further macro bug is downstream; if UI
-    # still shows 0, we KNOW the new nodes.py is not being executed (e.g.
-    # Streamlit Cloud serving stale deploy or module import cache).
-    print(f"[OPTION-B v3] running. HINTABLE_FACTORS={HINTABLE_FACTORS}", flush=True)
+    # Option B: Python owns numeric-factor scores via band tables. Text-heavy
+    # factors stay fully LLM-scored. Note: the real enforcement happens via
+    # an inlined safety net in frontend/pages/analysis.py — this block is a
+    # defense-in-depth copy in case the graph node runs with fresh code.
     for factor_key in HINTABLE_FACTORS:
         raw = str(state.get(factor_key, ""))
-        print(f"[OPTION-B v3] {factor_key}: raw={raw[:80]!r} is_error={_looks_like_error(raw)}", flush=True)
         if _looks_like_error(raw):
             continue
         python_score = _suggest_numeric_score(factor_key, raw)
-        print(f"[OPTION-B v3] {factor_key}: band_suggested={python_score}", flush=True)
         if python_score is not None:
             scores[factor_key] = python_score
-    print(f"[OPTION-B v3] final scores: cpi={scores.get('cpi')} ppi={scores.get('ppi')} fed_rate={scores.get('fed_rate')} usd_index={scores.get('usd_index')} beta={scores.get('beta')}", flush=True)
 
     up_prob, down_prob = calculate_probability(scores)
 

@@ -1430,7 +1430,7 @@ else:
         st.markdown(f"""
         <div style='padding:24px 32px 0'>
             <div style='font-family:Inter,sans-serif;font-size:1.3rem;font-weight:700;color:#EDF0F5;margin-bottom:4px'>
-                Factor Analysis <span class='ticker-chip'>{st.session_state.ticker}</span> <span style='font-size:0.65rem;color:#F5A524'>build v3</span>
+                Factor Analysis <span class='ticker-chip'>{st.session_state.ticker}</span>
             </div>
             <div style='font-size:0.75rem;color:#A4AFC0'>18-Factor Agentic RAG - Real-time APIs - University of Warwick</div>
         </div>
