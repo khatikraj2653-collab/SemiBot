@@ -2161,12 +2161,14 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     }
     ctx.globalAlpha = 1;
 
-    // Wave scheduler — launch a cluster, wait for the BOOM to finish, then next.
+    // Wave scheduler — launch a cluster, wait briefly for next; waves may
+    // overlap so the sky stays dense across the whole page.
     if (spawning && !waveActive && now - lastWaveEnd >= waveGap){
       fireWave();
     }
-    // Wave is "done" once every rocket has exploded and most sparks have faded.
-    if (waveActive && rockets.length === 0 && sparks.length <= 20){
+    // A wave is "done" as soon as its rockets have exploded — don't wait for
+    // every spark to fade, so the next cluster can start right away.
+    if (waveActive && rockets.length === 0){
       waveActive = false;
       lastWaveEnd = now;
     }
@@ -2174,26 +2176,28 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
   }
 
   // Wave pattern: launch together, boom together, short pause, repeat — forever.
+  // Canvas spans the whole document (~5900px), so each wave now carries more
+  // rockets per cluster — otherwise sparse bursts spread thin across the page.
   var waveActive = false;
   var lastWaveEnd = 0;
-  var waveGap = 350;  // tight gap keeps the sky active without overlap
+  var waveGap = 150;  // very short gap: waves land back-to-back so the sky is busy
   var waveNum = 0;
 
   function pickWave(){
     waveNum++;
     var r = Math.random();
-    if (r < 0.28) return ['small', 'small'];
-    if (r < 0.55) return ['medium', 'medium'];
-    if (r < 0.78) return ['small', 'medium', 'large'];
-    if (r < 0.93) return ['medium', 'large'];
-    return ['large', 'mega'];  // rare showstopper
+    if (r < 0.22) return ['small', 'small', 'small', 'medium'];
+    if (r < 0.48) return ['medium', 'medium', 'small', 'medium'];
+    if (r < 0.72) return ['small', 'medium', 'large', 'small', 'medium'];
+    if (r < 0.90) return ['medium', 'large', 'medium', 'large'];
+    return ['large', 'mega', 'medium', 'large'];  // showstopper
   }
 
   function fireWave(){
     waveActive = true;
     var sizes = pickWave();
     sizes.forEach(function(sz, i){
-      setTimeout(function(){ launch(sz); }, i * 160);  // slight stagger so they don't all leave the same spot
+      setTimeout(function(){ launch(sz); }, i * 110);  // tighter stagger: rockets leave faster
     });
   }
 
