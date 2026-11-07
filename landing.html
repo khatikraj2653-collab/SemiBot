@@ -1976,28 +1976,40 @@ if(chatHint){hintT.push(setTimeout(()=>chatHint.classList.add('is-visible'),1500
 window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":".sk-chip","hubs":[{"id":"orch","label":"Orchestration","desc":"LangGraph runs four parallel subgraphs covering 18 factors, then one synthesis step."},{"id":"mem","label":"Retrieval & memory","desc":"FAISS retrieval (RAG) with HuggingFace embeddings, short- and long-term memory, and SQLite for state."},{"id":"data","label":"Data sources","desc":"Macro, market and filing data from FRED, yfinance and SEC filings, plus news and web search."},{"id":"llm","label":"LLM","desc":"GPT-4o-mini synthesises all 18 factors into one prediction with per-factor attribution."},{"id":"eval","label":"Evaluation","desc":"Backtested on 426 observations across 48 tickers; accuracy rises with market cap, confirmed by logistic regression."},{"id":"ui","label":"Interface","desc":"A Streamlit app plus this HTML, CSS and JavaScript landing page with WebGL scenes."},{"id":"deploy","label":"Deployment","desc":"Hosted on Streamlit Community Cloud, with the source on GitHub."}],"links":{"LangGraph":["orch"],"LangChain":["orch","llm"],"Agentic AI":["orch"],"GenAI":["llm"],"RAG":["mem"],"FAISS":["mem"],"Prompt Engineering":["llm"],"OpenAI GPT-4o-mini":["llm"],"HuggingFace Embeddings":["mem"],"MCP (Model Context Protocol)":["data"],"Tavily Search":["data"],"Short-Term Memory":["mem"],"Long-Term Memory":["mem"],"Python":["orch","data","eval","ui"],"Streamlit":["ui"],"SQLite":["mem"],"FRED API":["data"],"yfinance":["data"],"SEC Filings Data":["data"],"DuckDuckGo Search":["data"],"GDELT":["data"],"Backtesting":["eval"],"Logistic Regression":["eval"],"McNemar's Test":["eval"],"Statistical Testing":["eval"],"Dual-Regime Modeling":["orch","eval"],"HTML / CSS / JS":["ui"],"three.js / WebGL":["ui"],"Streamlit Community Cloud":["deploy"],"Git / GitHub":["deploy"]},"colors":{"bg":"#262F3E","ink":"#EDF0F5","muted":"#9AA6B8","line":"#5A6A82","hub":"#8BB8FF","skill":"#FBBF24","hi":"#FBBF24"},"fonts":{"hub":"Inter, sans-serif","skill":"'JetBrains Mono', monospace"},"seed":5});
 </script>
 
-<!-- Diwali fireworks: endless, waves across the whole viewport -->
+<!-- Diwali fireworks: endless, scattered across the full landing page -->
 <script id="diwali-fx">
 (function(){
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  // Visible viewport — honours iframe embedding (visualViewport works inside the
-  // Streamlit components iframe; without it innerHeight returns full document
-  // height and rockets launch far below the user's window).
-  function vw(){ return (window.visualViewport && window.visualViewport.width)  || document.documentElement.clientWidth  || innerWidth; }
-  function vh(){ return Math.min((window.visualViewport && window.visualViewport.height) || document.documentElement.clientHeight || innerHeight, 900); }
+  // The landing is embedded as a fixed-height Streamlit components iframe, so
+  // position:fixed pins to the top of that iframe (the hero) and bursts never
+  // appear on the lower sections. Instead, lay the canvas across the WHOLE
+  // document, so sparks land on every section as the user scrolls past.
+  function vw(){ return document.documentElement.clientWidth || innerWidth; }
+  function docH(){
+    var d = document;
+    return Math.max(
+      d.body ? d.body.scrollHeight : 0,
+      d.body ? d.body.offsetHeight : 0,
+      d.documentElement ? d.documentElement.clientHeight : 0,
+      d.documentElement ? d.documentElement.scrollHeight : 0,
+      d.documentElement ? d.documentElement.offsetHeight : 0
+    );
+  }
   var cv = document.createElement('canvas');
-  cv.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:2147483646;';
+  cv.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:2147483646;';
   (document.body || document.documentElement).appendChild(cv);
   var ctx = cv.getContext('2d');
-  var W = vw(), H = vh();
+  var W = vw(), H = docH();
   function resize(){
-    W = vw(); H = vh();
+    W = vw(); H = docH();
     cv.width = W * devicePixelRatio; cv.height = H * devicePixelRatio;
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
   }
   resize(); addEventListener('resize', resize);
   if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
+  // Document height can grow as images/web-fonts load; re-measure periodically.
+  setInterval(function(){ if (Math.abs(docH() - H) > 20) resize(); }, 1500);
 
   var COLORS = ['#FFD700','#FF4E50','#4ECDC4','#FF8C42','#E8509C','#95E1D3','#F38181','#AA96DA','#FFF1AF','#B388EB','#8FFFC2','#FF6B9D','#FFFFFF'];
   var rockets = [], sparks = [];
@@ -2012,11 +2024,13 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
 
   function launch(sizeTag){
     var x = rnd(W * 0.04, W * 0.96);
-    // Cover the whole viewport, not just the upper band — bursts land anywhere
-    // from near the top to roughly three quarters down, so they fill the page
-    // as the user scrolls.
-    var targetY = rnd(H * 0.08, H * 0.78);
-    var startY = H + 10;
+    // Scatter bursts across the WHOLE document height — hero, factors,
+    // playground, framework, architecture, skills, tickers, footer — so the
+    // page feels festive wherever the user is reading.
+    var targetY = rnd(40, Math.max(200, H - 80));
+    // Launch each rocket from ~180-320px below its burst point so the trail
+    // is visible on the viewport the user is currently looking at.
+    var startY = targetY + rnd(180, 320);
     var color = COLORS[(Math.random() * COLORS.length) | 0];
     var vy0 = -Math.sqrt(2 * 0.09 * (startY - targetY));
     rockets.push({x:x, y:startY, vx: rnd(-0.6, 0.6), vy: vy0, color: color, trail: [], size: sizeTag || 'mix'});
