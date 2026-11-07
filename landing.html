@@ -1976,7 +1976,7 @@ if(chatHint){hintT.push(setTimeout(()=>chatHint.classList.add('is-visible'),1500
 window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":".sk-chip","hubs":[{"id":"orch","label":"Orchestration","desc":"LangGraph runs four parallel subgraphs covering 18 factors, then one synthesis step."},{"id":"mem","label":"Retrieval & memory","desc":"FAISS retrieval (RAG) with HuggingFace embeddings, short- and long-term memory, and SQLite for state."},{"id":"data","label":"Data sources","desc":"Macro, market and filing data from FRED, yfinance and SEC filings, plus news and web search."},{"id":"llm","label":"LLM","desc":"GPT-4o-mini synthesises all 18 factors into one prediction with per-factor attribution."},{"id":"eval","label":"Evaluation","desc":"Backtested on 426 observations across 48 tickers; accuracy rises with market cap, confirmed by logistic regression."},{"id":"ui","label":"Interface","desc":"A Streamlit app plus this HTML, CSS and JavaScript landing page with WebGL scenes."},{"id":"deploy","label":"Deployment","desc":"Hosted on Streamlit Community Cloud, with the source on GitHub."}],"links":{"LangGraph":["orch"],"LangChain":["orch","llm"],"Agentic AI":["orch"],"GenAI":["llm"],"RAG":["mem"],"FAISS":["mem"],"Prompt Engineering":["llm"],"OpenAI GPT-4o-mini":["llm"],"HuggingFace Embeddings":["mem"],"MCP (Model Context Protocol)":["data"],"Tavily Search":["data"],"Short-Term Memory":["mem"],"Long-Term Memory":["mem"],"Python":["orch","data","eval","ui"],"Streamlit":["ui"],"SQLite":["mem"],"FRED API":["data"],"yfinance":["data"],"SEC Filings Data":["data"],"DuckDuckGo Search":["data"],"GDELT":["data"],"Backtesting":["eval"],"Logistic Regression":["eval"],"McNemar's Test":["eval"],"Statistical Testing":["eval"],"Dual-Regime Modeling":["orch","eval"],"HTML / CSS / JS":["ui"],"three.js / WebGL":["ui"],"Streamlit Community Cloud":["deploy"],"Git / GitHub":["deploy"]},"colors":{"bg":"#262F3E","ink":"#EDF0F5","muted":"#9AA6B8","line":"#5A6A82","hub":"#8BB8FF","skill":"#FBBF24","hi":"#FBBF24"},"fonts":{"hub":"Inter, sans-serif","skill":"'JetBrains Mono', monospace"},"seed":5});
 </script>
 
-<!-- Diwali fireworks: 20s continuous burst on page load, size variety -->
+<!-- Diwali fireworks: endless, waves across the whole viewport -->
 <script id="diwali-fx">
 (function(){
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -2001,15 +2001,21 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
 
   var COLORS = ['#FFD700','#FF4E50','#4ECDC4','#FF8C42','#E8509C','#95E1D3','#F38181','#AA96DA','#FFF1AF','#B388EB','#8FFFC2','#FF6B9D','#FFFFFF'];
   var rockets = [], sparks = [];
-  var DURATION = 20000;
   var startTime = performance.now();
   var spawning = true;
+  // Pause fireworks when the tab is hidden to save CPU; resume when visible again.
+  document.addEventListener('visibilitychange', function(){
+    spawning = !document.hidden;
+  });
 
   function rnd(a,b){ return a + Math.random() * (b - a); }
 
   function launch(sizeTag){
-    var x = rnd(W * 0.06, W * 0.94);
-    var targetY = rnd(H * 0.10, H * 0.55);
+    var x = rnd(W * 0.04, W * 0.96);
+    // Cover the whole viewport, not just the upper band — bursts land anywhere
+    // from near the top to roughly three quarters down, so they fill the page
+    // as the user scrolls.
+    var targetY = rnd(H * 0.08, H * 0.78);
     var startY = H + 10;
     var color = COLORS[(Math.random() * COLORS.length) | 0];
     var vy0 = -Math.sqrt(2 * 0.09 * (startY - targetY));
@@ -2142,7 +2148,6 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     ctx.globalAlpha = 1;
 
     // Wave scheduler — launch a cluster, wait for the BOOM to finish, then next.
-    var elapsed = now - startTime;
     if (spawning && !waveActive && now - lastWaveEnd >= waveGap){
       fireWave();
     }
@@ -2151,17 +2156,13 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
       waveActive = false;
       lastWaveEnd = now;
     }
-    if (elapsed > DURATION) spawning = false;
-    if (!spawning && rockets.length === 0 && sparks.length === 0){
-      cv.remove(); return;
-    }
     requestAnimationFrame(tick);
   }
 
-  // Wave pattern: launch together, boom together, pause, repeat.
+  // Wave pattern: launch together, boom together, short pause, repeat — forever.
   var waveActive = false;
   var lastWaveEnd = 0;
-  var waveGap = 650;  // ms of quiet between waves
+  var waveGap = 350;  // tight gap keeps the sky active without overlap
   var waveNum = 0;
 
   function pickWave(){
