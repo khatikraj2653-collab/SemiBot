@@ -720,6 +720,26 @@ header, [data-testid="stHeader"] { display: none !important; }
     12%{opacity:0;transform:translateY(-6px);}
     100%{opacity:0;}
 }
+/* Thinking state when Analyse is clicked */
+.robot-rig.thinking{animation:robot-tilt 1.5s ease-in-out infinite !important;}
+@keyframes robot-tilt{
+    0%,100%{transform:translateY(-3px) rotate(-6deg);}
+    50%{transform:translateY(-6px) rotate(6deg);}
+}
+.thinking-bubble{position:absolute;top:-32px;left:50%;transform:translateX(-50%);display:none;gap:7px;z-index:4;pointer-events:none;}
+.robot-rig.thinking .thinking-bubble{display:flex;}
+.thinking-bubble span{
+    width:10px;height:10px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#BFD4FF,#5B9BFF);
+    box-shadow:0 0 10px rgba(91,155,255,0.8);
+    opacity:0.35;animation:thinking-dot 1.3s ease-in-out infinite;
+}
+.thinking-bubble span:nth-child(2){animation-delay:0.18s;}
+.thinking-bubble span:nth-child(3){animation-delay:0.36s;}
+@keyframes thinking-dot{
+    0%,100%{opacity:0.3;transform:scale(0.8);}
+    50%{opacity:1;transform:scale(1.15);}
+}
 .quick-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
 .quick-chip {
     font-family: var(--mono);
@@ -1430,6 +1450,10 @@ SemiBot v1.0 | University of Warwick | MSc Applied AI | ACM FinNLP
         render_ticker_tape()
         st.stop()
 
+# Celebration confetti — fires once after a fresh analysis sets the result.
+if st.session_state.pop("_celebrate", False):
+    components.html("""<script>(function(){try{var p=window.parent;if(!p||p===window)return;var d=p.document;var w=p.window;if(d.getElementById('celebrate-fx'))return;var cv=d.createElement('canvas');cv.id='celebrate-fx';cv.style.cssText='position:fixed;top:0;left:0;pointer-events:none;z-index:2147483645;';d.body.appendChild(cv);var ctx=cv.getContext('2d');var W=w.innerWidth,H=Math.min(w.innerHeight,900);cv.width=W*devicePixelRatio;cv.height=H*devicePixelRatio;cv.style.width=W+'px';cv.style.height=H+'px';ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);var CL=['#5B9BFF','#A78BFA','#34D399','#FBBF24','#8BB8FF','#BFD4FF','#FFFFFF'];var ps=[];for(var i=0;i<140;i++){ps.push({x:W/2+(Math.random()-0.5)*160,y:H*0.25+(Math.random()-0.5)*80,vx:(Math.random()-0.5)*9,vy:-4-Math.random()*8,r:3+Math.random()*4,rot:Math.random()*6.28,vr:(Math.random()-0.5)*0.3,c:CL[(Math.random()*CL.length)|0],life:1,decay:0.004+Math.random()*0.006,shape:Math.random()<0.5?'r':'s'});}var t0=performance.now();function tick(now){ctx.clearRect(0,0,W,H);var alive=0;for(var i=0;i<ps.length;i++){var p=ps[i];if(p.life<=0)continue;alive++;p.x+=p.vx;p.y+=p.vy;p.vy+=0.25;p.vx*=0.995;p.rot+=p.vr;p.life-=p.decay;ctx.save();ctx.globalAlpha=Math.max(0,p.life);ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;if(p.shape==='r'){ctx.fillRect(-p.r,-p.r*0.5,p.r*2,p.r);}else{ctx.beginPath();ctx.arc(0,0,p.r*0.7,0,Math.PI*2);ctx.fill();}ctx.restore();}if(alive===0||now-t0>3500){cv.remove();return;}requestAnimationFrame(tick);}requestAnimationFrame(tick);}catch(e){}})();</script>""", height=0)
+
 if not st.session_state.result:
     st.markdown(f"""
     <div class='hero-wrap'>
@@ -1437,6 +1461,7 @@ if not st.session_state.result:
         <div class='robot-wrap-outer'>
             <div class='robot-rig'>
                 <img class='robot-img' src='data:image/png;base64,{ROBOT_IMG}' width='180' style='border-radius:24px;filter:drop-shadow(0 0 24px rgba(91,155,255,0.5)) sepia(1) hue-rotate(195deg) saturate(2.5) brightness(1.05);'/>
+                <div class='thinking-bubble'><span></span><span></span><span></span></div>
             </div>
             <div class='robot-cloud'>18 causal factors tracked ⚡</div>
             <div class='robot-cloud'>Ask me anything 👋</div>
@@ -1661,6 +1686,10 @@ if not st.session_state.result:
             render_ticker_logo(ticker_input, size=52)
         analyse = st.button("Analyse ->", use_container_width=True, type="primary")
 
+        # Robot state hook — tilts robot + shows thinking dots the moment "Analyse"
+        # is clicked (JS injected into parent doc via components.html).
+        components.html("""<script>(function(){try{var p=window.parent;if(!p||p===window)return;var d=p.document;if(d.getElementById('robot-state-hook'))return;var s=d.createElement('script');s.id='robot-state-hook';s.textContent="(function(){function hook(){var bs=document.querySelectorAll('button');for(var i=0;i<bs.length;i++){var b=bs[i];if(b.dataset.rsh)continue;var t=b.textContent||'';if(/Analyse|Analyze|Run Analysis/i.test(t)){b.dataset.rsh='1';b.addEventListener('click',function(){var r=document.querySelector('.robot-rig');if(r)r.classList.add('thinking');});}}}hook();var mo=new MutationObserver(hook);mo.observe(document.body,{childList:true,subtree:true});})();";d.body.appendChild(s);}catch(e){}})();</script>""", height=0)
+
         # "Try sample" quick-start chips so first-time visitors can see a
         # working analysis in one click instead of needing to pick a ticker.
         st.markdown(
@@ -1859,6 +1888,7 @@ if analyse and ticker_input:
             st.session_state.result = result
             st.session_state.ticker = final_ticker
             st.session_state.followup_history = []
+            st.session_state._celebrate = True  # fire confetti on next render
 
             pred_text = result.get("prediction", "")
             up_prob_hist = "50%"
