@@ -2026,11 +2026,23 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     var x = rnd(W * 0.04, W * 0.96);
     // Scatter bursts across the WHOLE document height — hero, factors,
     // playground, framework, architecture, skills, tickers, footer — so the
-    // page feels festive wherever the user is reading.
-    var targetY = rnd(40, Math.max(200, H - 80));
-    // Launch each rocket from ~180-320px below its burst point so the trail
-    // is visible on the viewport the user is currently looking at.
-    var startY = targetY + rnd(180, 320);
+    // page feels festive wherever the user is reading. Give the top band
+    // (where the fixed nav + ticker strip live) an explicit share so bursts
+    // visibly happen around the ticker tape too.
+    var targetY;
+    var r = Math.random();
+    if (r < 0.25){
+      // Top band — nav + ticker strip + hero top. Burst low enough that the
+      // spray fans out above the content line, not the nav itself.
+      targetY = rnd(120, 260);
+    } else {
+      targetY = rnd(260, Math.max(400, H - 80));
+    }
+    // Launch each rocket from a shorter distance for top bursts (so the
+    // rocket doesn't start under the nav where it would be clipped), and
+    // a bigger distance for mid/lower bursts.
+    var trailDist = targetY < 300 ? rnd(80, 150) : rnd(180, 320);
+    var startY = targetY + trailDist;
     var color = COLORS[(Math.random() * COLORS.length) | 0];
     var vy0 = -Math.sqrt(2 * 0.09 * (startY - targetY));
     rockets.push({x:x, y:startY, vx: rnd(-0.6, 0.6), vy: vy0, color: color, trail: [], size: sizeTag || 'mix'});
