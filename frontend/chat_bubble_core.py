@@ -44,7 +44,7 @@ class BubbleConfig:
     system_prompt: str
     pre_message: Optional[Callable[[], str]] = None
     system_prompt_fn: Optional[Callable[[], Optional[str]]] = None
-    model: str = "gpt-4o-mini"
+    model: str = "gpt-6-luna"
 
 
 def _build_css(t: BubbleTheme) -> str:
@@ -166,7 +166,7 @@ def _build_css(t: BubbleTheme) -> str:
 
 
 def _get_llm(model: str):
-    return ChatOpenAI(model=model, api_key=os.getenv("OPENAI_API_KEY"), temperature=0)
+    return ChatOpenAI(model=model, api_key=os.getenv("OPENAI_API_KEY"), temperature=0, reasoning_effort="none")
 
 
 def render_bubble(cfg: BubbleConfig):
