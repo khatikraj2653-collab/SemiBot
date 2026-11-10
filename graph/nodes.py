@@ -13,18 +13,20 @@ from tools.market_tools import get_sector_rally, get_technical_signal, get_analy
 from tools.external_tools import get_geopolitics, get_news_sentiment, get_capital_rotation, get_competitor_contagion, get_beta, get_supply_chain
 
 llm = ChatOpenAI(
-    model="gpt-4o",
+    model="gpt-6-luna",
     api_key=os.getenv("OPENAI_API_KEY"),
-    temperature=0
+    temperature=0,
+    reasoning_effort="none"
 )
 
 # A second instance with higher temperature, used for retry calls only —
 # gpt-4o at temp=0 anchors hard on 0 for "near-mean" numeric factors; a
 # small temperature kick helps it break out of that pattern on retry.
 llm_retry = ChatOpenAI(
-    model="gpt-4o",
+    model="gpt-6-luna",
     api_key=os.getenv("OPENAI_API_KEY"),
-    temperature=0.4
+    temperature=0.4,
+    reasoning_effort="none"
 )
 
 

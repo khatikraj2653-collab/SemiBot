@@ -172,10 +172,17 @@ def parse_result(result: dict):
 
 import sqlite3
 import json
+import html
+import uuid
 
 def get_db_path():
     # PATH FIX 4: Go up TWO levels to find semibot_checkpoints.db at project root
     return os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'semibot_checkpoints.db')
+
+def get_browser_session_id():
+    if "browser_session_id" not in st.session_state:
+        st.session_state.browser_session_id = uuid.uuid4().hex
+    return st.session_state.browser_session_id
 
 def init_history_table():
     conn = sqlite3.connect(get_db_path())
@@ -186,9 +193,16 @@ def init_history_table():
             up_prob TEXT,
             timestamp TEXT,
             result_json TEXT,
-            followup_json TEXT
+            followup_json TEXT,
+            session_id TEXT
         )
     """)
+    columns = [row[1] for row in conn.execute("PRAGMA table_info(analysis_history)").fetchall()]
+    if "session_id" not in columns:
+        try:
+            conn.execute("ALTER TABLE analysis_history ADD COLUMN session_id TEXT")
+        except sqlite3.OperationalError:
+            pass
     conn.commit()
     conn.close()
 
@@ -221,8 +235,8 @@ def purge_stale_history_rows():
 def save_history(ticker, up_prob, timestamp, result, followup_history):
     conn = sqlite3.connect(get_db_path())
     conn.execute(
-        "INSERT INTO analysis_history (ticker, up_prob, timestamp, result_json, followup_json) VALUES (?, ?, ?, ?, ?)",
-        (ticker, up_prob, timestamp, json.dumps(result), json.dumps(followup_history))
+        "INSERT INTO analysis_history (ticker, up_prob, timestamp, result_json, followup_json, session_id) VALUES (?, ?, ?, ?, ?, ?)",
+        (ticker, up_prob, timestamp, json.dumps(result), json.dumps(followup_history), get_browser_session_id())
     )
     conn.commit()
     conn.close()
@@ -230,8 +244,8 @@ def save_history(ticker, up_prob, timestamp, result, followup_history):
 def load_history(limit=10):
     conn = sqlite3.connect(get_db_path())
     cursor = conn.execute(
-        "SELECT id, ticker, up_prob, timestamp FROM analysis_history ORDER BY id DESC LIMIT ?",
-        (limit,)
+        "SELECT id, ticker, up_prob, timestamp FROM analysis_history WHERE session_id = ? ORDER BY id DESC LIMIT ?",
+        (get_browser_session_id(), limit)
     )
     rows = cursor.fetchall()
     conn.close()
@@ -240,8 +254,8 @@ def load_history(limit=10):
 def load_history_detail(history_id):
     conn = sqlite3.connect(get_db_path())
     cursor = conn.execute(
-        "SELECT ticker, result_json, followup_json FROM analysis_history WHERE id = ?",
-        (history_id,)
+        "SELECT ticker, result_json, followup_json FROM analysis_history WHERE id = ? AND session_id = ?",
+        (history_id, get_browser_session_id())
     )
     row = cursor.fetchone()
     conn.close()
@@ -252,8 +266,8 @@ def load_history_detail(history_id):
 def update_followup(history_id, followup_history):
     conn = sqlite3.connect(get_db_path())
     conn.execute(
-        "UPDATE analysis_history SET followup_json = ? WHERE id = ?",
-        (json.dumps(followup_history), history_id)
+        "UPDATE analysis_history SET followup_json = ? WHERE id = ? AND session_id = ?",
+        (json.dumps(followup_history), history_id, get_browser_session_id())
     )
     conn.commit()
     conn.close()
@@ -266,17 +280,24 @@ def init_compare_table():
             tickers_csv TEXT,
             timestamp TEXT,
             results_json TEXT,
-            followup_json TEXT
+            followup_json TEXT,
+            session_id TEXT
         )
     """)
+    columns = [row[1] for row in conn.execute("PRAGMA table_info(compare_sessions)").fetchall()]
+    if "session_id" not in columns:
+        try:
+            conn.execute("ALTER TABLE compare_sessions ADD COLUMN session_id TEXT")
+        except sqlite3.OperationalError:
+            pass
     conn.commit()
     conn.close()
 
 def save_compare_session(tickers_list, timestamp, results_dict, followup_history):
     conn = sqlite3.connect(get_db_path())
     conn.execute(
-        "INSERT INTO compare_sessions (tickers_csv, timestamp, results_json, followup_json) VALUES (?, ?, ?, ?)",
-        (",".join(tickers_list), timestamp, json.dumps(results_dict), json.dumps(followup_history))
+        "INSERT INTO compare_sessions (tickers_csv, timestamp, results_json, followup_json, session_id) VALUES (?, ?, ?, ?, ?)",
+        (",".join(tickers_list), timestamp, json.dumps(results_dict), json.dumps(followup_history), get_browser_session_id())
     )
     conn.commit()
     conn.close()
@@ -284,8 +305,8 @@ def save_compare_session(tickers_list, timestamp, results_dict, followup_history
 def load_compare_sessions(limit=10):
     conn = sqlite3.connect(get_db_path())
     cursor = conn.execute(
-        "SELECT id, tickers_csv, timestamp FROM compare_sessions ORDER BY id DESC LIMIT ?",
-        (limit,)
+        "SELECT id, tickers_csv, timestamp FROM compare_sessions WHERE session_id = ? ORDER BY id DESC LIMIT ?",
+        (get_browser_session_id(), limit)
     )
     rows = cursor.fetchall()
     conn.close()
@@ -294,8 +315,8 @@ def load_compare_sessions(limit=10):
 def load_compare_session_detail(session_id):
     conn = sqlite3.connect(get_db_path())
     cursor = conn.execute(
-        "SELECT tickers_csv, results_json, followup_json FROM compare_sessions WHERE id = ?",
-        (session_id,)
+        "SELECT tickers_csv, results_json, followup_json FROM compare_sessions WHERE id = ? AND session_id = ?",
+        (session_id, get_browser_session_id())
     )
     row = cursor.fetchone()
     conn.close()
@@ -306,8 +327,8 @@ def load_compare_session_detail(session_id):
 def update_compare_followup(session_id, followup_history):
     conn = sqlite3.connect(get_db_path())
     conn.execute(
-        "UPDATE compare_sessions SET followup_json = ? WHERE id = ?",
-        (json.dumps(followup_history), session_id)
+        "UPDATE compare_sessions SET followup_json = ? WHERE id = ? AND session_id = ?",
+        (json.dumps(followup_history), session_id, get_browser_session_id())
     )
     conn.commit()
     conn.close()
@@ -1311,9 +1332,9 @@ if st.session_state.result is None:
 
             for msg in st.session_state.compare_followup_history:
                 if msg["role"] == "user":
-                    st.markdown(f"<div class='user-bubble'>{msg['content']}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='user-bubble'>{html.escape(str(msg['content']))}</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#8BB8FF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{msg['content']}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#8BB8FF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{html.escape(str(msg['content']))}</div>", unsafe_allow_html=True)
 
             if "compare_input_counter" not in st.session_state:
                 st.session_state.compare_input_counter = 0
@@ -2060,9 +2081,9 @@ if st.session_state.result:
 
     for msg in st.session_state.followup_history:
         if msg["role"] == "user":
-            st.markdown(f"<div class='user-bubble'>{msg['content']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='user-bubble'>{html.escape(str(msg['content']))}</div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#8BB8FF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{msg['content']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='bot-bubble'><div style='font-size:0.65rem;color:#8BB8FF;font-weight:600;margin-bottom:4px'>SEMIBOT</div>{html.escape(str(msg['content']))}</div>", unsafe_allow_html=True)
 
     fq1, fq2 = st.columns([5, 1])
     with fq1:
