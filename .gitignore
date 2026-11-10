@@ -3,7 +3,6 @@ myenv/
 __pycache__/
 *.pyc
 data/faiss_index/
-frontend/static/robot_b64.txt
 *.db
 *.db-shm
 *.db-wal
