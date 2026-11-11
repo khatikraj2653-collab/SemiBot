@@ -2011,7 +2011,18 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
   // Document height can grow as images/web-fonts load; re-measure periodically.
   setInterval(function(){ if (Math.abs(docH() - H) > 20) resize(); }, 1500);
 
-  var COLORS = ['#FFD700','#FF4E50','#4ECDC4','#FF8C42','#E8509C','#95E1D3','#F38181','#AA96DA','#FFF1AF','#B388EB','#8FFFC2','#FF6B9D','#FFFFFF'];
+  // Diwali palette — gold & amber, saffron & orange, crimson, magenta, royal
+  // purple, emerald & lime, turquoise & electric blue, rose pink, cream white.
+  var COLORS = [
+    '#FFD700','#FFC400','#FFAB00','#FF8F00',
+    '#FF6B00','#FF5722','#FF3D00',
+    '#FF1744','#E53935','#FF4081',
+    '#E91E63','#F50057','#C51162',
+    '#AA00FF','#7C4DFF','#B388EB',
+    '#2979FF','#00B0FF','#00E5FF','#1DE9B6',
+    '#00E676','#76FF03','#C6FF00',
+    '#FF80AB','#FFF1AF','#FFFFFF'
+  ];
   var rockets = [], sparks = [];
   var startTime = performance.now();
   var spawning = true;
@@ -2104,7 +2115,7 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
         // willow (slow, heavy gravity for downward droop)
         speed = rnd(speedLo * 0.6, speedHi * 0.8);
       }
-      c = Math.random() < 0.18 ? COLORS[(Math.random() * COLORS.length) | 0] : color;
+      c = Math.random() < 0.32 ? COLORS[(Math.random() * COLORS.length) | 0] : color;
       var vx = Math.cos(angle) * speed;
       var vy = Math.sin(angle) * speed;
       var opts = {};

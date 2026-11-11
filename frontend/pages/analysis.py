@@ -1537,7 +1537,16 @@ if not st.session_state.result:
   resize(); addEventListener('resize', resize);
   if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
 
-  var COLORS = ['#FFD700','#FF4E50','#4ECDC4','#FF8C42','#E8509C','#95E1D3','#F38181','#AA96DA','#FFF1AF','#B388EB','#8FFFC2','#FF6B9D','#FFFFFF'];
+  var COLORS = [
+    '#FFD700','#FFC400','#FFAB00','#FF8F00',
+    '#FF6B00','#FF5722','#FF3D00',
+    '#FF1744','#E53935','#FF4081',
+    '#E91E63','#F50057','#C51162',
+    '#AA00FF','#7C4DFF','#B388EB',
+    '#2979FF','#00B0FF','#00E5FF','#1DE9B6',
+    '#00E676','#76FF03','#C6FF00',
+    '#FF80AB','#FFF1AF','#FFFFFF'
+  ];
   var rockets = [], sparks = [];
   var DURATION = 20000;
   var startTime = performance.now();
@@ -1588,7 +1597,7 @@ if not st.session_state.result:
       else if (pattern < 0.55) speed = rnd(speedLo, speedHi);
       else if (pattern < 0.80) speed = rnd(speedLo, speedHi);
       else speed = rnd(speedLo * 0.6, speedHi * 0.8);
-      c = Math.random() < 0.18 ? COLORS[(Math.random() * COLORS.length) | 0] : color;
+      c = Math.random() < 0.32 ? COLORS[(Math.random() * COLORS.length) | 0] : color;
       var vx = Math.cos(angle) * speed, vy = Math.sin(angle) * speed;
       var opts = {};
       if (pattern >= 0.80) { opts.gravity = 0.12; opts.drag = 0.985; }
