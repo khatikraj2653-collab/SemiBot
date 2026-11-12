@@ -1976,40 +1976,45 @@ if(chatHint){hintT.push(setTimeout(()=>chatHint.classList.add('is-visible'),1500
 window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":".sk-chip","hubs":[{"id":"orch","label":"Orchestration","desc":"LangGraph runs four parallel subgraphs covering 18 factors, then one synthesis step."},{"id":"mem","label":"Retrieval & memory","desc":"FAISS retrieval (RAG) with HuggingFace embeddings, short- and long-term memory, and SQLite for state."},{"id":"data","label":"Data sources","desc":"Macro, market and filing data from FRED, yfinance and SEC filings, plus news and web search."},{"id":"llm","label":"LLM","desc":"GPT-6 Luna synthesises all 18 factors into one prediction with per-factor attribution."},{"id":"eval","label":"Evaluation","desc":"Backtested on 426 observations across 48 tickers; accuracy rises with market cap, confirmed by logistic regression."},{"id":"ui","label":"Interface","desc":"A Streamlit app plus this HTML, CSS and JavaScript landing page with WebGL scenes."},{"id":"deploy","label":"Deployment","desc":"Hosted on Streamlit Community Cloud, with the source on GitHub."}],"links":{"LangGraph":["orch"],"LangChain":["orch","llm"],"Agentic AI":["orch"],"GenAI":["llm"],"RAG":["mem"],"FAISS":["mem"],"Prompt Engineering":["llm"],"OpenAI GPT-6 Luna":["llm"],"HuggingFace Embeddings":["mem"],"MCP (Model Context Protocol)":["data"],"Tavily Search":["data"],"Short-Term Memory":["mem"],"Long-Term Memory":["mem"],"Python":["orch","data","eval","ui"],"Streamlit":["ui"],"SQLite":["mem"],"FRED API":["data"],"yfinance":["data"],"SEC Filings Data":["data"],"DuckDuckGo Search":["data"],"GDELT":["data"],"Backtesting":["eval"],"Logistic Regression":["eval"],"McNemar's Test":["eval"],"Statistical Testing":["eval"],"Dual-Regime Modeling":["orch","eval"],"HTML / CSS / JS":["ui"],"three.js / WebGL":["ui"],"Streamlit Community Cloud":["deploy"],"Git / GitHub":["deploy"]},"colors":{"bg":"#262F3E","ink":"#EDF0F5","muted":"#9AA6B8","line":"#5A6A82","hub":"#8BB8FF","skill":"#FBBF24","hi":"#FBBF24"},"fonts":{"hub":"Inter, sans-serif","skill":"'JetBrains Mono', monospace"},"seed":5});
 </script>
 
-<!-- Diwali fireworks: endless, scattered across the full landing page -->
+<!-- Diwali fireworks: endless, pinned to the user's viewport -->
 <script id="diwali-fx">
 (function(){
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  // The landing is embedded as a fixed-height Streamlit components iframe, so
-  // position:fixed pins to the top of that iframe (the hero) and bursts never
-  // appear on the lower sections. Instead, lay the canvas across the WHOLE
-  // document, so sparks land on every section as the user scrolls past.
-  function vw(){ return document.documentElement.clientWidth || innerWidth; }
-  function docH(){
-    var d = document;
-    return Math.max(
-      d.body ? d.body.scrollHeight : 0,
-      d.body ? d.body.offsetHeight : 0,
-      d.documentElement ? d.documentElement.clientHeight : 0,
-      d.documentElement ? d.documentElement.scrollHeight : 0,
-      d.documentElement ? d.documentElement.offsetHeight : 0
-    );
-  }
-  var cv = document.createElement('canvas');
-  cv.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:2147483646;';
-  (document.body || document.documentElement).appendChild(cv);
+  // Earlier version sized the canvas to the WHOLE document (10,000+ px tall)
+  // and cleared/redrew it every frame, which dropped the page to 1-2 FPS —
+  // ~15M pixels of canvas work per frame. Fix: attach the canvas to the PARENT
+  // window (srcdoc is same-origin with parent) at position:fixed + viewport
+  // dimensions. That tracks the user's scroll naturally and cuts canvas area
+  // ~20×, so bursts stay in view wherever the reader is without the lag.
+  var parentWin = null, parentDoc = null;
+  try {
+    if (window.parent && window.parent !== window) {
+      parentWin = window.parent;
+      parentDoc = parentWin.document;
+    }
+  } catch(e) {}
+  var hostWin = parentWin || window;
+  var hostDoc = parentDoc || document;
+
+  function vw(){ return (hostWin.visualViewport && hostWin.visualViewport.width) || hostDoc.documentElement.clientWidth || hostWin.innerWidth; }
+  function vh(){ return (hostWin.visualViewport && hostWin.visualViewport.height) || hostDoc.documentElement.clientHeight || hostWin.innerHeight; }
+
+  var cv = hostDoc.createElement('canvas');
+  cv.id = 'semibot-landing-fx-canvas';
+  cv.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:2147483646;';
+  (hostDoc.body || hostDoc.documentElement).appendChild(cv);
   var ctx = cv.getContext('2d');
-  var W = vw(), H = docH();
+  // Cap pixel density so retina / 4K displays don't pay a 4-9× fill-rate tax.
+  var dpr = Math.min(hostWin.devicePixelRatio || 1, 1.5);
+  var W = vw(), H = vh();
   function resize(){
-    W = vw(); H = docH();
-    cv.width = W * devicePixelRatio; cv.height = H * devicePixelRatio;
+    W = vw(); H = vh();
+    cv.width = W * dpr; cv.height = H * dpr;
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
   }
-  resize(); addEventListener('resize', resize);
-  if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
-  // Document height can grow as images/web-fonts load; re-measure periodically.
-  setInterval(function(){ if (Math.abs(docH() - H) > 20) resize(); }, 1500);
+  resize(); hostWin.addEventListener('resize', resize);
+  if (hostWin.visualViewport) hostWin.visualViewport.addEventListener('resize', resize);
 
   // Diwali palette — gold & amber, saffron & orange, crimson, magenta, royal
   // purple, emerald & lime, turquoise & electric blue, rose pink, cream white.
@@ -2027,33 +2032,31 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
   var startTime = performance.now();
   var spawning = true;
   // Pause fireworks when the tab is hidden to save CPU; resume when visible again.
-  document.addEventListener('visibilitychange', function(){
-    spawning = !document.hidden;
+  // Pause when the parent tab is hidden to save CPU. hostDoc is the parent
+  // document when attached there (same-origin srcdoc), otherwise local.
+  hostDoc.addEventListener('visibilitychange', function(){
+    spawning = !hostDoc.hidden;
   });
 
   function rnd(a,b){ return a + Math.random() * (b - a); }
 
   function launch(sizeTag){
     var x = rnd(W * 0.04, W * 0.96);
-    // Scatter bursts across the WHOLE document height — hero, factors,
-    // playground, framework, architecture, skills, tickers, footer — so the
-    // page feels festive wherever the user is reading. Give the top band
-    // (where the fixed nav + ticker strip live) an explicit share so bursts
-    // visibly happen around the ticker tape too.
+    // Canvas is now viewport-sized, so bursts target the current viewport —
+    // wherever the user has scrolled, bursts appear there. Top band (nav +
+    // ticker strip) gets a share so bursts stay lively near the top; the
+    // rest spread through the visible page.
     var targetY;
     var r = Math.random();
     if (r < 0.25){
-      // Top band — nav + ticker strip + hero top. Burst low enough that the
-      // spray fans out above the content line, not the nav itself.
-      targetY = rnd(120, 260);
+      targetY = rnd(90, 200);
     } else {
-      targetY = rnd(260, Math.max(400, H - 80));
+      targetY = rnd(200, Math.max(300, H - 60));
     }
-    // Launch each rocket from a shorter distance for top bursts (so the
-    // rocket doesn't start under the nav where it would be clipped), and
-    // a bigger distance for mid/lower bursts.
-    var trailDist = targetY < 300 ? rnd(80, 150) : rnd(180, 320);
-    var startY = targetY + trailDist;
+    // Rocket rises from off-screen bottom to target. Shorter rise for top
+    // bursts so the trail doesn't stretch across the whole viewport.
+    var trailDist = targetY < 240 ? rnd(80, 150) : rnd(180, 320);
+    var startY = Math.min(H + 10, targetY + trailDist);
     var color = COLORS[(Math.random() * COLORS.length) | 0];
     var vy0 = -Math.sqrt(2 * 0.09 * (startY - targetY));
     rockets.push({x:x, y:startY, vx: rnd(-0.6, 0.6), vy: vy0, color: color, trail: [], size: sizeTag || 'mix'});
@@ -2203,7 +2206,7 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
   // rockets per cluster — otherwise sparse bursts spread thin across the page.
   var waveActive = false;
   var lastWaveEnd = 0;
-  var waveGap = 150;  // very short gap: waves land back-to-back so the sky is busy
+  var waveGap = 400;  // short gap: waves land close together without hammering CPU
   var waveNum = 0;
 
   function pickWave(){
