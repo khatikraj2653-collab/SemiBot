@@ -252,10 +252,10 @@ _DIWALI_FIREWORKS_JS_TMPL = r"""
       bucket = r < 0.30 ? 'small' : r < 0.70 ? 'medium' : r < 0.93 ? 'large' : 'mega';
     }
     var count, speedLo, speedHi, sizeLo, sizeHi, decayLo, decayHi, flashSize;
-    if (bucket === 'small'){ count = 18 + ((Math.random()*10)|0); speedLo=1.4; speedHi=3.6; sizeLo=1.1; sizeHi=1.9; decayLo=0.012; decayHi=0.025; flashSize=12; }
-    else if (bucket === 'medium'){ count = 35 + ((Math.random()*20)|0); speedLo=2.0; speedHi=5.2; sizeLo=1.4; sizeHi=2.4; decayLo=0.009; decayHi=0.018; flashSize=18; }
-    else if (bucket === 'large'){ count = 70 + ((Math.random()*30)|0); speedLo=2.5; speedHi=7.5; sizeLo=1.7; sizeHi=3.0; decayLo=0.007; decayHi=0.014; flashSize=28; }
-    else { count = 120 + ((Math.random()*60)|0); speedLo=3; speedHi=9; sizeLo=1.9; sizeHi=3.6; decayLo=0.005; decayHi=0.011; flashSize=42; }
+    if (bucket === 'small'){ count = 13 + ((Math.random()*7)|0); speedLo=1.4; speedHi=3.6; sizeLo=1.1; sizeHi=1.9; decayLo=0.012; decayHi=0.025; flashSize=12; }
+    else if (bucket === 'medium'){ count = 25 + ((Math.random()*14)|0); speedLo=2.0; speedHi=5.2; sizeLo=1.4; sizeHi=2.4; decayLo=0.009; decayHi=0.018; flashSize=18; }
+    else if (bucket === 'large'){ count = 49 + ((Math.random()*21)|0); speedLo=2.5; speedHi=7.5; sizeLo=1.7; sizeHi=3.0; decayLo=0.007; decayHi=0.014; flashSize=28; }
+    else { count = 84 + ((Math.random()*42)|0); speedLo=3; speedHi=9; sizeLo=1.9; sizeHi=3.6; decayLo=0.005; decayHi=0.011; flashSize=42; }
 
     flash(x, y, '#FFFFFF', flashSize);
     var pattern = Math.random();
@@ -276,7 +276,7 @@ _DIWALI_FIREWORKS_JS_TMPL = r"""
       setTimeout(function(){
         if (!document.body.contains(cv)) return;
         var sc = Math.random() < 0.5 ? COLORS[(Math.random()*COLORS.length)|0] : color;
-        var scount = 60 + ((Math.random()*40)|0);
+        var scount = 42 + ((Math.random()*28)|0);
         for (var k = 0; k < scount; k++){
           var a = (Math.PI * 2 * k / scount);
           var sp = rnd(1.5, 3.5);
