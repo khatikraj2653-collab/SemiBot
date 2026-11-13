@@ -2088,13 +2088,13 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     }
     var count, speedLo, speedHi, sizeLo, sizeHi, decayLo, decayHi, flashSize;
     if (bucket === 'small'){
-      count = 18 + ((Math.random()*10)|0); speedLo=1.68; speedHi=4.32; sizeLo=1.32; sizeHi=2.28; decayLo=0.012; decayHi=0.025; flashSize=14;
+      count = 13 + ((Math.random()*7)|0); speedLo=1.68; speedHi=4.32; sizeLo=1.32; sizeHi=2.28; decayLo=0.012; decayHi=0.025; flashSize=14;
     } else if (bucket === 'medium'){
-      count = 35 + ((Math.random()*20)|0); speedLo=2.4; speedHi=6.24; sizeLo=1.68; sizeHi=2.88; decayLo=0.009; decayHi=0.018; flashSize=22;
+      count = 25 + ((Math.random()*14)|0); speedLo=2.4; speedHi=6.24; sizeLo=1.68; sizeHi=2.88; decayLo=0.009; decayHi=0.018; flashSize=22;
     } else if (bucket === 'large'){
-      count = 70 + ((Math.random()*30)|0); speedLo=3.0; speedHi=9.0; sizeLo=2.04; sizeHi=3.6; decayLo=0.007; decayHi=0.014; flashSize=34;
+      count = 49 + ((Math.random()*21)|0); speedLo=3.0; speedHi=9.0; sizeLo=2.04; sizeHi=3.6; decayLo=0.007; decayHi=0.014; flashSize=34;
     } else { // mega
-      count = 120 + ((Math.random()*60)|0); speedLo=3.6; speedHi=10.8; sizeLo=2.28; sizeHi=4.32; decayLo=0.005; decayHi=0.011; flashSize=50;
+      count = 84 + ((Math.random()*42)|0); speedLo=3.6; speedHi=10.8; sizeLo=2.28; sizeHi=4.32; decayLo=0.005; decayHi=0.011; flashSize=50;
     }
 
     // Center flash
@@ -2132,7 +2132,7 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
       setTimeout(function(){
         if (!document.body.contains(cv)) return;
         var sc = Math.random() < 0.5 ? COLORS[(Math.random()*COLORS.length)|0] : color;
-        var scount = 60 + ((Math.random()*40)|0);
+        var scount = 42 + ((Math.random()*28)|0);
         for (var k = 0; k < scount; k++){
           var a = (Math.PI * 2 * k / scount);
           var sp = rnd(1.8, 4.2);
