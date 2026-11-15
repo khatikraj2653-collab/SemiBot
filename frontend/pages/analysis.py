@@ -203,8 +203,21 @@ _DIWALI_FIREWORKS_JS_TMPL = r"""
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
   }
-  resize(); addEventListener('resize', resize);
+  // Streamlit Cloud iframes can report innerWidth / visualViewport as 0 at
+  // script init time (the iframe is placed before its own layout settles),
+  // which pinned the canvas at 0x150 and left the show invisible. Retry
+  // resize() each frame until the viewport reports a non-zero size, and
+  // observe documentElement so later layout changes also re-size.
+  resize();
+  var _rzTries = 0;
+  (function keepTrying(){
+    if (W > 0 && H > 0) return;
+    if (_rzTries++ > 120) return;  // ~2s @ 60fps; give up rather than loop
+    requestAnimationFrame(function(){ resize(); keepTrying(); });
+  })();
+  addEventListener('resize', resize);
   if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
+  if (window.ResizeObserver) { try { new ResizeObserver(resize).observe(document.documentElement); } catch(e){} }
 
   var COLORS = [
     '#FFD700','#FFC400','#FFAB00','#FF8F00',

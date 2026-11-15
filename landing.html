@@ -2013,8 +2013,19 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(dpr,0,0,dpr,0,0);
   }
-  resize(); hostWin.addEventListener('resize', resize);
+  // Parent iframe can briefly report 0 width at init on Streamlit Cloud,
+  // which would freeze the canvas at 0xN forever. Retry until non-zero,
+  // and observe documentElement so later layout changes also re-size.
+  resize();
+  var _rzTries = 0;
+  (function keepTrying(){
+    if (W > 0 && H > 0) return;
+    if (_rzTries++ > 120) return;
+    requestAnimationFrame(function(){ resize(); keepTrying(); });
+  })();
+  hostWin.addEventListener('resize', resize);
   if (hostWin.visualViewport) hostWin.visualViewport.addEventListener('resize', resize);
+  if (hostWin.ResizeObserver) { try { new hostWin.ResizeObserver(resize).observe(hostDoc.documentElement); } catch(e){} }
 
   // Diwali palette — gold & amber, saffron & orange, crimson, magenta, royal
   // purple, emerald & lime, turquoise & electric blue, rose pink, cream white.
