@@ -2044,13 +2044,31 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
     rockets.length = 0;
     sparks.length = 0;
   }
-  if (srcdocIframe && hostWin.MutationObserver) {
-    try {
-      var navObs = new hostWin.MutationObserver(function(){
-        if (!srcdocIframe.isConnected) { teardown(); navObs.disconnect(); }
-      });
-      navObs.observe(hostDoc.body, { childList: true, subtree: true });
-    } catch(e) {}
+  function navGone(){
+    // Streamlit's multi-page nav doesn't remove the srcdoc iframe — it collapses
+    // it to height:0 and leaves it attached. So "removed" alone isn't enough;
+    // also treat 0-size as gone.
+    if (!srcdocIframe) return false;
+    if (!srcdocIframe.isConnected) return true;
+    return srcdocIframe.offsetWidth === 0 || srcdocIframe.offsetHeight === 0;
+  }
+  if (srcdocIframe) {
+    if (hostWin.ResizeObserver) {
+      try {
+        var rso = new hostWin.ResizeObserver(function(){
+          if (navGone()) { teardown(); rso.disconnect(); }
+        });
+        rso.observe(srcdocIframe);
+      } catch(e) {}
+    }
+    if (hostWin.MutationObserver) {
+      try {
+        var navObs = new hostWin.MutationObserver(function(){
+          if (navGone()) { teardown(); navObs.disconnect(); }
+        });
+        navObs.observe(hostDoc.body, { childList: true, subtree: true });
+      } catch(e) {}
+    }
   }
 
   // Diwali palette — gold & amber, saffron & orange, crimson, magenta, royal
