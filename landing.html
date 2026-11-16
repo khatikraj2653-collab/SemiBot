@@ -2027,6 +2027,32 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
   if (hostWin.visualViewport) hostWin.visualViewport.addEventListener('resize', resize);
   if (hostWin.ResizeObserver) { try { new hostWin.ResizeObserver(resize).observe(hostDoc.documentElement); } catch(e){} }
 
+  // Clean up when the srcdoc iframe that hosts this landing page is removed
+  // from the parent document. The canvas + animation loop live in the parent
+  // (so viewport-tracking works), which means they survive the srcdoc being
+  // torn down when Streamlit navigates to another page. Without this teardown
+  // the user sees landing-page bursts painting over the analysis page.
+  // srcdoc is same-origin with parent, so window.frameElement gives us the
+  // <iframe srcdoc=...> element in the parent DOM.
+  var srcdocIframe = null;
+  try { srcdocIframe = window.frameElement; } catch(e) {}
+  var stopped = false;
+  function teardown(){
+    if (stopped) return;
+    stopped = true;
+    try { if (cv && cv.parentNode) cv.parentNode.removeChild(cv); } catch(e) {}
+    rockets.length = 0;
+    sparks.length = 0;
+  }
+  if (srcdocIframe && hostWin.MutationObserver) {
+    try {
+      var navObs = new hostWin.MutationObserver(function(){
+        if (!srcdocIframe.isConnected) { teardown(); navObs.disconnect(); }
+      });
+      navObs.observe(hostDoc.body, { childList: true, subtree: true });
+    } catch(e) {}
+  }
+
   // Diwali palette — gold & amber, saffron & orange, crimson, magenta, royal
   // purple, emerald & lime, turquoise & electric blue, rose pink, cream white.
   var COLORS = [
@@ -2155,6 +2181,7 @@ window.initStackMap({"host":"smWrap","canvas":"smCv","info":"smInfo","chipSel":"
   }
 
   function tick(now){
+    if (stopped) return;
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
 
