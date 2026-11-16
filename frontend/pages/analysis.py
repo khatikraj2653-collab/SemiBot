@@ -219,6 +219,29 @@ _DIWALI_FIREWORKS_JS_TMPL = r"""
   if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
   if (window.ResizeObserver) { try { new ResizeObserver(resize).observe(document.documentElement); } catch(e){} }
 
+  // Clean up when the components.html iframe that injected this script is
+  // removed from the parent DOM — otherwise navigating to another Streamlit
+  // page (e.g. compare, history) leaves these bursts painting over it. The
+  // injector stashes its own window.frameElement in a parent-window global
+  // keyed by canvas id so we can watch the right iframe.
+  var srcdocIframe = (window.__semibotFxSrcdoc || {})['__CANVAS_ID__'] || null;
+  var stopped = false;
+  function teardown(){
+    if (stopped) return;
+    stopped = true;
+    try { if (cv && cv.parentNode) cv.parentNode.removeChild(cv); } catch(e) {}
+    rockets.length = 0;
+    sparks.length = 0;
+  }
+  if (srcdocIframe && window.MutationObserver) {
+    try {
+      var navObs = new MutationObserver(function(){
+        if (!srcdocIframe.isConnected) { teardown(); navObs.disconnect(); }
+      });
+      navObs.observe(document.body, { childList: true, subtree: true });
+    } catch(e) {}
+  }
+
   var COLORS = [
     '#FFD700','#FFC400','#FFAB00','#FF8F00',
     '#FF6B00','#FF5722','#FF3D00',
@@ -316,6 +339,7 @@ _DIWALI_FIREWORKS_JS_TMPL = r"""
   }
 
   function tick(now){
+    if (stopped) return;
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
 
@@ -380,6 +404,11 @@ def _inject_diwali_fireworks(flag_key: str):
     inject = (
         "<script>(function(){try{var p=window.parent;if(!p||p===window)return;"
         "var d=p.document;if(d.getElementById('" + script_id + "'))return;"
+        # Stash THIS components.html iframe so the parent-side fireworks script
+        # can watch it for removal and tear down the canvas when the user
+        # navigates to another Streamlit page.
+        "p.__semibotFxSrcdoc=p.__semibotFxSrcdoc||{};"
+        "p.__semibotFxSrcdoc['" + canvas_id + "']=window.frameElement;"
         "var s=d.createElement('script');s.id='" + script_id + "';s.textContent="
         + json.dumps(js)
         + ";d.body.appendChild(s);}catch(e){console.warn('diwali-fx inject blocked:',e);}})();</script>"
